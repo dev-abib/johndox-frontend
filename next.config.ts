@@ -1,10 +1,10 @@
-let domain = "example.com"; // Fallback domain
+let domain = "example.com"; // fallback
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 if (siteUrl) {
   try {
     domain = new URL(siteUrl).hostname;
-  } catch (error) {
+  } catch {
     console.warn("Invalid NEXT_PUBLIC_SITE_URL, using fallback domain.");
   }
 } else {
@@ -14,10 +14,17 @@ if (siteUrl) {
 const nextConfig = {
   images: {
     remotePatterns: [
+      // Your own site (dynamic)
       {
         protocol: "https",
         hostname: domain,
-        port: "",
+        pathname: "/**",
+      },
+
+      // iBB image hosting (logo)
+      {
+        protocol: "https",
+        hostname: "i.ibb.co.com",
         pathname: "/**",
       },
     ],

@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
+
+
 @theme {
   /* Colors */
   --color-primary-green: #63be60;
   --color-secondary-blue: #0184ff;
 
   /* Font Family */
-  --font-poppins: var(--font-poppins);
+  --font-montserrat: var(--font-montserrat);
 
   /* Breakpoints */
   --breakpoint-sm: 480px;
@@ -18,7 +20,7 @@
 }
 
 body {
-  @apply font-poppins;
+  @apply font-montserrat;
 }
 
 /* Custom CSS */
