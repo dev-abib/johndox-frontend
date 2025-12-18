@@ -11,20 +11,26 @@ import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-useEffect(() => {
-  const handleScroll = () => {
-    setScrolled(window.scrollY > 100);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 100);
+    };
 
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
-}, []);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
+  const [langOpen, setLangOpen] = useState(false);
+  const [activeLang, setActiveLang] = useState("English");
+
+  const languages = ["English", "Deutsch"];
 
   return (
-    <nav   className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
-    scrolled ? "bg-white shadow-md" : "bg-transparent"
-  }`}>
+    <nav
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+        scrolled ? "bg-white shadow-md" : "bg-transparent"
+      }`}
+    >
       <Container>
         <header className="w-full text-black">
           <div className="flex items-center justify-between px-6 py-[26px]">
@@ -47,9 +53,6 @@ useEffect(() => {
 
               <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
                 Browse Properties
-                <span className="text-xs ml-3">
-                  <AngleBottomSvg />
-                </span>
               </li>
 
               <li>
@@ -67,11 +70,42 @@ useEffect(() => {
                 </Link>
               </li>
 
-              <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
-                <PlanetSvg /> English
-                <span className="text-xs ml-3">
-                  <AngleBottomSvg />
-                </span>
+              <li className="relative">
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="flex items-center gap-1 cursor-pointer hover:text-black transition"
+                >
+                  <PlanetSvg /> {activeLang}
+                  <span
+                    className={`text-xs ml-3 transition-transform ${
+                      langOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    <AngleBottomSvg />
+                  </span>
+                </button>
+
+                {/* Dropdown */}
+                <div
+                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
+                    langOpen
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-2 pointer-events-none"
+                  }`}
+                >
+                  {languages.map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        setActiveLang(lang);
+                        setLangOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
               </li>
             </ul>
             <div className="hidden xl:flex items-center gap-4">
@@ -121,9 +155,6 @@ useEffect(() => {
 
               <li className="flex items-center gap-1 cursor-pointer">
                 Browse Properties{" "}
-                <span className="text-xs ml-3">
-                  <AngleBottomSvg />
-                </span>
               </li>
 
               <li>
@@ -137,12 +168,42 @@ useEffect(() => {
                   About
                 </Link>
               </li>
+              <li className="relative">
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="flex items-center gap-1 cursor-pointer hover:text-black transition"
+                >
+                  <PlanetSvg /> {activeLang}
+                  <span
+                    className={`text-xs ml-3 transition-transform ${
+                      langOpen ? "rotate-180" : ""
+                    }`}
+                  >
+                    <AngleBottomSvg />
+                  </span>
+                </button>
 
-              <li className="flex items-center gap-2 cursor-pointer">
-                <PlanetSvg /> English{" "}
-                <span className="text-xs ml-3">
-                  <AngleBottomSvg />
-                </span>
+                {/* Dropdown */}
+                <div
+                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark  transition-all duration-200 ${
+                    langOpen
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-2 pointer-events-none"
+                  }`}
+                >
+                  {languages.map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        setActiveLang(lang);
+                        setLangOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
               </li>
             </ul>
             <div className="px-6 flex flex-col gap-4">
