@@ -8,7 +8,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0f0f0f] text-white overflow-hidden">
+    <footer className="bg-[#0f0f0f] text-white overflow-hidden mt-[150px]">
       <Container>
         <div>
           {/* Big Background Text */}
