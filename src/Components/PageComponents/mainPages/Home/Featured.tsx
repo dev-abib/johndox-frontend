@@ -17,7 +17,7 @@ const Featured = () => {
   const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 6);
 
   return (
-    <section className="py-16 md:py-24 lg:py-[150px]">
+    <section className="py-16 md:py-24 xl:py-[150px]">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
@@ -36,7 +36,7 @@ const Featured = () => {
               className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
             >
               <div className="relative overflow-hidden">
-                <figure className="h-[260px] sm:h-[280px] lg:h-[300px]">
+                <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
                   <Image
                     src={item.Image}
                     alt={item.title}
