@@ -4,8 +4,9 @@
 
 @theme {
 
-  --color-primary-green: #63be60;
+  --color-primary-blue: #0085FF;
   --color-secondary-blue: #0184ff;
+  --color-text-dark: #5F5F5F;
   --color-muted-gray: #DFE3E8;
   --font-montserrat: var(--font-montserrat);
 
@@ -28,6 +29,9 @@ body {
 }
 .footer_text {
   @apply  xl:text-[20px] font-medium leading-[30px] text-muted-gray;
+}
+.menu_item {
+  @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark ;
 }
 
 .section_description {
