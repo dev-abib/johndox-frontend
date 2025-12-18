@@ -1,22 +1,21 @@
 @import "tailwindcss";
 
-
-
 @theme {
-  /* Colors */
-  --color-primary-green: #63be60;
-  --color-secondary-blue: #0184ff;
 
-  /* Font Family */
+  --color-primary-blue: #0085FF;
+  --color-secondary-blue: #0184ff;
+  --color-text-dark: #5F5F5F;
+  --color-muted-gray: #DFE3E8;
   --font-montserrat: var(--font-montserrat);
 
   /* Breakpoints */
+  /* --breakpoint-sm: 480px;
   --breakpoint-sm: 480px;
   --breakpoint-md: 576px;
   --breakpoint-lg: 768px;
   --breakpoint-xl: 1024px;
   --breakpoint-2xl: 1280px;
-  --breakpoint-3xl: 1536px;
+  --breakpoint-3xl: 1536px; */
 }
 
 body {
@@ -28,7 +27,20 @@ body {
 .section_title {
   @apply text-xl;
 }
+.footer_text {
+  @apply  xl:text-[20px] font-medium leading-[30px] text-muted-gray;
+}
+.menu_item {
+  @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark ;
+}
 
 .section_description {
   @apply text-base;
+}
+
+.mainhero {
+  background-image: url("../Assets/mainhero.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
