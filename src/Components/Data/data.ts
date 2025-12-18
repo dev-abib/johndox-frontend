@@ -10,7 +10,7 @@ import Product6 from "../../Assets/product6.png";
 import Browse1 from "../../Assets/browse1.png";
 import Browse2 from "../../Assets/browse2.png";
 import Browse3 from "../../Assets/browse3.png";
-import { Commercial, House, Land } from "../Svg/SvgContainer";
+import { Commercial, Expert, House, Interactive, Land, Premium, Secure, Support, Verified } from "../Svg/SvgContainer";
 import { SVGProps } from "react";
 
 export interface Property {
@@ -95,5 +95,47 @@ export const PropertyCategories: PropertyCategory[] = [
     listings: 456,
     icon_name: Commercial,
     image: Browse3,
+  },
+];
+
+
+// Teralink Data
+
+export interface FeatureItem {
+  title: string;
+  description: string;
+  icon: React.ComponentType<SVGProps<SVGSVGElement>>;
+}
+
+export const WhyChooseUsFeatures: FeatureItem[] = [
+  {
+    title: "Verified Listings",
+    description: "All properties are verified and authenticated by our team",
+    icon: Verified,
+  },
+  {
+    title: "Secure Transactions",
+    description: "Safe and secure payment processing for peace of mind",
+    icon: Secure,
+  },
+  {
+    title: "Expert Agents",
+    description: "Connect with experienced real estate professionals",
+    icon: Expert,
+  },
+  {
+    title: "Interactive Maps",
+    description: "Explore properties with our advanced mapping technology",
+    icon: Interactive,
+  },
+  {
+    title: "24/7 Support",
+    description: "Get dedicated support from our experienced real estate team",
+    icon: Support,
+  },
+  {
+    title: "Premium Tools",
+    description: "Advanced search filters and property comparison tools",
+    icon: Premium,
   },
 ];
