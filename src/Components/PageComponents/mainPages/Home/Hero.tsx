@@ -64,7 +64,7 @@ const Hero: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab("buy")}
-                  className={`rounded-3xl lg:rounded-[40px] py-2.5 px-6 lg:py-1 lg:px-0 w-full text-center font-medium transition-all duration-200
+                  className={`rounded-3xl lg:rounded-[40px] py-2.5 px-6 lg:py-1 lg:px-0 w-full text-center font-medium transition-all duration-200 cursor-pointer
                     ${
                       activeTab === "buy"
                         ? "bg-[#0085FF] text-white shadow-md"
@@ -77,7 +77,7 @@ const Hero: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab("rent")}
-                  className={`rounded-3xl lg:rounded-[40px] py-2.5 px-6 lg:py-1 lg:px-0 w-full text-center font-medium transition-all duration-200
+                  className={`rounded-3xl lg:rounded-[40px] py-2.5 px-6 lg:py-1 lg:px-0 w-full text-center font-medium transition-all duration-200 cursor-pointer
                     ${
                       activeTab === "rent"
                         ? "bg-[#0085FF] text-white shadow-md"
@@ -137,7 +137,7 @@ const Hero: React.FC = () => {
                 <div className="mt-6 lg:mt-8 relative group">
                   <button
                     type="submit"
-                    className="bg-[#0085FF] rounded-2xl lg:rounded-[18px] px-8 xl:py-4 py-3 text-center text-white font-medium text-base w-full border border-[#0085FF] hover:bg-transparent hover:text-[#0085FF] transition-all duration-300 group"
+                    className="bg-[#0085FF] rounded-2xl lg:rounded-[18px] px-8 xl:py-4 py-3 text-center text-white font-medium text-base w-full border border-[#0085FF] hover:bg-transparent hover:text-[#0085FF] transition-all duration-300 group cursor-pointer"
                   >
                     Search Properties
                   </button>
