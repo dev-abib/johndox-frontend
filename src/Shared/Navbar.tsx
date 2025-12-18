@@ -34,7 +34,9 @@ const Navbar = () => {
 
             <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
               Browse Properties
-              <span className="text-xs ml-3"><AngleBottomSvg/></span>
+              <span className="text-xs ml-3">
+                <AngleBottomSvg />
+              </span>
             </li>
 
             <li>
@@ -51,7 +53,9 @@ const Navbar = () => {
 
             <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
               <PlanetSvg /> English
-              <span className="text-xs ml-3"><AngleBottomSvg/></span>
+              <span className="text-xs ml-3">
+                <AngleBottomSvg />
+              </span>
             </li>
           </ul>
           <div className="hidden xl:flex items-center gap-4">
@@ -100,7 +104,10 @@ const Navbar = () => {
             </li>
 
             <li className="flex items-center gap-1 cursor-pointer">
-              Browse Properties <span className="text-xs ml-3"><AngleBottomSvg/></span>
+              Browse Properties{" "}
+              <span className="text-xs ml-3">
+                <AngleBottomSvg />
+              </span>
             </li>
 
             <li>
@@ -116,7 +123,10 @@ const Navbar = () => {
             </li>
 
             <li className="flex items-center gap-2 cursor-pointer">
-              <PlanetSvg /> English <span className="text-xs ml-3"><AngleBottomSvg/></span>
+              <PlanetSvg /> English{" "}
+              <span className="text-xs ml-3">
+                <AngleBottomSvg />
+              </span>
             </li>
           </ul>
           <div className="px-6 flex flex-col gap-4">
