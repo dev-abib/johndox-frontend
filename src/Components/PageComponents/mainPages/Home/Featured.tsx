@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import React, { useState } from "react";
 import Container from "@/Components/Common/Container";
 import { Featuredata } from "@/Components/Data/data";
 import {
@@ -9,18 +11,14 @@ import {
   Favourite,
   Location,
 } from "@/Components/Svg/SvgContainer";
-import Image from "next/image";
-import React, { useState } from "react";
 
 const Featured = () => {
   const [showAll, setShowAll] = useState(false);
-
-  const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 3);
+  const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 6);
 
   return (
     <section className="py-16 md:py-24 lg:py-[150px]">
       <Container>
-        {/* Section Header */}
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
             Featured Properties
@@ -31,7 +29,7 @@ const Featured = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-11">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
           {displayedProperties.map((item, index) => (
             <div
               key={index}
@@ -53,21 +51,21 @@ const Featured = () => {
                 </div>
               </div>
 
-              <div className="">
-                <h3 className="text-2xl lg:text-[28px] font-bold text-[#0085FF]">
+              <div className="mt-5">
+                <h3 className=" text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
                   {item.price.replace(" USD", "")}
                   <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                     USD
                   </span>
                 </h3>
 
-                <h4 className="text-xl lg:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
+                <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
                   {item.title}
                 </h4>
 
                 <div className="flex items-center gap-2.5 mt-4">
                   <Location />
-                  <p className="text-base lg:text-[18px] font-medium text-[#919191]">
+                  <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
                     {item.location}
                   </p>
                 </div>
@@ -85,7 +83,7 @@ const Featured = () => {
                   ))}
                 </div>
 
-                <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3.5 lg:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
+                <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                   Contact
                 </button>
               </div>
@@ -93,12 +91,11 @@ const Featured = () => {
           ))}
         </div>
 
-        {/* View All Button - Only show if not all are displayed */}
-        {!showAll && Featuredata.length > 3 && (
+        {!showAll && Featuredata.length > 6 && (
           <div className="text-center mt-12 lg:mt-16">
             <button
               onClick={() => setShowAll(true)}
-              className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-lg px-10 py-4 rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
+              className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-lg px-10 xl:py-4 py-3 rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
             >
               View All Properties
             </button>
