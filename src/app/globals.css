@@ -33,6 +33,9 @@ body {
 .menu_item {
   @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark ;
 }
+.Auth_section_title {
+  @apply 2xl:text-[32px] font-semibold leading-[48px] text-primary-blue ;
+}
 
 .section_description {
   @apply text-base;
