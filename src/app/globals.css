@@ -3,14 +3,12 @@
 
 
 @theme {
-  /* Colors */
+
   --color-primary-green: #63be60;
   --color-secondary-blue: #0184ff;
-
-  /* Font Family */
+  --color-muted-gray: #DFE3E8;
   --font-montserrat: var(--font-montserrat);
 
-  /* Breakpoints */
   --breakpoint-sm: 480px;
   --breakpoint-md: 576px;
   --breakpoint-lg: 768px;
@@ -27,6 +25,9 @@ body {
 
 .section_title {
   @apply text-xl;
+}
+.footer_text {
+  @apply  xl:text-[20px] font-medium leading-[30px] text-muted-gray;
 }
 
 .section_description {
