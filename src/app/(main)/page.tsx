@@ -1,14 +1,15 @@
 import Container from "@/Components/Common/Container";
+import Browser from "@/Components/PageComponents/mainPages/Home/Browser";
+import Featured from "@/Components/PageComponents/mainPages/Home/Featured";
+import Hero from "@/Components/PageComponents/mainPages/Home/Hero";
 
 const Page = () => {
   return (
-    <main className="grid place-items-center h-[87vh] bg-gray-900 text-white">
-      <Container>
-        <h1 className="text-3xl px-5 py-3 rounded w-full font-medium mb-8 bg-gray-600">
-          Welcome to Next JS
-        </h1>
-      </Container>
-    </main>
+    <>
+      <Hero />
+      <Featured />
+      <Browser />
+    </>
   );
 };
 
