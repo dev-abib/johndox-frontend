@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import { useState } from "react";
 import Container from "@/Components/Common/Container";
 import { Featuredata } from "@/Components/Data/data";
 import {
