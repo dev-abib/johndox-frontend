@@ -1,7 +1,8 @@
 "use client";
 import React, { useRef, useState } from "react";
 import Container from "@/Components/Common/Container";
-import { Video } from "@/Components/Svg/SvgContainer";
+import { Save, Video } from "@/Components/Svg/SvgContainer";
+import { IoShareSocialOutline } from "react-icons/io5";
 
 const BrowseDetails: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -25,7 +26,7 @@ const BrowseDetails: React.FC = () => {
     <section className="pt-10">
       <Container>
         <div className="flex gap-x-8.5">
-          <div className="bg-red-300 w-full rounded-lg overflow-hidden relative h-[440px] cursor-pointer">
+          <div className=" w-full rounded-lg overflow-hidden relative h-[440px] cursor-pointer">
             <video
               ref={videoRef}
               preload="metadata"
@@ -47,8 +48,26 @@ const BrowseDetails: React.FC = () => {
             )}
           </div>
 
-          <div className="bg-red-300 w-full aspect-video rounded-lg">
-            <div className="flex "></div>
+          <div className=" w-full rounded-lg">
+            <div className="flex gap-x-20">
+              <div className="flex gap-x-8">
+                <h3 className="font-semibold text-[28px] text-[#0085FF]">
+                  Modern 3-Bedroom Apartment For Rent
+                </h3>
+                <div className="flex gap-x-3 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer">
+                  <p className="font-medium  text-[18px] text-[#0085FF]">
+                    Share
+                  </p>
+                  <IoShareSocialOutline className="text-[#0085FF]" />
+                </div>
+              </div>
+              <div className="flex gap-x-10">
+                <h4 className="font-semibold text-[28px] text-[#0085FF] shrink-0">
+                  $ 10,000
+                </h4>
+                <Save className="shrink-0" />
+              </div>
+            </div>
           </div>
         </div>
       </Container>

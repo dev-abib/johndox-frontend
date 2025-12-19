@@ -639,6 +639,47 @@ export function Premium() {
     </svg>
   );
 }
+export function Save({ className }: { className?: string }) {
+  return (
+    <svg
+      width="38"
+      height="38"
+      viewBox="0 0 38 38"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M25.3346 14.2347V32.2214C25.3346 34.5172 23.688 35.483 21.6771 34.3747L15.4547 30.9072C14.7897 30.543 13.713 30.543 13.048 30.9072L6.82546 34.3747C4.81463 35.483 3.16797 34.5172 3.16797 32.2214V14.2347C3.16797 11.5272 5.38461 9.31055 8.09211 9.31055H20.4105C23.118 9.31055 25.3346 11.5272 25.3346 14.2347Z"
+        stroke="#0085FF"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M34.8346 8.09016V26.0768C34.8346 28.3727 33.188 29.3385 31.1771 28.2302L25.3346 24.9685V14.2335C25.3346 11.526 23.118 9.30936 20.4105 9.30936H12.668V8.09016C12.668 5.38266 14.8846 3.16602 17.5921 3.16602H29.9105C32.618 3.16602 34.8346 5.38266 34.8346 8.09016Z"
+        stroke="#0085FF"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M11.082 19H17.4154"
+        stroke="#0085FF"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M14.25 22.1673V15.834"
+        stroke="#0085FF"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function Video({ className }: { className?: string }) {
   return (
