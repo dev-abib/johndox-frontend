@@ -42,12 +42,14 @@ const BrowseDetails: React.FC = () => {
                 onClick={handlePlay}
                 className="absolute inset-0 flex items-center justify-center bg-black/30"
               >
-                <Video className="cursor-pointer" />
+                <Video className="cursor-pointer animate-spin [animation-duration:3s]" />
               </div>
             )}
           </div>
 
-          <div className="bg-red-300 w-full aspect-video rounded-lg"></div>
+          <div className="bg-red-300 w-full aspect-video rounded-lg">
+            <div className="flex "></div>
+          </div>
         </div>
       </Container>
     </section>

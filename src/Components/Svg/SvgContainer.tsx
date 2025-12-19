@@ -643,7 +643,7 @@ export function Premium() {
 export function Video({ className }: { className?: string }) {
   return (
     <svg
-      width="240"
+      width="140"
       height="240"
       viewBox="0 0 240 240"
       fill="none"
