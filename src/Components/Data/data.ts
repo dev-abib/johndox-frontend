@@ -12,6 +12,7 @@ import Browse2 from "../../Assets/browse2.png";
 import Browse3 from "../../Assets/browse3.png";
 import { Commercial, Expert, House, Interactive, Land, Premium, Secure, Support, Verified } from "../Svg/SvgContainer";
 import { SVGProps } from "react";
+import { AnalyticsSvg, GraphSvg, MarketingSvg, MessageSvg, SecureSvg, SparkSvg } from "../Svg/SvgContainer2";
 
 export interface Property {
   price: string;
@@ -138,4 +139,59 @@ export const WhyChooseUsFeatures: FeatureItem[] = [
     description: "Advanced search filters and property comparison tools",
     icon: Premium,
   },
+];
+export const WhyChooseUsFeatures2: FeatureItem[] = [
+  {
+    title: "Reach More Buyers",
+    description: "List your property and reach thousands of verified buyers across Honduras.",
+    icon: GraphSvg,
+  },
+  {
+    title: "Quick & Easy",
+    description: "Publish your listing in just a few clicks — no complexity.",
+    icon: SparkSvg,
+  },
+  {
+    title: "Advanced Analytics",
+    description: "Track views, inquiries, and engagement with detailed analytics.",
+    icon: AnalyticsSvg,
+  },
+  {
+    title: "Direct Messaging",
+    description: "Connect instantly with verified buyers using our secure chat system.",
+    icon: MessageSvg,
+  },
+  {
+    title: "Targeted Marketing",
+    description: "Promote your listings with featured placements and social media integration.",
+    icon: MarketingSvg,
+  },
+  {
+    title: "Secure & Safe",
+    description: "All transactions and communications are secure and verified.",
+    icon: SecureSvg,
+  },
+];
+export const HowItWorksdata = [
+  {
+    title: "Create Account",
+    description: "Sign up as a seller and verify your email.",
+    count: 1,
+  },
+  {
+    title: "Add Listing",
+    description: "Fill in property details, upload photos, and set your price.",
+     count: 2,
+  },
+  {
+    title: "Go Live",
+    description: "Your listing appears on our marketplace immediately.",
+     count: 3,
+  },
+  {
+    title: "Connect with Buyers",
+    description: "Connect with real buyers ready to make their move.",
+    count: 4,
+  },
+
 ];
