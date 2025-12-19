@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import User from "../../../../Assets/user.png";
-import Container from "@/Components/Common/Container";
+import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
 import {
   Acceleration,
@@ -39,7 +39,7 @@ const BrowseDetails: React.FC = () => {
     <section className="pt-10">
       <Container>
         <div className="flex gap-x-8.5">
-          <div className=" w-full rounded-lg overflow-hidden relative h-[440px] cursor-pointer">
+          <div className="w-full rounded-lg overflow-hidden relative h-[440px] cursor-pointer">
             <video
               ref={videoRef}
               preload="metadata"
@@ -64,7 +64,7 @@ const BrowseDetails: React.FC = () => {
           <div className=" w-full rounded-lg">
             <div className="flex gap-x-20">
               <div className="flex gap-x-8">
-                <h3 className="font-semibold text-[28px] text-[#0085FF]">
+                <h3 className="font-semibold text-[28px] text-[#0085FF] max-w-[300px]">
                   Modern 3-Bedroom Apartment For Rent
                 </h3>
                 <div className="flex gap-x-3 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer">
@@ -75,12 +75,12 @@ const BrowseDetails: React.FC = () => {
                 </div>
               </div>
               <div className="">
-                <div className="flex gap-x-10">
+                <div className="flex gap-x-20 w-full">
                   <h4 className="font-semibold text-[28px] text-[#0085FF] shrink-0">
                     $ 10,000
                   </h4>
-                  <div className="flex flex-col gap-6">
-                    <Save className="shrink-0" />
+                  <div className="flex flex-col gap-y-6">
+                    <Save />
                     <Converter />
                   </div>
                 </div>
@@ -129,7 +129,7 @@ const BrowseDetails: React.FC = () => {
                   <li className="text-[18px] font-medium text-[#5F5F5F]">
                     Senior Real Estate Agent
                   </li>
-                  <li className="flex gap-x-2 text-[18px] font-medium text-[#5F5F5F]">
+                  <li className="flex gap-x-2 text-[18px] font-medium text-[#5F5F5F] mt-2">
                     <Star />
                     4.8 (127 review)
                   </li>
@@ -139,7 +139,7 @@ const BrowseDetails: React.FC = () => {
                     <Mobile />
                     +52 384 123 4568
                   </li>
-                  <li className="flex gap-x-2 text-[18px] font-medium text-[#5F5F5F]">
+                  <li className="flex gap-x-2 text-[18px] font-medium text-[#5F5F5F] mt-2">
                     <Email />
                     jessayking@gmail.com
                   </li>

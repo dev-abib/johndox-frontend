@@ -10,7 +10,7 @@ import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
@@ -93,7 +93,7 @@ const Navbar = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {languages.map((lang) => (
+                  {languages.map(lang => (
                     <button
                       key={lang}
                       onClick={() => {
@@ -191,7 +191,7 @@ const Navbar = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {languages.map((lang) => (
+                  {languages.map(lang => (
                     <button
                       key={lang}
                       onClick={() => {
