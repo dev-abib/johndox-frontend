@@ -639,3 +639,24 @@ export function Premium() {
     </svg>
   );
 }
+
+export function Video({ className }: { className?: string }) {
+  return (
+    <svg
+      width="240"
+      height="240"
+      viewBox="0 0 240 240"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <circle cx="120" cy="120" r="120" fill="#0085FF" fillOpacity="0.2" />
+      <circle cx="120" cy="120" r="101" fill="#0085FF" fillOpacity="0.4" />
+      <circle cx="120" cy="120" r="83" fill="#0085FF" fillOpacity="0.6" />
+      <path
+        d="M154 116.536C156.667 118.075 156.667 121.924 154 123.464L106 151.177C103.333 152.717 100 150.792 100 147.713L100 92.2872C100 89.208 103.333 87.2835 106 88.8231L154 116.536Z"
+        fill="white"
+      />
+    </svg>
+  );
+}

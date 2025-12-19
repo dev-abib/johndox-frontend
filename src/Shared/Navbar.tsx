@@ -1,16 +1,16 @@
 "use client";
-
+import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 import Container from "@/Components/Common/Container";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
-import Image from "next/image";
-import Link from "next/link";
-import { FaBars, FaTimes } from "react-icons/fa";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
