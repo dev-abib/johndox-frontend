@@ -15,7 +15,7 @@ const PricingTable = () => {
           <h2 className="text-xl md:text-3xl lg:text-[56px] font-bold text-[#0085FF]">
             Simple, Transparent Pricing
           </h2>
-          <p className="mt-3 text-base lg:text-[20px] font-medium text-[#404040]">
+          <p className="mt-3 text-sm md:text-base lg:text-[20px] font-medium text-[#404040]">
             Choose the perfect plan for your real estate business
           </p>
 
@@ -118,16 +118,18 @@ const PricingTable = () => {
               </div>
 
               <button className="lg:mt-8 mt-3 md:mt-[50px] mb-8 md:mb-10 w-full rounded-xl border-2 text-base md:text-lg xl:text-2xl leading-tight md:leading-[36px] border-[#0085FF] xl:py-3 py-2 text-[#0085FF] font-semibold group-hover:bg-[#0085FF] group-hover:text-white transition">
-                Get Started
+                Start Free Trial
               </button>
 
               <ul className=" lg:mt-8 space-y-4 lg:space-y-[28px] text-base md:text-xl leading-relaxed md:leading-[30px] font-medium text-[#5F5F5F]">
                 {[
-                  "Up to 3 active listings",
-                  "Basic property photos",
-                  "Standard support",
-                  "Basic analytics",
-                  "Email notifications",
+                  "Up to 15 active listings",
+                  "Unlimited photos & videos",
+                  "Priority support",
+                  "Advanced analytics",
+                  "Featured listings (5/month)",
+                  "Social media integration",
+                  "Lead management tools",
                 ].map(item => (
                   <li
                     key={item}
@@ -157,16 +159,19 @@ const PricingTable = () => {
             </div>
 
             <button className="lg:mt-8 mt-3 md:mt-[50px] mb-8 md:mb-10 w-full rounded-xl border-2 text-base md:text-lg xl:text-2xl leading-tight md:leading-[36px] border-[#0085FF] xl:py-3 py-2 text-[#0085FF] font-semibold group-hover:bg-[#0085FF] group-hover:text-white transition">
-              Get Started
+              Contact Sales
             </button>
 
             <ul className=" lg:mt-8 space-y-4 lg:space-y-[28px] text-base md:text-xl leading-relaxed md:leading-[30px] font-medium text-[#5F5F5F]">
               {[
-                "Up to 3 active listings",
-                "Basic property photos",
-                "Standard support",
-                "Basic analytics",
-                "Email notifications",
+                "Unlimited listings",
+                "Unlimited photos & videos",
+                "24/7 dedicated support",
+                "Custom analytics",
+                "Unlimited featured listings",
+                "Team management",
+                "API access",
+                "Custom branding",
               ].map(item => (
                 <li
                   key={item}
