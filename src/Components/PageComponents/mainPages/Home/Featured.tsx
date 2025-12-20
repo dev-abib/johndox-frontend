@@ -64,7 +64,9 @@ const Featured = () => {
                 </h4>
 
                 <div className="flex items-center gap-2.5 mt-4">
-                  <Location />
+                  <Location
+                    className={"w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "}
+                  />
                   <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
                     {item.location}
                   </p>
@@ -76,7 +78,7 @@ const Featured = () => {
                       {i === 0 && <Bed />}
                       {i === 1 && <Bathtub />}
                       {i === 2 && <Acceleration />}
-                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                      <span className="text-sm lg:text-[14px] whitespace-nowrap inline-block font-normal text-[#919191]">
                         {feature.trim()}
                       </span>
                     </div>

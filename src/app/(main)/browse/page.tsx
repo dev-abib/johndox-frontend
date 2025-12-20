@@ -39,7 +39,7 @@ const page = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggle = (key: keyof typeof openn) => {
-    setOpenn((prev) => ({ ...prev, [key]: !prev[key] }));
+    setOpenn(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const [propertyType, setPropertyType] = useState("All");
@@ -91,7 +91,7 @@ const page = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {options.map((option) => (
+                  {options.map(option => (
                     <button
                       key={option}
                       onClick={() => {
@@ -160,7 +160,11 @@ const page = () => {
                     </h4>
 
                     <div className="flex items-center gap-2.5 mt-4">
-                      <Location />
+                      <Location
+                        className={
+                          "w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "
+                        }
+                      />
                       <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
                         {item.location}
                       </p>
@@ -172,7 +176,7 @@ const page = () => {
                           {i === 0 && <Bed />}
                           {i === 1 && <Bathtub />}
                           {i === 2 && <Acceleration />}
-                          <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap inline-block">
                             {feature.trim()}
                           </span>
                         </div>
@@ -223,7 +227,7 @@ const page = () => {
                       : "max-h-0 opacity-0"
                   }`}
                 >
-                  {["All", "House", "Land", "Commercial"].map((type) => (
+                  {["All", "House", "Land", "Commercial"].map(type => (
                     <label
                       key={type}
                       className="flex items-center gap-3 mb-3 cursor-pointer"
@@ -317,7 +321,7 @@ const page = () => {
                 >
                   <p className="text-sm text-gray-600 mb-2">Bedrooms</p>
                   <div className="flex gap-2 mb-4">
-                    {[1, 2, 3, 4, 5].map((num) => (
+                    {[1, 2, 3, 4, 5].map(num => (
                       <button
                         key={num}
                         onClick={() => setBedrooms(num)}
@@ -334,7 +338,7 @@ const page = () => {
 
                   <p className="text-sm text-gray-600 mb-2">Bathrooms</p>
                   <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((num) => (
+                    {[1, 2, 3, 4, 5].map(num => (
                       <button
                         key={num}
                         onClick={() => setBathrooms(num)}
