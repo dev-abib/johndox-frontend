@@ -8,7 +8,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0f0f0f] text-white overflow-hidden mt-[150px]">
+    <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15">
       <Container>
         <div>
           {/* Big Background Text */}
@@ -22,7 +22,6 @@ const Footer = () => {
 
           {/* Main Content */}
           <div className="xl:px-0 px-5 py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
-            
             {/* Left Text */}
             <div className="xl:w-[37%] w-full">
               <p className="footer_text xl:w-[80%] w-full text-center xl:text-left">
@@ -32,7 +31,6 @@ const Footer = () => {
 
             {/* Links */}
             <div className="flex flex-col sm:flex-row xl:flex-row justify-between items-start flex-1 gap-5 xl:gap-10 xl:w-[63%] w-full">
-              
               <div className="w-full sm:w-auto">
                 <ul className="xl:space-y-3 footer_text text-center sm:text-left">
                   <li>
@@ -92,7 +90,6 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-
             </div>
           </div>
 

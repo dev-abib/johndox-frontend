@@ -10,7 +10,6 @@ const ListPropertyCTA = () => {
       }}
     >
 
-      {/* Content */}
       <div className="relative z-10 ">
         <h2 className=" text-2xl 2xl:text-[32px] font-semibold leading-8 xl:leading-[48px] text-[#212B36] mb-4">
           Ready to List Your Property?
@@ -21,7 +20,6 @@ const ListPropertyCTA = () => {
           properties faster.
         </p>
 
-        {/* Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
           <button className="px-8 xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
             Start Selling Today
