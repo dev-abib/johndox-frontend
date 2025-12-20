@@ -9,7 +9,7 @@ const page = () => {
     <>
       <BrowseDetails />
       <BrowseDescription />
-      {/* <Maps /> */}
+      <Maps />
       {/* <ListPropertyCTA /> */}
     </>
   );
