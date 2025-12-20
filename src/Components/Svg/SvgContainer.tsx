@@ -82,12 +82,11 @@ export function Lookingfor() {
     </svg>
   );
 }
-export function Location() {
+export function Location({ className }: any) {
   return (
     <svg
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
+      className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -111,12 +110,13 @@ export function Location() {
     </svg>
   );
 }
-export function Bed() {
+export function Bed({ className }: any) {
   return (
     <svg
       width="18"
       height="18"
       viewBox="0 0 18 18"
+      className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -150,12 +150,13 @@ export function Bed() {
     </svg>
   );
 }
-export function Bathtub() {
+export function Bathtub({ className }: any) {
   return (
     <svg
       width="18"
       height="18"
       viewBox="0 0 18 18"
+      className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -186,12 +187,13 @@ export function Bathtub() {
     </svg>
   );
 }
-export function Acceleration() {
+export function Acceleration({ className }: any) {
   return (
     <svg
       width="18"
       height="18"
       viewBox="0 0 18 18"
+      className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -642,8 +644,6 @@ export function Premium() {
 export function Save({ className }: { className?: string }) {
   return (
     <svg
-      width="38"
-      height="38"
       viewBox="0 0 38 38"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -680,14 +680,19 @@ export function Save({ className }: { className?: string }) {
     </svg>
   );
 }
-export function Converter({ className }: { className?: string }) {
+type SaveProps = {
+  className?: string;
+  onClick?: () => void;
+};
+
+export function Converter({ className, onClick }: SaveProps) {
   return (
     <svg
-      width="38"
-      height="38"
       viewBox="0 0 38 38"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      onClick={onClick}
     >
       <path
         d="M7 16.334H31"
@@ -749,9 +754,8 @@ export function Video({ className }: { className?: string }) {
 export function Star() {
   return (
     <svg
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
+      className={"w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]"}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -772,9 +776,8 @@ export function Star() {
 export function Mobile() {
   return (
     <svg
-      width="22"
-      height="22"
       viewBox="0 0 22 22"
+      className={"w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]"}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -790,8 +793,7 @@ export function Mobile() {
 export function Email() {
   return (
     <svg
-      width="24"
-      height="24"
+      className={"w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]"}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

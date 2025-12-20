@@ -19,9 +19,9 @@ const BrowseDescription: React.FC = () => {
   const hiddenImages = imageUrls.slice(4);
 
   return (
-    <section>
+    <section className="xxl:pt-0 lg:pt-10 pt-5">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           <div className="space-y-4">
             {/* Top 4 images */}
             <div className="grid grid-cols-2 gap-4">
@@ -71,12 +71,12 @@ const BrowseDescription: React.FC = () => {
             )}
           </div>
 
-          <div className="space-y-8 mt-8">
+          <div className="space-y-8 lg:mt-8 mt-4">
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] mb-4 uppercase">
                 Description
               </h2>
-              <p className="text-[18px] text-[#404040] font-normal leading-relaxed">
+              <p className="lg:text-[18px] text-base text-[#404040] font-normal leading-relaxed">
                 Nestled in a charming suburban area, this stunning home rests on
                 a spacious lot, offering picturesque views of the nearby rolling
                 hills. Located in the tranquil heart of Pleasantville, it
