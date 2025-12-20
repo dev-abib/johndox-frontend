@@ -153,6 +153,8 @@ export function Bed({ className }: any) {
 export function Bathtub({ className }: any) {
   return (
     <svg
+      width="18"
+      height="18"
       viewBox="0 0 18 18"
       className={className}
       fill="none"
@@ -188,6 +190,8 @@ export function Bathtub({ className }: any) {
 export function Acceleration({ className }: any) {
   return (
     <svg
+      width="18"
+      height="18"
       viewBox="0 0 18 18"
       className={className}
       fill="none"
@@ -725,7 +729,6 @@ export function Converter({ className, onClick }: SaveProps) {
     </svg>
   );
 }
-
 
 export function Video({ className }: { className?: string }) {
   return (

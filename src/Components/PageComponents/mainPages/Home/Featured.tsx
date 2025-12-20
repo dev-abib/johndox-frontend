@@ -75,9 +75,10 @@ const Featured = () => {
                 <div className="flex flex-wrap gap-5 mt-5">
                   {item.details.split(" • ").map((feature, i) => (
                     <div key={i} className="flex items-center gap-2.5">
-                      {i === 0 && <Bed />}
-                      {i === 1 && <Bathtub />}
-                      {i === 2 && <Acceleration />}
+                      {i === 0 && <Bed className="shrink-0" />}
+                      {i === 1 && <Bathtub className="shrink-0" />}
+                      {i === 2 && <Acceleration className="shrink-0" />}
+
                       <span className="text-sm lg:text-[14px] whitespace-nowrap inline-block font-normal text-[#919191]">
                         {feature.trim()}
                       </span>
