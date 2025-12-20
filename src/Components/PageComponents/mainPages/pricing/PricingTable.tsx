@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Container from "@/Components/Common/Container";
 import { CheckSvg } from "@/Components/Svg/SvgContainer2";
-import { useState } from "react";
 
 const PricingTable = () => {
   const [isYearly, setIsYearly] = useState(false);
@@ -10,7 +10,6 @@ const PricingTable = () => {
   return (
     <section className="lg:px-6 px-3 lg:pt-10">
       <Container>
-        {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-xl md:text-3xl lg:text-[56px] font-bold text-[#0085FF]">
             Simple, Transparent Pricing
@@ -19,7 +18,6 @@ const PricingTable = () => {
             Choose the perfect plan for your real estate business
           </p>
 
-          {/* Toggle */}
           <div className="mt-6 flex items-center justify-center gap-3 text-sm">
             <span
               className={
@@ -57,9 +55,7 @@ const PricingTable = () => {
           </div>
         </div>
 
-        {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-[45px]">
-          {/* Starter */}
           <div className="rounded-2xl border border-gray-200 bg-[rgba(230,243,255,0.20)] p-4 xl:p-8 group shadow-sm hover:border hover:border-[#0085FF] transition-all">
             <h3 className="text-2xl md:text-[32px] leading-tight md:leading-[48px] font-semibold text-black">
               Starter

@@ -3,11 +3,11 @@ import { WhyChooseUsFeatures2 } from "@/Components/Data/data";
 
 const WhySell = () => {
   return (
-    <section className="py-20 lg:py-[150px]">
+    <section className="py-20 lg:pt-[150px]">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-2xl sm:text-4xl xl:text-[38px]">
-           Why Sell With Terralink?
+            Why Sell With Terralink?
           </h2>
           <p className="font-normal text-black text-base sm:text-lg lg:text-[18px] mt-4 max-w-3xl mx-auto">
             Showcase your property to a wide network of verified buyers.
