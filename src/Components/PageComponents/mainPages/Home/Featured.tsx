@@ -11,6 +11,7 @@ import {
   Favourite,
   Location,
 } from "@/Components/Svg/SvgContainer";
+import Link from "next/link";
 
 const Featured = () => {
   const [showAll, setShowAll] = useState(false);
@@ -85,10 +86,11 @@ const Featured = () => {
                     </div>
                   ))}
                 </div>
-
+                <Link href={`/browse/${item?.id}`}>
                 <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                   Contact
                 </button>
+                </Link>
               </div>
             </div>
           ))}

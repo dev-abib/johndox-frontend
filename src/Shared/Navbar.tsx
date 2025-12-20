@@ -50,16 +50,14 @@ const Navbar = () => {
                   Home
                 </Link>
               </li>
-
-              <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
-                Browse Properties
-              </li>
+              <Link href={"/browse"}>
+                <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
+                  Browse Properties
+                </li>
+              </Link>
 
               <li>
-                <Link
-                  href="/for-sellers"
-                  className="hover:text-black transition"
-                >
+                <Link href="/forseller" className="hover:text-black transition">
                   For Sellers
                 </Link>
               </li>
@@ -152,10 +150,11 @@ const Navbar = () => {
                   Home
                 </Link>
               </li>
-
-              <li className="flex items-center gap-1 cursor-pointer">
-                Browse Properties{" "}
-              </li>
+              <Link href={"/browse"}>
+                <li className="flex items-center gap-1 cursor-pointer">
+                  Browse Properties{" "}
+                </li>
+              </Link>
 
               <li>
                 <Link href="/for-sellers" onClick={() => setIsOpen(false)}>
