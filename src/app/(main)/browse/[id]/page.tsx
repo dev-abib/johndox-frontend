@@ -8,7 +8,7 @@ const page = () => {
   return (
     <>
       <BrowseDetails />
-      {/* <BrowseDescription /> */}
+      <BrowseDescription />
       {/* <Maps /> */}
       {/* <ListPropertyCTA /> */}
     </>
