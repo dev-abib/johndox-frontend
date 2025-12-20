@@ -20,10 +20,12 @@ export interface Property {
   location: string;
   details: string;
   Image: StaticImageData;
+  id: number
 }
 
 export const Featuredata: Property[] = [
   {
+    id: 1,
     price: "$240,000 USD",
     title: "Residential Land in Yocón",
     location: "LA MIEL, Honduras",
@@ -31,6 +33,7 @@ export const Featuredata: Property[] = [
     Image: Product1,
   },
   {
+    id: 2,
     price: "$320,000 USD",
     title: "Downtown Office Space",
     location: "LA MIEL, Honduras",
@@ -38,6 +41,7 @@ export const Featuredata: Property[] = [
     Image: Product2,
   },
   {
+    id: 3,
     price: "$620,000 USD",
     title: "Modern House in LA MIEL",
     location: "LA MIEL, Honduras",
@@ -45,6 +49,7 @@ export const Featuredata: Property[] = [
     Image: Product3,
   },
   {
+    id: 4,
     price: "$720,000 USD",
     title: "Investment Land in Caldas",
     location: "LA MIEL, Honduras",
@@ -52,6 +57,7 @@ export const Featuredata: Property[] = [
     Image: Product4,
   },
   {
+    id: 5,
     price: "$620,000 USD",
     title: "Commercial Space in Caldas",
     location: "LA MIEL, Honduras",
@@ -59,6 +65,7 @@ export const Featuredata: Property[] = [
     Image: Product5,
   },
   {
+    id: 6,
     price: "$120,000 USD",
     title: "Modern House in LA MIEL",
     location: "LA MIEL, Honduras",

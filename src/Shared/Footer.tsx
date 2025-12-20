@@ -63,8 +63,9 @@ const Footer = () => {
                       List Property
                     </a>
                   </li>
+
                   <li>
-                    <a href="#" className="hover:text-white">
+                    <a href="/pricing" className="hover:text-white">
                       Pricing
                     </a>
                   </li>
