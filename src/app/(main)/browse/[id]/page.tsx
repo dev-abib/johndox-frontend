@@ -10,7 +10,7 @@ const page = () => {
       <BrowseDetails />
       <BrowseDescription />
       <Maps />
-      {/* <ListPropertyCTA /> */}
+      <ListPropertyCTA />
     </>
   );
 };

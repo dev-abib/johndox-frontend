@@ -676,13 +676,19 @@ export function Save({ className }: { className?: string }) {
     </svg>
   );
 }
-export function Converter({ className }: { className?: string }) {
+type SaveProps = {
+  className?: string;
+  onClick?: () => void;
+};
+
+export function Converter({ className, onClick }: SaveProps) {
   return (
     <svg
       viewBox="0 0 38 38"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      onClick={onClick}
     >
       <path
         d="M7 16.334H31"
@@ -719,6 +725,7 @@ export function Converter({ className }: { className?: string }) {
     </svg>
   );
 }
+
 
 export function Video({ className }: { className?: string }) {
   return (

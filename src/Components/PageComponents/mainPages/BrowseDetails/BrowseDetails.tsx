@@ -20,6 +20,7 @@ import {
 const BrowseDetails: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [openConverter, setOpenConverter] = useState(false);
 
   const handlePlay = (): void => {
     if (videoRef.current) {
@@ -80,8 +81,11 @@ const BrowseDetails: React.FC = () => {
                     $ 10,000
                   </h4>
                   <div className="flex flex-row md:flex-col gap-3 md:gap-6">
-                    <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px]" />
-                    <Converter className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px]" />
+                    <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer" />
+                    <Converter
+                      onClick={() => setOpenConverter(true)}
+                      className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer"
+                    />
                   </div>
                 </div>
               </div>
@@ -164,6 +168,64 @@ const BrowseDetails: React.FC = () => {
             </div>
           </div>
         </div>
+        {openConverter && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-3 sm:px-0">
+            <div className="bg-white w-full sm:w-[90%] max-w-[520px] rounded-xl p-4 sm:p-6 relative">
+              {/* Close */}
+              <button
+                onClick={() => setOpenConverter(false)}
+                className="absolute right-3 top-3 sm:right-4 sm:top-4 text-gray-400 hover:text-black cursor-pointer"
+              >
+                ✕
+              </button>
+
+              <h3 className="text-[#0085FF] text-base sm:text-lg font-semibold mb-4 sm:mb-5">
+                Currency Converter
+              </h3>
+
+              {/* From */}
+              <div className="border rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center overflow-hidden mb-4">
+                <input
+                  type="number"
+                  defaultValue={1}
+                  className="w-full sm:w-1/2 px-4 py-3 outline-none border-b md:border-0"
+                />
+                <select className="w-full sm:w-1/2 px-4 py-3 outline-none bg-transparent">
+                  <option>Honduran Lempira</option>
+                  <option>Dollar</option>
+                </select>
+              </div>
+
+              {/* Swap */}
+              <div className="flex justify-center my-3">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium">
+                  ⇅
+                </div>
+              </div>
+
+              {/* To */}
+              <div className="border rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center overflow-hidden mb-5 sm:mb-6">
+                <input
+                  type="number"
+                  defaultValue={0.038}
+                  className="w-full sm:w-1/2 px-4 py-3 outline-none border-b md:border-0"
+                />
+                <select className="w-full sm:w-1/2 px-4 py-3 outline-none bg-transparent">
+                  <option>Dollar</option>
+                  <option>Honduran Lempira</option>
+                </select>
+              </div>
+
+              {/* Button */}
+              <button
+                onClick={() => setOpenConverter(false)}
+                className="w-full bg-[#0085FF] text-white py-3 sm:py-3.5 rounded-lg font-medium hover:opacity-90 transition cursor-pointer"
+              >
+                Ok
+              </button>
+            </div>
+          </div>
+        )}
       </Container>
     </section>
   );
