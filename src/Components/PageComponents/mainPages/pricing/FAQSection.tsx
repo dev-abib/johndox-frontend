@@ -25,9 +25,9 @@ const faqs = [
 
 const FAQSection = () => {
   return (
-    <section className="px-6 py-20">
+    <section className="px-6 pt-[150px]">
       {/* Heading */}
-      <h2 className="text-center text-2xl sm:text-3xl font-semibold mb-10">
+      <h2 className="text-center text-[#101010] text-[38px] font-semibold mb-10">
         Frequently Asked Questions
       </h2>
 
@@ -36,12 +36,12 @@ const FAQSection = () => {
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="rounded-xl border border-[#D6E4FF] bg-white px-6 py-4"
+            className="rounded-[18px] border border-[#B0D9FF] bg-[rgba(230,243,255,0.20)] shadow-[0_0_4px_0_rgba(145,158,171,0.40)] py-7.5 px-12.5"
           >
-            <h3 className="text-base font-medium text-[#212B36]">
+            <h3 className="text-[24px] font-medium text-[#000]">
               {faq.question}
             </h3>
-            <p className="mt-2 text-sm text-[#637381]">
+            <p className="text-[18px] font-normal text-[#000] mt-5">
               {faq.answer}
             </p>
           </div>
