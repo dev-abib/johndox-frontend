@@ -123,7 +123,7 @@ const page = () => {
                   <div className="relative overflow-hidden">
                     <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
                       <Image
-                        src={item.Image || "/placeholder.svg"}
+                        src={item.Image}
                         alt={item.title}
                         width={500}
                         height={300}

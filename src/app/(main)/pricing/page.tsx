@@ -5,9 +5,9 @@ import PricingTable from "@/Components/PageComponents/mainPages/pricing/PricingT
 
 export default function Page() {
   return (
-    <div>
+    <>
       <PricingTable />
       <FAQSection />
-    </div>
+    </>
   );
 }
