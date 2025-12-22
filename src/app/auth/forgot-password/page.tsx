@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import Container from "@/Components/Common/Container";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
-import Link from "next/link";
 
 type LoginFormData = {
   email: string;

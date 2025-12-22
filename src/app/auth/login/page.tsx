@@ -1,7 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Container from "@/Components/Common/Container";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
@@ -35,16 +35,16 @@ const Login = () => {
           />
         </div>
 
-        {/* Right Form Section */}
         <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
           <div className="w-full ">
-            <h1 className="Auth_section_title mb-2 xl:text-[36px] text-[28px]">
+            <h1 className="Auth_section_title mb-2 xl:text-[36px] md:text-[28px] text-[20px] lg:text-start text-center">
               Welcome Back to Terralink!
             </h1>
-            <p className="text-[#404040] mb-8">Sign in your account</p>
+            <p className="text-[#404040] mb-8 lg:text-start text-center">
+              Sign in your account
+            </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Email */}
               <div>
                 <label className="block text-lg text-[#5F5F5F] mb-2">
                   Your Email
@@ -68,7 +68,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Password */}
               <div>
                 <label className="block text-lg text-[#5F5F5F]  mb-2">
                   Password
@@ -101,7 +100,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Remember + Forgot */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-sm">
                   <input
@@ -120,7 +118,6 @@ const Login = () => {
                 </a>
               </div>
 
-              {/* Login Button */}
               <button
                 type="submit"
                 className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition cursor-pointer"
@@ -128,14 +125,12 @@ const Login = () => {
                 Login
               </button>
 
-              {/* Divider */}
               <div className="flex items-center gap-4">
                 <div className="flex-1 h-px bg-gray-300" />
                 <span className="text-sm text-gray-400">Or</span>
                 <div className="flex-1 h-px bg-gray-300" />
               </div>
 
-              {/* Google Login */}
               <button
                 type="button"
                 className="w-full flex items-center justify-center gap-3 py-3 rounded-lg bg-[#E6F3FF] hover:bg-blue-100 transition cursor-pointer"
@@ -145,12 +140,11 @@ const Login = () => {
                   alt="Google"
                   className="w-5 h-5"
                 />
-                <span className="text-[#5F5F5F] text-xl font-medium  ">
+                <span className="text-[#5F5F5F] lg:text-xl text-lg font-medium  ">
                   Sign in with Google
                 </span>
               </button>
 
-              {/* Register */}
               <p className="text-center text-gray-500">
                 Don’t have any account?{" "}
                 <a
