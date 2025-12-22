@@ -122,7 +122,9 @@ const Page = () => {
                   {[0, 1, 2, 3].map(index => (
                     <input
                       key={index}
-                      ref={el => (inputRefs.current[index] = el)}
+                      ref={el => {
+                        inputRefs.current[index] = el;
+                      }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
