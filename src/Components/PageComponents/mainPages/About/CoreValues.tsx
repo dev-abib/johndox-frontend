@@ -3,7 +3,7 @@ import { WhyChooseUsFeatures3 } from "@/Components/Data/data";
 
 const CoreValues = () => {
   return (
-    <section className="lg:pt-[150px]">
+    <section className="lg:py-[150px]">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-2xl sm:text-4xl xl:text-[38px]">
