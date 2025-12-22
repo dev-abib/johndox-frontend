@@ -21,9 +21,10 @@ const Page = () => {
       otp: "",
     },
   });
+const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  // const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     const fullOtp = otpDigits.join("");
@@ -119,20 +120,26 @@ const Page = () => {
                   className="flex gap-4 justify-center lg:justify-start"
                   onPaste={handlePaste}
                 >
-                  {[0, 1, 2, 3].map(index => (
-                    <input
-                      key={index}
-                      ref={el => (inputRefs.current[index] = el)}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={otpDigits[index]}
-                      onChange={e => handleChange(index, e.target.value)}
-                      onKeyDown={e => handleKeyDown(index, e)}
-                      className="w-14 h-14 text-center text-2xl font-semibold border-2 border-gray-300 rounded-xl focus:border-primary-blue focus:outline-none transition-all"
-                      aria-label={`OTP digit ${index + 1}`}
-                    />
-                  ))}
+{otpDigits.map((_, index) => (
+  <input
+    key={index}
+    ref={(el: HTMLInputElement | null) => {
+      inputRefs.current[index] = el;
+    }}
+    type="text"
+    inputMode="numeric"
+    maxLength={1}
+    value={otpDigits[index]}
+    onChange={(e) => handleChange(index, e.target.value)}
+    onKeyDown={(e) => handleKeyDown(index, e)}
+    className="w-14 h-14 text-center text-2xl font-semibold border-2 border-gray-300 rounded-xl"
+    aria-label={`OTP digit ${index + 1}`}
+  />
+))}
+
+
+
+
                 </div>
 
                 {errors.otp && (
