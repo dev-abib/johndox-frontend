@@ -35,10 +35,10 @@ const page = () => {
         {/* Right Form Section */}
         <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
           <div className="w-full ">
-            <h1 className="Auth_section_title mb-2 xl:text-[36px] text-[28px] lg:text-start text-center">
+            <h1 className="Auth_section_title mb-2 xl:text-[36px] md:text-[28px] text-[24px] lg:text-start text-center">
               Forgot your password?
             </h1>
-            <p className="text-[#404040] mb-8">
+            <p className="text-[#404040] mb-8 lg:text-lg text-base lg:text-start text-center ">
               Enter your email address, and we’ll send you a link to reset your
               password.
             </p>
