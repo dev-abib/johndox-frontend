@@ -9,8 +9,8 @@ const page = () => {
   return (
     <>
       <Banner />
-      {/* <OurMission /> */}
-      {/* <Community /> */}
+      <OurMission />
+      <Community />
       {/* <CoreValues /> */}
       {/* <ListPropertyCTA /> */}
     </>

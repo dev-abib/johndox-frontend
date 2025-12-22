@@ -813,14 +813,13 @@ export function Email() {
     </svg>
   );
 }
-export function Mark() {
+export function Mark({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="34"
-      height="34"
       viewBox="0 0 34 34"
       fill="none"
+      className={className}
     >
       <path
         d="M32.4167 16.5827C32.4167 7.83817 25.3278 0.749351 16.5833 0.749351C7.83882 0.749351 0.75 7.83817 0.75 16.5827C0.75 25.3272 7.83882 32.416 16.5833 32.416C25.3278 32.416 32.4167 25.3272 32.4167 16.5827Z"
