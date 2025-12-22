@@ -113,7 +113,7 @@ const Login = () => {
                 </label>
 
                 <a
-                  href="#"
+                  href="/auth/forgot-password"
                   className="text-sm text-gray-500 hover:text-primary-blue"
                 >
                   Forgot Password?
@@ -154,7 +154,7 @@ const Login = () => {
               <p className="text-center text-gray-500">
                 Don’t have any account?{" "}
                 <a
-                  href="#"
+                  href="/auth/register"
                   className="text-primary-blue font-medium hover:underline"
                 >
                   Register

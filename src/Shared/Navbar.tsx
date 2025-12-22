@@ -108,14 +108,14 @@ const Navbar = () => {
             </ul>
             <div className="hidden xl:flex items-center gap-4">
               <Link
-                href="/login"
+                href="/auth/login"
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition"
               >
                 Log In
               </Link>
 
               <Link
-                href="/signup"
+                href="/auth/signup"
                 className="rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue"
               >
                 Sign Up
