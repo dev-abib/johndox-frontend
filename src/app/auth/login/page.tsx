@@ -26,19 +26,19 @@ const Login = () => {
 
   return (
     <Container>
-      <div className="flex h-screen items-center justify-center gap-10 py-10 xl:py-0">
-        <div className="hidden lg:flex xl:w-[65%] items-center justify-center">
+      <div className="flex h-screen items-center justify-center gap-10 py-10">
+        <div className="hidden lg:flex xl:w-[65%] lg:w-[50%] items-center justify-center h-full">
           <img
             src="https://i.ibb.co.com/7dPT0LX2/30ad3fc61803922fec84f5a2798ab18904d9635f.jpg"
             alt="Login Visual"
-            className="rounded-2xl w-full h-auto object-cover"
+            className="rounded-2xl w-full h-full object-cover"
           />
         </div>
 
         {/* Right Form Section */}
-        <div className="w-full xl:w-[35%] flex items-center justify-center px-6">
+        <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
           <div className="w-full ">
-            <h1 className="Auth_section_title mb-2">
+            <h1 className="Auth_section_title mb-2 xl:text-[36px] text-[28px]">
               Welcome Back to Terralink!
             </h1>
             <p className="text-[#404040] mb-8">Sign in your account</p>
@@ -123,7 +123,7 @@ const Login = () => {
               {/* Login Button */}
               <button
                 type="submit"
-                className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition"
+                className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition cursor-pointer"
               >
                 Login
               </button>
@@ -138,14 +138,14 @@ const Login = () => {
               {/* Google Login */}
               <button
                 type="button"
-                className="w-full flex items-center justify-center gap-3 py-3 rounded-lg bg-[#E6F3FF] hover:bg-blue-100 transition"
+                className="w-full flex items-center justify-center gap-3 py-3 rounded-lg bg-[#E6F3FF] hover:bg-blue-100 transition cursor-pointer"
               >
                 <img
                   src="https://www.svgrepo.com/show/475656/google-color.svg"
                   alt="Google"
                   className="w-5 h-5"
                 />
-                <span className="text-[#5F5F5F] text-xl font-medium">
+                <span className="text-[#5F5F5F] text-xl font-medium  ">
                   Sign in with Google
                 </span>
               </button>
