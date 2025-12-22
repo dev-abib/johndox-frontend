@@ -11,7 +11,6 @@ const Footer = () => {
     <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15">
       <Container>
         <div>
-          {/* Big Background Text */}
           <div className="mt-16">
             <img
               src="https://i.ibb.co.com/TDs1BV9P/Group-1321314777-1.png"
