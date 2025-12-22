@@ -33,7 +33,7 @@ const Navbar = () => {
     >
       <Container>
         <header className="w-full text-black">
-          <div className="flex items-center justify-between px-6 py-[26px]">
+          <div className="flex items-center justify-between py-[26px]">
             <Link href="/" className="flex items-center">
               <Image
                 src="https://i.ibb.co.com/2YMddrBt/Group-1321314777.png"
