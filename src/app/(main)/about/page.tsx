@@ -11,8 +11,8 @@ const page = () => {
       <Banner />
       <OurMission />
       <Community />
-      {/* <CoreValues /> */}
-      {/* <ListPropertyCTA /> */}
+      <CoreValues />
+      <ListPropertyCTA />
     </>
   );
 };

@@ -3,7 +3,7 @@ import { WhyChooseUsFeatures3 } from "@/Components/Data/data";
 
 const CoreValues = () => {
   return (
-    <section className="lg:py-[150px]">
+    <section className="lg:py-[150px] py-20">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-2xl sm:text-4xl xl:text-[38px]">
@@ -20,10 +20,10 @@ const CoreValues = () => {
             return (
               <div
                 key={index}
-                className="bg-[rgba(230,243,255,0.4)] rounded-[18px] shadow-[0_0_8px_rgba(145,158,171,0.4)] py-10 px-8 hover:shadow-lg transition-shadow duration-300"
+                className="bg-[rgba(230,243,255,0.4)] rounded-[18px] shadow-[0_0_8px_rgba(145,158,171,0.4)] xl:py-10 xl:px-8 p-5 hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="">
-                  <Icon />
+                  <Icon  />
                 </div>
 
                 <h3 className="text-xl lg:text-2xl font-semibold text-[#212B36] mt-5 mb-2">
