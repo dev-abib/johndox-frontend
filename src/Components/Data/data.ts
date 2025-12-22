@@ -10,9 +10,32 @@ import Product6 from "../../Assets/product6.png";
 import Browse1 from "../../Assets/browse1.png";
 import Browse2 from "../../Assets/browse2.png";
 import Browse3 from "../../Assets/browse3.png";
-import { Commercial, Expert, House, Interactive, Land, Premium, Secure, Support, Verified } from "../Svg/SvgContainer";
+import {
+  Access,
+  Commercial,
+  Community,
+  Excellence,
+  Expert,
+  House,
+  Innovation,
+  Interactive,
+  Intergrity,
+  Land,
+  Premium,
+  Secure,
+  Support,
+  Trust,
+  Verified,
+} from "../Svg/SvgContainer";
 import { SVGProps } from "react";
-import { AnalyticsSvg, GraphSvg, MarketingSvg, MessageSvg, SecureSvg, SparkSvg } from "../Svg/SvgContainer2";
+import {
+  AnalyticsSvg,
+  GraphSvg,
+  MarketingSvg,
+  MessageSvg,
+  SecureSvg,
+  SparkSvg,
+} from "../Svg/SvgContainer2";
 
 export interface Property {
   price: string;
@@ -20,7 +43,7 @@ export interface Property {
   location: string;
   details: string;
   Image: StaticImageData;
-  id: number
+  id: number;
 }
 
 export const Featuredata: Property[] = [
@@ -106,7 +129,6 @@ export const PropertyCategories: PropertyCategory[] = [
   },
 ];
 
-
 // Teralink Data
 
 export interface FeatureItem {
@@ -150,7 +172,8 @@ export const WhyChooseUsFeatures: FeatureItem[] = [
 export const WhyChooseUsFeatures2: FeatureItem[] = [
   {
     title: "Reach More Buyers",
-    description: "List your property and reach thousands of verified buyers across Honduras.",
+    description:
+      "List your property and reach thousands of verified buyers across Honduras.",
     icon: GraphSvg,
   },
   {
@@ -160,23 +183,61 @@ export const WhyChooseUsFeatures2: FeatureItem[] = [
   },
   {
     title: "Advanced Analytics",
-    description: "Track views, inquiries, and engagement with detailed analytics.",
+    description:
+      "Track views, inquiries, and engagement with detailed analytics.",
     icon: AnalyticsSvg,
   },
   {
     title: "Direct Messaging",
-    description: "Connect instantly with verified buyers using our secure chat system.",
+    description:
+      "Connect instantly with verified buyers using our secure chat system.",
     icon: MessageSvg,
   },
   {
     title: "Targeted Marketing",
-    description: "Promote your listings with featured placements and social media integration.",
+    description:
+      "Promote your listings with featured placements and social media integration.",
     icon: MarketingSvg,
   },
   {
     title: "Secure & Safe",
     description: "All transactions and communications are secure and verified.",
     icon: SecureSvg,
+  },
+];
+export const WhyChooseUsFeatures3: FeatureItem[] = [
+  {
+    title: "Integrity",
+    description:
+      "We operate with complete honesty and transparency in all our dealings.",
+    icon: Intergrity,
+  },
+  {
+    title: "Innovation",
+    description:
+      "We continuously improve our platform with cutting-edge technology.",
+    icon: Innovation,
+  },
+  {
+    title: "Community",
+    description:
+      "We build a supportive ecosystem for buyers, sellers, and agents.",
+    icon: Community,
+  },
+  {
+    title: "Excellence",
+    description: "We strive for the highest standards in everything we do.",
+    icon: Excellence,
+  },
+  {
+    title: "Accessibility",
+    description: "We make real estate opportunities available to everyone.",
+    icon: Access,
+  },
+  {
+    title: "Trust",
+    description: "We earn trust through consistent, reliable service.",
+    icon: Trust,
   },
 ];
 export const HowItWorksdata = [
@@ -188,17 +249,16 @@ export const HowItWorksdata = [
   {
     title: "Add Listing",
     description: "Fill in property details, upload photos, and set your price.",
-     count: 2,
+    count: 2,
   },
   {
     title: "Go Live",
     description: "Your listing appears on our marketplace immediately.",
-     count: 3,
+    count: 3,
   },
   {
     title: "Connect with Buyers",
     description: "Connect with real buyers ready to make their move.",
     count: 4,
   },
-
 ];
