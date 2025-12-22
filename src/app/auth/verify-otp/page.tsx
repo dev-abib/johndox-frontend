@@ -34,7 +34,7 @@ const Page = () => {
     if (!/^\d?$/.test(value)) return;
 
     const newDigits = [...otpDigits];
-    newDigits[index] = value; 
+    newDigits[index] = value;
     setOtpDigits(newDigits);
 
     if (value && index < 3) {
@@ -86,18 +86,8 @@ const Page = () => {
         <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
           <div className="w-full">
             <h1 className="Auth_section_title mb-2 xl:text-[36px] md:text-[28px] text-[24px] lg:text-start text-center">
-              Verify your identity
+              Enter Your OTP Code
             </h1>
-            <p className="text-[#404040] my-8 lg:text-lg text-base lg:text-start text-center">
-              Please enter the OTP sent to{" "}
-              <span className="text-[#0085FF] cursor-pointer">
-                demo@gmail.com
-              </span>{" "}
-              to continue{" "}
-              <span className="text-[#0085FF] cursor-pointer underline">
-                Change Email
-              </span>
-            </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <input
