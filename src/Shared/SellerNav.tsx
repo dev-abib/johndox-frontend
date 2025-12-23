@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { CgProfile } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import { GoListUnordered } from "react-icons/go";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Container from "@/Components/Common/Container";
+import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
-import { Listing, PlanetSvg, Profile } from "@/Components/Svg/SvgContainer";
-import { CgProfile } from "react-icons/cg";
 
 const SellerNav = () => {
   const [isOpen, setIsOpen] = useState(false);
