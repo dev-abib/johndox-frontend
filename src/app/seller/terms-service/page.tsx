@@ -1,6 +1,6 @@
-import React from "react";
+import Container from "@/Components/Common/Container";
 import { Mark } from "@/Components/Svg/SvgContainer";
-import Container from "@/Components/Common/Container";   
+import React from "react";
 
 const page = () => {
   return (
