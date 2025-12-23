@@ -1047,3 +1047,94 @@ export function Excellence() {
     </svg>
   );
 }
+export function Listing() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9.33203 5.83331L23.332 5.83331"
+        stroke="#0085FF"
+        stroke-width="1.5"
+        stroke-linecap="round"
+      />
+      <path
+        d="M4.66797 5.83331H4.67845"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M4.66797 14H4.67845"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M4.66797 22.1667H4.67845"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M9.33203 14L23.332 14"
+        stroke="#0085FF"
+        stroke-width="1.5"
+        stroke-linecap="round"
+      />
+      <path
+        d="M9.33203 22.1667L23.332 22.1667"
+        stroke="#0085FF"
+        stroke-width="1.5"                    
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+}
+export function Profile() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clip-path="url(#clip0_22515_12310)">
+        <path
+          d="M14.1385 14.91C14.0569 14.8983 13.9519 14.8983 13.8585 14.91C11.8052 14.84 10.1719 13.16 10.1719 11.095C10.1719 8.98331 11.8752 7.26831 13.9985 7.26831C16.1102 7.26831 17.8252 8.98331 17.8252 11.095C17.8135 13.16 16.1919 14.84 14.1385 14.91Z"
+          stroke="white"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M21.8634 22.61C19.7867 24.5117 17.0334 25.6667 14.0001 25.6667C10.9667 25.6667 8.21339 24.5117 6.13672 22.61C6.25339 21.5133 6.95339 20.44 8.20172 19.6C11.3984 17.4767 16.6251 17.4767 19.7984 19.6C21.0467 20.44 21.7467 21.5133 21.8634 22.61Z"
+          stroke="white"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M13.9987 25.6666C20.442 25.6666 25.6654 20.4433 25.6654 14C25.6654 7.55666 20.442 2.33331 13.9987 2.33331C7.55538 2.33331 2.33203 7.55666 2.33203 14C2.33203 20.4433 7.55538 25.6666 13.9987 25.6666Z"
+          stroke="white"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_22515_12310">
+          <rect width="28" height="28" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
