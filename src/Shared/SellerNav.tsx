@@ -55,20 +55,20 @@ const SellerNav = () => {
                   For Sellers
                 </Link>
               </li>
-              <Link href={"/browse"}>
+              <Link href={"/seller/pricing"}>
                 <li className="flex items-center gap-1 cursor-pointer hover:text-black transition">
                   Subscription Plans
                 </li>
               </Link>
 
               <li>
-                <Link href="/forseller" className="hover:text-black transition">
+                <Link href="/seller/about" className="hover:text-black transition">
                   About
                 </Link>
               </li>
 
               <li>
-                <Link href="/about" className="hover:text-black transition">
+                <Link href="/seller/contact-us" className="hover:text-black transition">
                   Contract Us
                 </Link>
               </li>
@@ -113,7 +113,7 @@ const SellerNav = () => {
             </ul>
             <div className="hidden xl:flex items-center gap-4">
               <Link
-                href="/auth/login"
+                href=""
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
               >
                 <GoListUnordered className="size-7" />
@@ -121,7 +121,7 @@ const SellerNav = () => {
               </Link>
 
               <Link
-                href="/auth/signup"
+                href=""
                 className="rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue flex gap-x-2 items-center"
               >
                 <CgProfile className="size-7" />
@@ -153,24 +153,24 @@ const SellerNav = () => {
             </div>
             <ul className="flex flex-col gap-3 px-6 py-5 ">
               <li>
-                <Link href="/" onClick={() => setIsOpen(false)}>
+                <Link href="/seller/forseller" onClick={() => setIsOpen(false)}>
                   For Sellers
                 </Link>
               </li>
-              <Link href={"/browse"}>
+              <Link href={"/seller/pricing"}>
                 <li className="flex items-center gap-1 cursor-pointer">
                   Subscription Plans
                 </li>
               </Link>
 
               <li>
-                <Link href="/for-sellers" onClick={() => setIsOpen(false)}>
+                <Link href="/seller/about" onClick={() => setIsOpen(false)}>
                   About
                 </Link>
               </li>
 
               <li>
-                <Link href="/about" onClick={() => setIsOpen(false)}>
+                <Link href="/seller/conatact-us" onClick={() => setIsOpen(false)}>
                   Contract Us
                 </Link>
               </li>
@@ -214,7 +214,7 @@ const SellerNav = () => {
             </ul>
             <div className="px-6 flex flex-col gap-4">
               <Link
-                href="/login"
+                href=""
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue flex gap-x-2 items-center"
               >
@@ -223,7 +223,7 @@ const SellerNav = () => {
               </Link>
 
               <Link
-                href="/signup"
+                href=""
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white flex gap-x-2 items-center"
               >
