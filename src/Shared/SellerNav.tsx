@@ -48,7 +48,10 @@ const SellerNav = () => {
             </Link>
             <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
               <li>
-                <Link href="/" className="hover:text-black transition">
+                <Link
+                  href="/seller/forseller"
+                  className="hover:text-black transition"
+                >
                   For Sellers
                 </Link>
               </li>
