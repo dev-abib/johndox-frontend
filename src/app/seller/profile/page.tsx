@@ -60,7 +60,7 @@ const page = () => {
   const [activetab, setActiveTab] = useState("My Listings");
 
   return (
-    <section className="py-10">
+    <section className="pt-10">
       <Container>
         <h3 className="text-[32px] font-medium text-[#101010]">
           Seller Profile
@@ -119,7 +119,7 @@ const page = () => {
             );
           })}
         </div>
-          
+
         {activetab === "My Listings" && <MyListings />}
         {activetab === "Messages" && <Messages />}
         {activetab === "Analytics" && <Analytic />}
