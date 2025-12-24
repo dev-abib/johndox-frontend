@@ -60,35 +60,37 @@ const page = () => {
   const [activetab, setActiveTab] = useState("My Listings");
 
   return (
-    <section className="pt-10">
+    <section className="lg:pt-10 pt-0">
       <Container>
-        <h3 className="text-[32px] font-medium text-[#101010]">
+        <h3 className="lg:text-[32px] md:text-[24px] text-[20px] font-medium text-[#101010]">
           Seller Profile
         </h3>
-        <p className="text-[20px] font-normal text-[#404040] mt-3">
+        <p className="lg:text-[20px] text-base font-normal text-[#404040] mt-3">
           Manage your listings and grow your business
         </p>
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-9">
-          {[
-            { value: "3", label: "Active Listings" },
-            { value: "4,444", label: "Total Views" },
-            { value: "80", label: "Total Leads" },
-            { value: "2", label: "Unread Messages" },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="rounded-[16px] bg-[rgba(230,243,255,0.20)] shadow-[0_0_6px_0_rgba(145,158,171,0.40)] py-8 lg:py-10 px-6 lg:px-10"
-            >
-              <h4 className="text-[#5F5F5F] text-base lg:text-lg font-normal">
-                {item.label}
-              </h4>
-              <h3 className="text-3xl lg:text-[38px] text-[#404040] font-medium mt-4">
-                {item.value}
-              </h3>
-            </div>
-          ))}
-        </div>
-        <div className="my-15 flex gap-x-11 bg-[#ECECF0] rounded-[36px] p-3 w-fit">
+        {activetab !== "Settings" && (
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-9">
+            {[
+              { value: "3", label: "Active Listings" },
+              { value: "4,444", label: "Total Views" },
+              { value: "80", label: "Total Leads" },
+              { value: "2", label: "Unread Messages" },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="rounded-[16px] bg-[rgba(230,243,255,0.20)] shadow-[0_0_6px_0_rgba(145,158,171,0.40)] py-8 lg:py-10 px-5 lg:px-10"
+              >
+                <h4 className="text-[#5F5F5F] text-sm md:text-base lg:text-lg font-normal md:text-start text-center">
+                  {item.label}
+                </h4>
+                <h3 className="text-3xl lg:text-[38px] text-[#404040] font-medium mt-4 md:text-start text-center">
+                  {item.value}
+                </h3>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* <div className="my-15 flex gap-x-11 bg-[#ECECF0] rounded-[36px] p-3 w-fit">
           {tabs.map(item => {
             const isActive = activetab === item.label;
 
@@ -118,13 +120,13 @@ const page = () => {
               </button>
             );
           })}
-        </div>
+        </div> */}
 
-        {activetab === "My Listings" && <MyListings />}
+        {/* {activetab === "My Listings" && <MyListings />}
         {activetab === "Messages" && <Messages />}
         {activetab === "Analytics" && <Analytic />}
         {activetab === "Settings" && <Setting />}
-        {activetab === "Subscription" && <SubsCription />}
+        {activetab === "Subscription" && <SubsCription />} */}
       </Container>
     </section>
   );
