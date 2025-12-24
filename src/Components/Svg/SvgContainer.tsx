@@ -1499,3 +1499,86 @@ export function Analytics() {
     </svg>
   );
 }
+export function Document({ className }: { className?: string }) {
+  return (
+    <svg
+      width="52"
+      height="52"
+      viewBox="0 0 52 52"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M27.082 6.5H24.9154C15.2123 6.5 10.3608 6.5 7.34639 9.51436C4.33203 12.5287 4.33203 17.3803 4.33203 27.0833C4.33203 36.7864 4.33203 41.6379 7.34639 44.6523C10.3608 47.6667 15.2123 47.6667 24.9154 47.6667C34.6184 47.6667 39.47 47.6667 42.4843 44.6523C45.4987 41.6379 45.4987 36.7864 45.4987 27.0833V24.9167"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M47.6667 11.9167C47.6667 16.1049 44.2715 19.5 40.0833 19.5C35.8952 19.5 32.5 16.1049 32.5 11.9167C32.5 7.72855 35.8952 4.33337 40.0833 4.33337C44.2715 4.33337 47.6667 7.72855 47.6667 11.9167Z"
+        stroke="#0085FF"
+        stroke-width="2"
+      />
+      <path
+        d="M15.168 23.8334H23.8346"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M15.168 34.6666H32.5013"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
+export function Notification({ className }: { className?: string }) {
+  return (
+    <svg
+      width="52"
+      height="52"
+      viewBox="0 0 52 52"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M32.457 15.2004C32.457 15.2004 33.5404 16.2838 34.6237 18.4504C34.6237 18.4504 38.0648 13.0338 41.1237 11.9504"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M21.6542 4.37971C16.2409 4.15051 12.0586 4.77413 12.0586 4.77413C9.41778 4.96294 4.35686 6.44348 4.3569 15.09C4.35694 23.663 4.30092 34.2319 4.3569 38.4453C4.3569 41.0194 5.95075 47.0239 11.4674 47.3458C18.1729 47.737 30.2512 47.8201 35.7931 47.3458C37.2765 47.2621 42.2154 46.0975 42.8405 40.724C43.488 35.1571 43.3591 31.2883 43.3591 30.3675"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M47.668 15.2005C47.668 21.1836 42.813 26.0339 36.8242 26.0339C30.8354 26.0339 25.9805 21.1836 25.9805 15.2005C25.9805 9.21744 30.8354 4.36719 36.8242 4.36719C42.813 4.36719 47.668 9.21744 47.668 15.2005Z"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M15.125 28.2004H23.7917"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M15.125 36.8672H32.4583"
+        stroke="#0085FF"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+}

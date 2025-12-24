@@ -3,10 +3,10 @@ import { CheckSvg } from "@/Components/Svg/SvgContainer2";
 const SubsCription = () => {
   return (
     <div>
-      <h2 className="text-[#404040] text-[28px] font-medium">
+      <h2 className="text-[#404040] lg:text-[28px] text-[24px] font-medium">
         Subscription Plans
       </h2>
-      <h5 className="text-[18px] text-[#5F5F5F] font-normal mt-3">
+      <h5 className="lg:text-[18px] text-base text-[#5F5F5F] font-normal mt-3">
         Select a plan that fits your selling goals
       </h5>
       <div className="mt-16">
