@@ -119,7 +119,7 @@ const page = () => {
             );
           })}
         </div>
-
+          
         {activetab === "My Listings" && <MyListings />}
         {activetab === "Messages" && <Messages />}
         {activetab === "Analytics" && <Analytic />}
