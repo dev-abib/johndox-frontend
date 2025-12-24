@@ -62,13 +62,13 @@ const MyListing = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-3 mt-5">
-                    <button className="flex items-center gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
+                    <button className="flex items-center cursor-pointer  gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
                       <BsEye className="text-lg" /> View Post
                     </button>
-                    <button className="flex items-center gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
+                    <button className="flex items-center cursor-pointer  gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
                       <MdEdit className="text-lg" /> Edit
                     </button>
-                    <button className="flex items-center gap-1 border border-[#FCC9CB] text-[#E7000B] px-2.5 py-1 rounded-[12px] bg-[#FFE9EA]">
+                    <button className="flex items-center cursor-pointer  gap-1 border border-[#FCC9CB] text-[#E7000B] px-2.5 py-1 rounded-[12px] bg-[#FFE9EA]">
                       <MdDelete className="text-lg" /> Delete
                     </button>
                   </div>
