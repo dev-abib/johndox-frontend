@@ -62,13 +62,19 @@ const SellerNav = () => {
               </Link>
 
               <li>
-                <Link href="/seller/about" className="hover:text-black transition">
+                <Link
+                  href="/seller/about"
+                  className="hover:text-black transition"
+                >
                   About
                 </Link>
               </li>
 
               <li>
-                <Link href="/seller/contact-us" className="hover:text-black transition">
+                <Link
+                  href="/seller/contact-us"
+                  className="hover:text-black transition"
+                >
                   Contract Us
                 </Link>
               </li>
@@ -113,7 +119,7 @@ const SellerNav = () => {
             </ul>
             <div className="hidden xl:flex items-center gap-4">
               <Link
-                href="/seller/listing"
+                href="/seller/profile"
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
               >
                 <GoListUnordered className="size-7" />
@@ -170,7 +176,10 @@ const SellerNav = () => {
               </li>
 
               <li>
-                <Link href="/seller/conatact-us" onClick={() => setIsOpen(false)}>
+                <Link
+                  href="/seller/conatact-us"
+                  onClick={() => setIsOpen(false)}
+                >
                   Contract Us
                 </Link>
               </li>
@@ -214,7 +223,7 @@ const SellerNav = () => {
             </ul>
             <div className="px-6 flex flex-col gap-4">
               <Link
-                href="/seller/listing"
+                href="/seller/profile"
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue flex gap-x-2 items-center"
               >
