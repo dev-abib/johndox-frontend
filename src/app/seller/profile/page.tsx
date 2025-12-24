@@ -90,7 +90,7 @@ const page = () => {
             ))}
           </div>
         )}
-        {/* <div className="my-15 flex gap-x-11 bg-[#ECECF0] rounded-[36px] p-3 w-fit">
+        <div className="lg:my-15 my-8 xl:flex lg:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
           {tabs.map(item => {
             const isActive = activetab === item.label;
 
@@ -99,7 +99,7 @@ const page = () => {
                 key={item.label}
                 onClick={() => setActiveTab(item.label)}
                 className={`
-          px-12 py-2 text-[20px] font-medium cursor-pointer 
+          xl:px-12 px-5 py-2 xl:text-[20px] lg:text-lg text-base font-medium cursor-pointer 
           flex gap-x-2 items-center rounded-[36px] transition-all
           ${
             isActive
@@ -120,13 +120,13 @@ const page = () => {
               </button>
             );
           })}
-        </div> */}
+        </div>
 
-        {/* {activetab === "My Listings" && <MyListings />}
+        {activetab === "My Listings" && <MyListings />}
         {activetab === "Messages" && <Messages />}
         {activetab === "Analytics" && <Analytic />}
         {activetab === "Settings" && <Setting />}
-        {activetab === "Subscription" && <SubsCription />} */}
+        {activetab === "Subscription" && <SubsCription />}
       </Container>
     </section>
   );
