@@ -196,14 +196,13 @@ const BrowseDetails: React.FC = () => {
                 </select>
               </div>
 
-              {/* Swap */}
               <div className="flex justify-center my-3">
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium">
                   ⇅
                 </div>
               </div>
 
-              {/* To */}
+            
               <div className="border rounded-lg flex flex-col sm:flex-row items-stretch sm:items-center overflow-hidden mb-5 sm:mb-6">
                 <input
                   type="number"
@@ -216,7 +215,7 @@ const BrowseDetails: React.FC = () => {
                 </select>
               </div>
 
-              {/* Button */}
+          
               <button
                 onClick={() => setOpenConverter(false)}
                 className="w-full bg-[#0085FF] text-white py-3 sm:py-3.5 rounded-lg font-medium hover:opacity-90 transition cursor-pointer"

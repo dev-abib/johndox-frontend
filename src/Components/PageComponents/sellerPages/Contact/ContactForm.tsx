@@ -8,10 +8,10 @@ import Container from "@/Components/Common/Container";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 type ContactFormData = {
+  sub: string;
   email: string;
   phone: string;
   name: boolean;
-  sub: string;
   message: string;
 };
 

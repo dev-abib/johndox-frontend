@@ -23,7 +23,6 @@ const BrowseDescription: React.FC = () => {
       <Container>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           <div className="space-y-4">
-            {/* Top 4 images */}
             <div className="grid grid-cols-2 gap-4">
               {visibleImages.map((url, index) => (
                 <div
@@ -36,7 +35,6 @@ const BrowseDescription: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
 
-                  {/* 4+ overlay */}
                   {index === 3 &&
                     hiddenImages.length > 0 &&
                     !showMoreImages && (
