@@ -10,6 +10,7 @@ import Product6 from "../../Assets/product6.png";
 import Browse1 from "../../Assets/browse1.png";
 import Browse2 from "../../Assets/browse2.png";
 import Browse3 from "../../Assets/browse3.png";
+import Listingimg from "../../Assets/listingimage.png";
 import {
   Access,
   Commercial,
@@ -260,5 +261,60 @@ export const HowItWorksdata = [
     title: "Connect with Buyers",
     description: "Connect with real buyers ready to make their move.",
     count: 4,
+  },
+];
+
+
+// Listing
+
+interface Listing {
+  id: string | number;
+  title: string;
+  location: string;
+  price: string;
+  currency: string;
+  views: number;
+  leads: number;
+  postedDate: string;
+  status: string; 
+  imageUrl?: StaticImageData; 
+}
+
+export const listingsData: Listing[] = [
+  {
+    id: 1,
+    title: "Residential Land in Yocón",
+    location: "LA MIEL, Honduras",
+    price: "120,000",
+    currency: "USD",
+    views: 1247,
+    leads: 45,
+    postedDate: "10/20/2025",
+    status: "For Sale",
+    imageUrl: Listingimg,
+  },
+  {
+    id: 2,
+    title: "Residential Land in Yocón",
+    location: "LA MIEL, Honduras",
+    price: "120,000",
+    currency: "USD",
+    views: 1247,
+    leads: 45,
+    postedDate: "10/20/2025",
+    status: "For Sale",
+    imageUrl: Listingimg,
+  },
+  {
+    id: 3,
+    title: "Residential Land in Yocón",
+    location: "LA MIEL, Honduras",
+    price: "120,000",
+    currency: "USD",
+    views: 1247,
+    leads: 45,
+    postedDate: "10/20/2025",
+    status: "For Sale",
+    imageUrl: Listingimg,
   },
 ];
