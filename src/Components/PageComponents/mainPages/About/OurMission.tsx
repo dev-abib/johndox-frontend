@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import Mission from "../../../../Assets/mission.png";
-import Container from "@/Components/Common/Container";
 import { Mark } from "@/Components/Svg/SvgContainer";
+import Container from "@/Components/Common/Container";
 
 const OurMission = () => {
   return (
@@ -59,7 +59,6 @@ const OurMission = () => {
             </div>
           </div>
 
-          {/* Image */}
           <figure className="w-full xl:w-1/2">
             <Image
               src={Mission}
