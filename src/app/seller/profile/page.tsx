@@ -33,7 +33,7 @@ const tabs: Tab[] = [
     label: "Messages",
     icon: Message,
     active: true,
-    badge: 48,
+    badge: 2,
     hasUnread: true,
   },
   {
