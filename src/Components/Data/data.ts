@@ -1,15 +1,13 @@
-// @/Components/Data/data.ts
-
 import { StaticImageData } from "next/image";
+import Browse1 from "../../Assets/browse1.png";
+import Browse2 from "../../Assets/browse2.png";
+import Browse3 from "../../Assets/browse3.png";
 import Product1 from "../../Assets/product1.png";
 import Product2 from "../../Assets/product2.png";
 import Product3 from "../../Assets/product3.png";
 import Product4 from "../../Assets/product4.png";
 import Product5 from "../../Assets/product5.png";
 import Product6 from "../../Assets/product6.png";
-import Browse1 from "../../Assets/browse1.png";
-import Browse2 from "../../Assets/browse2.png";
-import Browse3 from "../../Assets/browse3.png";
 import Listingimg from "../../Assets/listingimage.png";
 import {
   Access,

@@ -8,11 +8,11 @@ import {
   Settings,
   Subscription,
 } from "@/Components/Svg/SvgContainer";
-import Analytic from "@/Components/PageComponents/sellerPages/Profile/Analytic";
-import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListing";
 import Setting from "@/Components/PageComponents/sellerPages/Profile/Setting";
-import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
+import Analytic from "@/Components/PageComponents/sellerPages/Profile/Analytic";
 import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
+import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListing";
+import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
 
 interface Tab {
   label: string;
@@ -58,10 +58,6 @@ const tabs: Tab[] = [
 
 const page = () => {
   const [activetab, setActiveTab] = useState("My Listings");
-
-  const activeTabObj = tabs.find(tab => tab?.label === activetab);
-
-  console.log(activeTabObj);
 
   return (
     <section className="py-10">

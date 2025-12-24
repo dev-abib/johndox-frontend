@@ -1,9 +1,9 @@
-import { listingsData } from "@/Components/Data/data";
-import Image from "next/image";
 import React from "react";
-import { BsEye, BsFillChatDotsFill, BsCalendar3 } from "react-icons/bs";
-import { MdEdit, MdDelete } from "react-icons/md";
+import Image from "next/image";
 import { BsPlusLg } from "react-icons/bs";
+import { MdEdit, MdDelete } from "react-icons/md";
+import { listingsData } from "@/Components/Data/data";
+import { BsEye, BsFillChatDotsFill, BsCalendar3 } from "react-icons/bs";
 
 const MyListing = () => {
   return (
@@ -30,7 +30,6 @@ const MyListing = () => {
               key={item.id}
               className="bg-white border border-[#E7E7E7] px-5 py-7 rounded-[28px] flex items-center justify-between gap-8"
             >
-              {/* Left: Image + Details */}
               <div className="flex items-center gap-x-5 flex-1">
                 <figure className="shrink-0">
                   <Image
@@ -50,7 +49,6 @@ const MyListing = () => {
                     {item.location}
                   </p>
 
-                  {/* Stats */}
                   <div className="flex items-center gap-6 mt-4 text-[18px] text-[#5F5F5F]">
                     <span className="flex items-center gap-2 ">
                       <BsEye /> {item.views} views
@@ -63,7 +61,6 @@ const MyListing = () => {
                     </span>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex items-center gap-4 mt-5">
                     <button className="text-[#5F5F5F] cursor-pointer flex items-center gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px]">
                       <BsEye className="text-lg" /> View Post
@@ -78,7 +75,6 @@ const MyListing = () => {
                 </div>
               </div>
 
-              {/* Right: Price + Status */}
               <div className="text-right shrink-0">
                 <p className="text-[28px] font-bold text-[#0085FF]">
                   ${item.price}
