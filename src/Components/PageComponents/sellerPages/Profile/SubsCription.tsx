@@ -78,8 +78,6 @@ const Subscription = () => {
                 </span>
                 <span className="text-gray-500"> /month</span>
               </div>
-
-
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="lg:mt-8 mt-3 md:mt-[50px] mb-8 md:mb-10 w-full rounded-xl border-2 text-base md:text-lg xl:text-2xl leading-tight md:leading-[36px] border-[#0085FF] xl:py-3 py-2 text-[#0085FF] font-semibold group-hover:bg-[#0085FF] group-hover:text-white transition"

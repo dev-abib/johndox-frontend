@@ -83,7 +83,6 @@ const Navbar = () => {
                   </span>
                 </button>
 
-                {/* Dropdown */}
                 <div
                   className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
                     langOpen
@@ -115,7 +114,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                href="/auth/signup"
+                href="/auth/register"
                 className="rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue"
               >
                 Sign Up
@@ -152,12 +151,12 @@ const Navbar = () => {
               </li>
               <Link href={"/browse"}>
                 <li className="flex items-center gap-1 cursor-pointer">
-                  Browse Properties{" "}
+                  Browse Properties
                 </li>
               </Link>
 
               <li>
-                <Link href="/for-sellers" onClick={() => setIsOpen(false)}>
+                <Link href="/forseller" onClick={() => setIsOpen(false)}>
                   For Sellers
                 </Link>
               </li>
@@ -181,8 +180,6 @@ const Navbar = () => {
                     <AngleBottomSvg />
                   </span>
                 </button>
-
-                {/* Dropdown */}
                 <div
                   className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark  transition-all duration-200 ${
                     langOpen
@@ -207,15 +204,14 @@ const Navbar = () => {
             </ul>
             <div className="px-6 flex flex-col gap-4">
               <Link
-                href="/login"
+                href="/auth/login"
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue"
               >
                 Log In
               </Link>
-
               <Link
-                href="/signup"
+                href="/auth/register"
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white"
               >

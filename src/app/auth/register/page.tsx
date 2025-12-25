@@ -41,7 +41,7 @@ const Login = () => {
         </div>
 
         {/* Right Form Section */}
-        <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
+        <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center lg:px-6 px-3">
           <div className="w-full ">
             <h1 className="Auth_section_title mb-2 xl:text-[36px] text-[28px] lg:text-start text-center">
               Create account

@@ -6,12 +6,12 @@ import Container from "@/Components/Common/Container";
 
 const NotificationsPage = () => {
   const [toggles, setToggles] = useState({
-    propertyAlerts: true,
-    messageNotifications: true,
-    priceUpdates: false,
     tagActivity: true,
+    priceUpdates: false,
+    propertyAlerts: true,
     promotionsOffers: true,
     emailNotifications: true,
+    messageNotifications: true,
   });
 
   const handleToggle = (key: keyof typeof toggles) => {
@@ -32,12 +32,10 @@ const NotificationsPage = () => {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#101010] mb-10">
             Notifications
           </h1>
-
           <div className="">
             <h2 className="text-xl sm:text-2xl font-medium text-[#101010] mb-8">
               Notification type
             </h2>
-
             <div className="space-y-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
                 <div className="flex-1">
@@ -62,7 +60,6 @@ const NotificationsPage = () => {
                   />
                 </button>
               </div>
-
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
                 <div className="flex-1">
                   <h3 className="text-lg sm:text-xl font-medium text-[#101010]">
@@ -90,8 +87,6 @@ const NotificationsPage = () => {
                   />
                 </button>
               </div>
-
-              {/* Price Updates */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
                 <div className="flex-1">
                   <h3 className="text-lg sm:text-xl font-medium text-[#101010]">
@@ -115,8 +110,6 @@ const NotificationsPage = () => {
                   />
                 </button>
               </div>
-
-              {/* Tag Activity */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
                 <div className="flex-1">
                   <h3 className="text-lg sm:text-xl font-medium text-[#101010]">
@@ -141,7 +134,6 @@ const NotificationsPage = () => {
                 </button>
               </div>
 
-              {/* Promotions & Offers */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
                 <div className="flex-1">
                   <h3 className="text-lg sm:text-xl font-medium text-[#101010]">
@@ -168,7 +160,6 @@ const NotificationsPage = () => {
                 </button>
               </div>
 
-              {/* Email Notifications */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="text-lg sm:text-xl font-medium text-[#101010]">
