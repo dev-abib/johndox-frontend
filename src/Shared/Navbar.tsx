@@ -166,6 +166,7 @@ const Navbar = () => {
                   About
                 </Link>
               </li>
+              
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
