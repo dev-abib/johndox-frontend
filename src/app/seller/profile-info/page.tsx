@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
@@ -9,26 +10,18 @@ const AccountSettingsPage = () => {
   return (
     <section className="mt-10">
       <Container>
-        {/* Header */}
         <h3 className="flex items-center gap-x-2 cursor-pointer text-[24px] lg:text-[32px] font-medium text-[#0085FF] mb-12">
           <IoIosArrowBack className="size-8" />
           Account Settings
         </h3>
-
-        {/* Main Card */}
         <div className="bg-[#F5F5F5] p-3 lg:p-10 rounded-[28px]">
           <h4 className="text-[24px] lg:text-[32px] font-medium text-[#101010] lg:mb-10 mb-5">
             My Profile
           </h4>
-
-          {/* White Inner Card */}
           <div className="bg-white rounded-[28px] p-4 lg:p-12">
-            {/* Personal Info Section */}
-            <h4 className="text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
+            <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Personal Info
             </h4>
-
-            {/* Profile Photo */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
@@ -39,25 +32,25 @@ const AccountSettingsPage = () => {
                     Personalize your profile pic with a custom photo.
                   </p>
                 </div>
-                <div className="flex items-center gap-4 cursor-pointer">
-                  <div className="relative">
-                    <Image
-                      src={Profilepic}
-                      alt="Profile"
-                      width={90}
-                      height={90}
-                      className="rounded-full object-cover border-4 border-white shadow-md"
-                    />
+                <Link href={"/seller/upload-image"}>
+                  <div className="flex items-center gap-4 cursor-pointer">
+                    <div className="relative">
+                      <Image
+                        src={Profilepic}
+                        alt="Profile"
+                        width={90}
+                        height={90}
+                        className="rounded-full object-cover border-4 border-white shadow-md"
+                      />
+                    </div>
+                    <FaRegEdit className="text-[#0085FF] text-2xl" />
+                    <span className="text-[#0085FF] text-xl lg:text-2xl font-medium">
+                      Edit
+                    </span>
                   </div>
-                  <FaRegEdit className="text-[#0085FF] text-2xl" />
-                  <span className="text-[#0085FF] text-xl lg:text-2xl font-medium">
-                    Edit
-                  </span>
-                </div>
+                </Link>
               </div>
             </div>
-
-            {/* Name - Input Field */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
                 <div className="flex-1 w-full">
@@ -77,13 +70,9 @@ const AccountSettingsPage = () => {
                 </button>
               </div>
             </div>
-
-            {/* Sign in & Security Section */}
             <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Sign in & Security
             </h4>
-
-            {/* Email - Input Field */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
                 <div className="flex-1 w-full">
@@ -102,8 +91,6 @@ const AccountSettingsPage = () => {
                 </button>
               </div>
             </div>
-
-            {/* Phone Number - Input Field */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
                 <div className="flex-1 w-full">
@@ -121,7 +108,6 @@ const AccountSettingsPage = () => {
                 </button>
               </div>
             </div>
-
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-[#B5B5B5] pb-5">
                 <div className="flex-1 w-full">
