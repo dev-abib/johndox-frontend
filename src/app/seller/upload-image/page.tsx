@@ -50,7 +50,7 @@ const EditPhotoPage = () => {
           Edit photo
         </h1>
 
-        <div className="bg-[#F9FAFB] rounded-2xl lg:py-12 p-3 sm:px-12 lg:px-20">
+        <div className="bg-[#F9FAFB] rounded-2xl lg:py-12 p-3 border border-[#B0D9FF] lg:px-20">
           <p className="text-center text-[#404040] text-lg sm:text-xl lg:text-2xl font-normal lg:mb-12 mb-5">
             Add an updated photo of yourself to help fill out your profile.
           </p>
