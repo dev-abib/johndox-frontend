@@ -41,7 +41,7 @@ const Login = () => {
         </div>
 
         {/* Right Form Section */}
-        <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
+        <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center lg:px-6 px-3">
           <div className="w-full ">
             <h1 className="Auth_section_title mb-2 xl:text-[36px] text-[28px] lg:text-start text-center">
               Create account
@@ -75,7 +75,6 @@ const Login = () => {
               </button>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* First Name */}
               <div>
                 <label className="block text-lg text-[#5F5F5F] mb-2 font-medium">
                   First Name
@@ -95,7 +94,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Last Name */}
               <div>
                 <label className="block text-lg text-[#5F5F5F] mb-2 font-medium">
                   Last Name
@@ -115,7 +113,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-lg text-[#5F5F5F] mb-2 font-medium">
                   Your Email
@@ -139,7 +136,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Password */}
               <div>
                 <label className="block text-lg text-[#5F5F5F] mb-2 font-medium">
                   Password
@@ -172,7 +168,6 @@ const Login = () => {
                 )}
               </div>
 
-              {/* Remember */}
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -182,7 +177,6 @@ const Login = () => {
                 Remember Me
               </label>
 
-              {/* Submit */}
               <button
                 type="submit"
                 className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition"
