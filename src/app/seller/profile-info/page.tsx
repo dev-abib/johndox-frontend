@@ -16,7 +16,7 @@ const AccountSettingsPage = () => {
 
   const handleApplyName = () => {
     setFirstName(tempFirstName);
-    setLastName(tempLastName);
+    setLastName(tempLastName);    
     setIsNameModalOpen(false);
   };
 
@@ -42,7 +42,6 @@ const AccountSettingsPage = () => {
               Personal Info
             </h4>
 
-            {/* Profile Photo */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
@@ -73,7 +72,6 @@ const AccountSettingsPage = () => {
               </div>
             </div>
 
-            {/* Name Section with Edit Button */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
                 <div className="flex-1 w-full">
@@ -94,7 +92,6 @@ const AccountSettingsPage = () => {
               </div>
             </div>
 
-            {/* Sign in & Security */}
             <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Sign in & Security
             </h4>
@@ -155,7 +152,6 @@ const AccountSettingsPage = () => {
         </div>
       </Container>
 
-      {/* Edit Name Modal */}
       {isNameModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-xl w-full p-8 relative">
