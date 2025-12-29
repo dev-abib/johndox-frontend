@@ -1,12 +1,31 @@
-import React from "react";
+"use client";
 import Link from "next/link";
 import Image from "next/image";
+import React, { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
 
 const AccountSettingsPage = () => {
+  const [lastName, setLastName] = useState("Taylor");
+  const [firstName, setFirstName] = useState("Robert");
+  const [tempLastName, setTempLastName] = useState(lastName);
+  const [tempFirstName, setTempFirstName] = useState(firstName);
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+
+  const handleApplyName = () => {
+    setFirstName(tempFirstName);
+    setLastName(tempLastName);
+    setIsNameModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setTempFirstName(firstName);
+    setTempLastName(lastName);
+    setIsNameModalOpen(false);
+  };
+
   return (
     <section className="mt-10">
       <Container>
@@ -22,6 +41,8 @@ const AccountSettingsPage = () => {
             <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Personal Info
             </h4>
+
+            {/* Profile Photo */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
@@ -51,25 +72,29 @@ const AccountSettingsPage = () => {
                 </Link>
               </div>
             </div>
+
+            {/* Name Section with Edit Button */}
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
                 <div className="flex-1 w-full">
                   <h2 className="text-[#404040] lg:text-[24px] text-[20px] font-medium mb-2">
                     Name
                   </h2>
-                  <input
-                    type="text"
-                    defaultValue="Full names"
-                    className="w-full pt-3 text-[#5F5F5F] rounded-xl focus:outline-none  lg:text-[18px] text-base"
-                    placeholder="Full name"
-                  />
+                  <p className="pt-3 text-[#5F5F5F] lg:text-[18px] text-base">
+                    {firstName} {lastName}
+                  </p>
                 </div>
-                <button className="text-[#0085FF] text-xl lg:text-2xl font-medium flex items-center gap-2 whitespace-nowrap">
+                <button
+                  onClick={() => setIsNameModalOpen(true)}
+                  className="text-[#0085FF] text-xl lg:text-2xl font-medium flex items-center gap-2 whitespace-nowrap cursor-pointer"
+                >
                   <FaRegEdit className="text-2xl" />
                   Edit
                 </button>
               </div>
             </div>
+
+            {/* Sign in & Security */}
             <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Sign in & Security
             </h4>
@@ -82,11 +107,11 @@ const AccountSettingsPage = () => {
                   <input
                     type="email"
                     defaultValue="slatfvshsw@gmail.com"
-                    className="w-full  pt-3  text-[#101010]  rounded-xl outline-0 lg:text-[18px] text-base"
+                    className="w-full pt-3 text-[#101010] rounded-xl outline-0 lg:text-[18px] text-base"
                     placeholder="Enter your email"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
                   Verify
                 </button>
               </div>
@@ -100,10 +125,10 @@ const AccountSettingsPage = () => {
                   <input
                     type="tel"
                     placeholder="Add your phone number"
-                    className="w-full pt-3 text-[#5F5F5F]  rounded-xl outline-none lg:text-[18px] text-base"
+                    className="w-full pt-3 text-[#5F5F5F] rounded-xl outline-none lg:text-[18px] text-base"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
                   Add
                 </button>
               </div>
@@ -121,7 +146,7 @@ const AccountSettingsPage = () => {
                     placeholder="Set a unique password"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
                   Change Password
                 </button>
               </div>
@@ -129,6 +154,64 @@ const AccountSettingsPage = () => {
           </div>
         </div>
       </Container>
+
+      {/* Edit Name Modal */}
+      {isNameModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-xl w-full p-8 relative">
+            <button
+              onClick={handleCancel}
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 text-2xl"
+            >
+              ×
+            </button>
+
+            <h3 className="text-2xl font-medium text-[#101010] text-center mb-8">
+              Edit Name
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-[#404040] mb-2">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  value={tempFirstName}
+                  onChange={e => setTempFirstName(e.target.value)}
+                  className="w-full px-4 lg:py-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0085FF] text-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-[#404040] mb-2">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  value={tempLastName}
+                  onChange={e => setTempLastName(e.target.value)}
+                  className="w-full px-4 lg:py-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0085FF] text-lg"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-8">
+              <button
+                onClick={handleCancel}
+                className="px-6 lg:py-3 py-2 rounded-lg border border-[#0085FF] text-[#0085FF] hover:bg-[#0085FF]/5 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApplyName}
+                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
