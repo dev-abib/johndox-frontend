@@ -12,8 +12,8 @@ const AccountSettingsPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [lastName, setLastName] = useState("Taylor");
   const [firstName, setFirstName] = useState("Robert");
-  const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [tempLastName, setTempLastName] = useState(lastName);
+  const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [tempFirstName, setTempFirstName] = useState(firstName);
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
