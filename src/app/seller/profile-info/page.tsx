@@ -6,6 +6,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
+import { Mail } from "@/Components/Svg/SvgContainer";
 
 const AccountSettingsPage = () => {
   const [lastName, setLastName] = useState("Taylor");
@@ -13,17 +14,35 @@ const AccountSettingsPage = () => {
   const [tempLastName, setTempLastName] = useState(lastName);
   const [tempFirstName, setTempFirstName] = useState(firstName);
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [tempPhoneNumber, setTempPhoneNumber] = useState("");
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
   const handleApplyName = () => {
     setFirstName(tempFirstName);
-    setLastName(tempLastName);    
+    setLastName(tempLastName);
     setIsNameModalOpen(false);
   };
 
-  const handleCancel = () => {
+  const handleCancelName = () => {
     setTempFirstName(firstName);
     setTempLastName(lastName);
     setIsNameModalOpen(false);
+  };
+
+  const handleApplyPhone = () => {
+    setPhoneNumber(tempPhoneNumber);
+    setIsPhoneModalOpen(false);
+  };
+
+  const handleCancelPhone = () => {
+    setTempPhoneNumber(phoneNumber);
+    setIsPhoneModalOpen(false);
+  };
+
+  const openPhoneModal = () => {
+    setTempPhoneNumber(phoneNumber);
+    setIsPhoneModalOpen(true);
   };
 
   return (
@@ -41,7 +60,6 @@ const AccountSettingsPage = () => {
             <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Personal Info
             </h4>
-
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
@@ -71,7 +89,6 @@ const AccountSettingsPage = () => {
                 </Link>
               </div>
             </div>
-
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
                 <div className="flex-1 w-full">
@@ -91,7 +108,6 @@ const AccountSettingsPage = () => {
                 </button>
               </div>
             </div>
-
             <h4 className="text-[20px] lg:text-[28px] font-medium text-[#101010] lg:mb-10 mb-5">
               Sign in & Security
             </h4>
@@ -119,14 +135,15 @@ const AccountSettingsPage = () => {
                   <h2 className="text-[#404040] lg:text-[24px] text-[20px] font-medium mb-2">
                     Phone Number
                   </h2>
-                  <input
-                    type="tel"
-                    placeholder="Add your phone number"
-                    className="w-full pt-3 text-[#5F5F5F] rounded-xl outline-none lg:text-[18px] text-base"
-                  />
+                  <p className="pt-3 text-[#5F5F5F] lg:text-[18px] text-base">
+                    {phoneNumber || "Add your phone number"}
+                  </p>
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
-                  Add
+                <button
+                  onClick={openPhoneModal}
+                  className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap"
+                >
+                  {phoneNumber ? "Edit" : "Add"}
                 </button>
               </div>
             </div>
@@ -152,20 +169,19 @@ const AccountSettingsPage = () => {
         </div>
       </Container>
 
+      {/* Name Edit Modal */}
       {isNameModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-xl w-full p-8 relative">
             <button
-              onClick={handleCancel}
+              onClick={handleCancelName}
               className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 text-2xl"
             >
               ×
             </button>
-
             <h3 className="text-2xl font-medium text-[#101010] text-center mb-8">
               Edit Name
             </h3>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-[#404040] mb-2">
@@ -190,10 +206,9 @@ const AccountSettingsPage = () => {
                 />
               </div>
             </div>
-
             <div className="flex justify-end gap-3 mt-8">
               <button
-                onClick={handleCancel}
+                onClick={handleCancelName}
                 className="px-6 lg:py-3 py-2 rounded-lg border border-[#0085FF] text-[#0085FF] hover:bg-[#0085FF]/5 transition"
               >
                 Cancel
@@ -203,6 +218,45 @@ const AccountSettingsPage = () => {
                 className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
               >
                 Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Phone Number Modal */}
+      {isPhoneModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-xl w-full p-8 relative">
+            <button
+              onClick={handleCancelPhone}
+              className="absolute top-6 right-6  hover:text-gray-600 text-5xl text-[#0085FF]"
+            >
+              ×
+            </button>
+            <h3 className="text-2xl font-medium text-[#0085FF] text-center mb-8">
+              {phoneNumber ? "Edit Phone Number" : "Add Phone Number"}
+            </h3>
+            <div className="lg:w-[270px] w-25 lg:h-[270px] h-25 bg-[#E6F3FF] rounded-full flex justify-center items-center mx-auto lg:mt-20 lg:mb-5 my-5">
+              <Mail className="lg:w-[220px] lg:h-[220px] h-20 w-20" />
+            </div>
+            <div className="max-w-md mx-auto">
+              <label className="block text-sm text-[#0085FF] mb-2 text-center">
+                To add number put your number here
+              </label>
+              <input
+                type="tel"
+                value={tempPhoneNumber}
+                onChange={e => setTempPhoneNumber(e.target.value)}
+                className="w-full px-4 lg:py-3 py-2 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0085FF] text-lg"
+              />
+            </div>
+            <div className="flex justify-center gap-3 mt-8">
+              <button
+                onClick={handleApplyPhone}
+                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
+              >
+                Next
               </button>
             </div>
           </div>
