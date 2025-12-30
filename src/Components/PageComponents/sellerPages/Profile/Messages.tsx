@@ -1,10 +1,11 @@
 "use client";
 import Image from "next/image";
 import { CiUser } from "react-icons/ci";
-import { IoSend } from "react-icons/io5";
-import EmojiPicker from "emoji-picker-react";
+import { IoSend, IoArrowBack } from "react-icons/io5";
 import { BsEmojiSmile } from "react-icons/bs";
 import { VscFileMedia } from "react-icons/vsc";
+import { IoStar, IoStarOutline } from "react-icons/io5"; // For stars
+import EmojiPicker from "emoji-picker-react";
 import React, { useRef, useState } from "react";
 import Profile from "../../../../Assets/profilepic.png";
 
@@ -54,8 +55,12 @@ const Messages = () => {
   const [image, setImage] = useState<File | null>(null);
   const [showEmoji, setShowEmoji] = useState(false);
 
-  const fileRef = useRef<HTMLInputElement>(null);
+  // Rating Modal States
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
 
+  const fileRef = useRef<HTMLInputElement>(null);
   const imagePreview = image ? URL.createObjectURL(image) : null;
 
   const handleSend = () => {
@@ -91,8 +96,22 @@ const Messages = () => {
     setShowEmoji(false);
   };
 
+  const handleApplyRating = () => {
+    console.log("Rating submitted:", {
+      rating,
+      reviewText,
+      buyer: activeMessage.user,
+    });
+    // Here you would send to backend
+    setIsRatingModalOpen(false);
+    setRating(0);
+    setReviewText("");
+    alert("Thank you for your rating!");
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
+      {/* Conversations List */}
       {!activeMessage && (
         <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl">
           <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
@@ -135,21 +154,33 @@ const Messages = () => {
         </div>
       )}
 
+      {/* Active Chat */}
       {activeMessage && (
-        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-8 rounded-2xl">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
-              {activeMessage.title}
-            </h2>
+        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 px-4  lg:py-10 lg:px-8 rounded-2xl">
+          {/* Chat Header */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setActiveMessage(null)}
+                className="lg:hidden text-[#0085FF] text-2xl"
+              >
+                <IoArrowBack />
+              </button>
+              <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
+                {activeMessage.title}
+              </h2>
+            </div>
+
             <button
-              className="flex gap-1 items-center bg-[#0085FF] px-4 py-2 rounded-lg text-white text-sm lg:text-base"
-              onClick={() => setActiveMessage(null)}
+              onClick={() => setIsRatingModalOpen(true)}
+              className="flex gap-2 items-center bg-[#0085FF] px-5 py-3 rounded-xl text-white font-medium hover:bg-[#006edc] transition"
             >
-              Back
+              Give Rating
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto flex flex-col gap-4 pb-4">
+          {/* Messages */}
+          <div className=" overflow-y-auto h-[600px] flex flex-col gap-6 pb-4">
             {activeMessage.messages.map((msg: any) => (
               <div
                 key={msg.id}
@@ -158,7 +189,7 @@ const Messages = () => {
                 }`}
               >
                 {msg.role === "user" && (
-                  <div className="h-10 w-10 rounded-full flex justify-center items-center bg-[#E6F3FF] text-sm font-bold">
+                  <div className="h-10 w-10 rounded-full flex justify-center items-center bg-[#E6F3FF] text-[#0085FF] text-sm font-bold">
                     {msg.sender
                       .split(" ")
                       .map((n: string) => n[0])
@@ -166,25 +197,25 @@ const Messages = () => {
                   </div>
                 )}
 
-                <div className="max-w-[70%]">
-                  <div className="bg-white rounded-xl p-4 lg:p-6">
-                    <h4 className="text-[#5F5F5F] text-sm lg:text-base mb-1">
+                <div className="max-w-[75%]">
+                  <div className="bg-white rounded-3xl px-5 py-4 shadow-sm border border-gray-100">
+                    <h4 className="text-[#5F5F5F] text-sm font-medium mb-1">
                       {msg.sender}
                     </h4>
                     {msg.message && (
-                      <p className="text-[#616161] text-sm lg:text-base">
+                      <p className="text-[#101010] text-base leading-relaxed">
                         {msg.message}
                       </p>
                     )}
                     {msg.image && (
-                      <img
+                      <Image
                         src={msg.image}
                         alt="sent"
-                        className="rounded-lg mt-2 w-[20px] h-[20px]"
+                        className="rounded-lg w-[40px] h-[40px] mt-3 max-w-full shrink-0"
                       />
                     )}
                   </div>
-                  <p className="text-[#8AC7FF] text-xs lg:text-sm mt-1">
+                  <p className="text-[#94A3B8] text-xs mt-2 text-right">
                     {msg.time}
                   </p>
                 </div>
@@ -192,17 +223,20 @@ const Messages = () => {
                 {msg.role === "agent" && (
                   <Image
                     src={Profile}
-                    alt="profile"
-                    className="rounded-full w-[30px] h-[30px]"
+                    alt="You"
+                    width={10}
+                    height={10}
+                    className="rounded-full w-[40px] h-[40px] object-cover border-2 border-white shadow shrink-0"
                   />
                 )}
               </div>
             ))}
           </div>
 
+          {/* Image Preview */}
           {imagePreview && (
-            <div className="mb-3 flex items-center gap-4">
-              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-[#E7E7E7]">
+            <div className="mb-4 flex items-center gap-4">
+              <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
                 <Image
                   src={imagePreview}
                   alt="preview"
@@ -211,32 +245,37 @@ const Messages = () => {
                 />
                 <button
                   onClick={() => setImage(null)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
                 >
-                  ✕
+                  ×
                 </button>
               </div>
             </div>
           )}
 
-          <div className="relative bg-white border border-[#E7E7E7] rounded-xl px-4 py-3 flex justify-between items-center mt-2">
-            <div className="flex gap-3 items-center flex-1">
-              <BsEmojiSmile
-                className="cursor-pointer text-lg lg:text-xl"
-                onClick={() => setShowEmoji(p => !p)}
-              />
-              <input
-                value={text}
-                onChange={e => setText(e.target.value)}
-                type="text"
-                placeholder="Type your message"
-                className="outline-none flex-1 text-sm lg:text-base"
-              />
-            </div>
+          {/* Input */}
+          <div className="relative bg-white border border-[#E7E7E7] rounded-2xl px-5 py-4 flex items-center gap-4 mt-4">
+            <BsEmojiSmile
+              className="cursor-pointer text-[#0085FF] text-xl"
+              onClick={() => setShowEmoji(p => !p)}
+            />
 
-            <div className="flex items-center gap-3">
+            <input
+              value={text}
+              onChange={e => setText(e.target.value)}
+              onKeyDown={e =>
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                (e.preventDefault(), handleSend())
+              }
+              type="text"
+              placeholder="Type your message"
+              className="flex-1 outline-none text-base"
+            />
+
+            <div className="flex items-center gap-4">
               <VscFileMedia
-                className="cursor-pointer text-lg lg:text-xl"
+                className="cursor-pointer text-[#0085FF] text-xl"
                 onClick={() => fileRef.current?.click()}
               />
               <input
@@ -247,8 +286,8 @@ const Messages = () => {
                 onChange={e => setImage(e.target.files?.[0] || null)}
               />
               <IoSend
-                className="cursor-pointer text-blue-500 text-xl lg:text-2xl"
                 onClick={handleSend}
+                className="cursor-pointer text-[#0085FF] text-2xl hover:scale-110 transition"
               />
             </div>
 
@@ -257,6 +296,69 @@ const Messages = () => {
                 <EmojiPicker onEmojiClick={e => setText(p => p + e.emoji)} />
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Rating Modal - Matches Image ID: 4 Exactly */}
+      {isRatingModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsRatingModalOpen(false)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 text-2xl"
+            >
+              ×
+            </button>
+
+            {/* Title */}
+            <h3 className="text-2xl font-medium text-[#101010] text-center mb-8">
+              Rating
+            </h3>
+
+            {/* Stars */}
+            <div className="flex justify-center gap-4 mb-10">
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className="text-5xl transition transform hover:scale-110"
+                >
+                  {rating >= star ? (
+                    <IoStar className="text-yellow-400" />
+                  ) : (
+                    <IoStarOutline className="text-gray-300" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Review Textarea */}
+            <textarea
+              value={reviewText}
+              onChange={e => setReviewText(e.target.value)}
+              placeholder="Robert"
+              className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-lg text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0085FF] resize-none"
+              rows={4}
+            />
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4 mt-8">
+              <button
+                onClick={() => setIsRatingModalOpen(false)}
+                className="px-8 py-3 rounded-xl border border-[#0085FF] text-[#0085FF] font-medium hover:bg-[#0085FF]/5 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleApplyRating}
+                disabled={rating === 0}
+                className="px-8 py-3 rounded-xl bg-[#0085FF] text-white font-medium hover:bg-[#006edc] transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Apply
+              </button>
+            </div>
           </div>
         </div>
       )}
