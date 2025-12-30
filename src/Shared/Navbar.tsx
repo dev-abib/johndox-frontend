@@ -8,11 +8,12 @@ import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 
 const Navbar = () => {
+  
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = () => {                       
       setScrolled(window.scrollY > 100);
     };
 
@@ -20,10 +21,9 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const languages = ["English", "Deutsch"];
   const [langOpen, setLangOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("English");
-
-  const languages = ["English", "Deutsch"];
 
   return (
     <nav
@@ -166,7 +166,7 @@ const Navbar = () => {
                   About
                 </Link>
               </li>
-              
+
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
@@ -218,7 +218,7 @@ const Navbar = () => {
               >
                 Sign Up
               </Link>
-            </div>
+            </div> 
           </div>
           {isOpen && (
             <div
@@ -231,5 +231,4 @@ const Navbar = () => {
     </nav>
   );
 };
-
 export default Navbar;
