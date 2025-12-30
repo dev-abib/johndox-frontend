@@ -4,18 +4,18 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
+import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
-import { Mail } from "@/Components/Svg/SvgContainer";
 
 const AccountSettingsPage = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [lastName, setLastName] = useState("Taylor");
   const [firstName, setFirstName] = useState("Robert");
+  const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [tempLastName, setTempLastName] = useState(lastName);
   const [tempFirstName, setTempFirstName] = useState(firstName);
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
   const handleApplyName = () => {
