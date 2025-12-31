@@ -48,20 +48,17 @@ const conversationsData = [
 ];
 
 const Messages = () => {
-  const [conversations, setConversations] = useState(conversationsData);
-  const [activeMessage, setActiveMessage] = useState<any>(null);
-
   const [text, setText] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [showEmoji, setShowEmoji] = useState(false);
-
-  // Rating Modal States
-  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-
   const fileRef = useRef<HTMLInputElement>(null);
+  const [reviewText, setReviewText] = useState("");
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [activeMessage, setActiveMessage] = useState<any>(null);
   const imagePreview = image ? URL.createObjectURL(image) : null;
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [conversations, setConversations] = useState(conversationsData);
+
 
   const handleSend = () => {
     if (!text && !image) return;
@@ -102,7 +99,6 @@ const Messages = () => {
       reviewText,
       buyer: activeMessage.user,
     });
-    // Here you would send to backend
     setIsRatingModalOpen(false);
     setRating(0);
     setReviewText("");
@@ -111,7 +107,6 @@ const Messages = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      {/* Conversations List */}
       {!activeMessage && (
         <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl">
           <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
