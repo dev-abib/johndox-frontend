@@ -1606,3 +1606,14 @@ export function Mail({ className }: { className?: string }) {
     </svg>
   );
 }
+export function Convert({ className }: { className?: string }) {
+  return (
+   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.83464 17.5003L20.233 17.5003C21.4064 17.5003 21.9931 17.5003 22.1391 17.8604C22.2851 18.2205 21.8703 18.6443 21.0405 19.492L18.4219 22.167" stroke="#404040" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.83464 17.5003L20.233 17.5003C21.4064 17.5003 21.9931 17.5003 22.1391 17.8604C22.2851 18.2205 21.8703 18.6443 21.0405 19.492L18.4219 22.167" stroke="black" stroke-opacity="0.2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22.168 10.5L7.76963 10.5C6.5962 10.5 6.00949 10.5 5.86347 10.1399C5.71746 9.7798 6.13233 9.35599 6.96207 8.50837L9.58069 5.83333" stroke="#404040" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22.168 10.5L7.76963 10.5C6.5962 10.5 6.00949 10.5 5.86347 10.1399C5.71746 9.7798 6.13233 9.35599 6.96207 8.50837L9.58069 5.83333" stroke="black" stroke-opacity="0.2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+  );
+}
