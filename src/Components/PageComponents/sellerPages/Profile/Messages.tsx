@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import { CiUser } from "react-icons/ci";
-import { IoSend, IoArrowBack } from "react-icons/io5";
+import EmojiPicker from "emoji-picker-react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { VscFileMedia } from "react-icons/vsc";
-import { IoStar, IoStarOutline } from "react-icons/io5"; // For stars
-import EmojiPicker from "emoji-picker-react";
 import React, { useRef, useState } from "react";
+import { IoSend, IoArrowBack } from "react-icons/io5";
+import { IoStar, IoStarOutline } from "react-icons/io5"; 
 import Profile from "../../../../Assets/profilepic.png";
 
 const conversationsData = [
