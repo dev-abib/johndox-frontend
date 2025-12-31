@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import { CiUser } from "react-icons/ci";
-import { IoSend, IoArrowBack } from "react-icons/io5";
+import EmojiPicker from "emoji-picker-react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { VscFileMedia } from "react-icons/vsc";
-import { IoStar, IoStarOutline } from "react-icons/io5"; // For stars
-import EmojiPicker from "emoji-picker-react";
 import React, { useRef, useState } from "react";
+import { IoSend, IoArrowBack } from "react-icons/io5";
+import { IoStar, IoStarOutline } from "react-icons/io5"; 
 import Profile from "../../../../Assets/profilepic.png";
 
 const conversationsData = [
@@ -48,20 +48,17 @@ const conversationsData = [
 ];
 
 const Messages = () => {
-  const [conversations, setConversations] = useState(conversationsData);
-  const [activeMessage, setActiveMessage] = useState<any>(null);
-
   const [text, setText] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [showEmoji, setShowEmoji] = useState(false);
-
-  // Rating Modal States
-  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-
   const fileRef = useRef<HTMLInputElement>(null);
+  const [reviewText, setReviewText] = useState("");
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [activeMessage, setActiveMessage] = useState<any>(null);
   const imagePreview = image ? URL.createObjectURL(image) : null;
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [conversations, setConversations] = useState(conversationsData);
+
 
   const handleSend = () => {
     if (!text && !image) return;
@@ -102,7 +99,6 @@ const Messages = () => {
       reviewText,
       buyer: activeMessage.user,
     });
-    // Here you would send to backend
     setIsRatingModalOpen(false);
     setRating(0);
     setReviewText("");
@@ -111,7 +107,6 @@ const Messages = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      {/* Conversations List */}
       {!activeMessage && (
         <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl">
           <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
@@ -154,11 +149,9 @@ const Messages = () => {
         </div>
       )}
 
-      {/* Active Chat */}
       {activeMessage && (
-        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 px-4  lg:py-10 lg:px-8 rounded-2xl">
-          {/* Chat Header */}
-          <div className="flex justify-between items-center mb-6">
+        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 md:px-4 px-2  lg:py-10 lg:px-8 rounded-2xl">
+          <div className="md:flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setActiveMessage(null)}
@@ -166,20 +159,21 @@ const Messages = () => {
               >
                 <IoArrowBack />
               </button>
-              <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
+              <h2 className="text-[#404040] lg:text-2xl md:text-lg text-base font-medium">
                 {activeMessage.title}
               </h2>
             </div>
 
-            <button
-              onClick={() => setIsRatingModalOpen(true)}
-              className="flex gap-2 items-center bg-[#0085FF] px-5 py-3 rounded-xl text-white font-medium hover:bg-[#006edc] transition"
-            >
-              Give Rating
-            </button>
+            <div className="flex md:justify-start justify-end md:mt-0 mt-5">
+              <button
+                onClick={() => setIsRatingModalOpen(true)}
+                className="flex gap-2 items-center bg-[#0085FF] px-5 py-3 rounded-xl text-white font-medium hover:bg-[#006edc] transition"
+              >
+                Give Rating
+              </button>
+            </div>
           </div>
 
-          {/* Messages */}
           <div className=" overflow-y-auto h-[600px] flex flex-col gap-6 pb-4">
             {activeMessage.messages.map((msg: any) => (
               <div
@@ -233,7 +227,6 @@ const Messages = () => {
             ))}
           </div>
 
-          {/* Image Preview */}
           {imagePreview && (
             <div className="mb-4 flex items-center gap-4">
               <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
@@ -253,10 +246,9 @@ const Messages = () => {
             </div>
           )}
 
-          {/* Input */}
-          <div className="relative bg-white border border-[#E7E7E7] rounded-2xl px-5 py-4 flex items-center gap-4 mt-4">
+          <div className="relative bg-white border border-[#E7E7E7] rounded-2xl lg:px-5 px-2 lg:py-4 py-3 flex items-center lg:gap-4 gap-2 mt-4">
             <BsEmojiSmile
-              className="cursor-pointer text-[#0085FF] text-xl"
+              className="cursor-pointer text-[#0085FF] md:text-xl text-lg"
               onClick={() => setShowEmoji(p => !p)}
             />
 
@@ -273,9 +265,9 @@ const Messages = () => {
               className="flex-1 outline-none text-base"
             />
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center lg:gap-4 gap-2">
               <VscFileMedia
-                className="cursor-pointer text-[#0085FF] text-xl"
+                className="cursor-pointer text-[#0085FF] lg:text-xl text-base"
                 onClick={() => fileRef.current?.click()}
               />
               <input
@@ -287,7 +279,7 @@ const Messages = () => {
               />
               <IoSend
                 onClick={handleSend}
-                className="cursor-pointer text-[#0085FF] text-2xl hover:scale-110 transition"
+                className="cursor-pointer text-[#0085FF] lg:text-2xl text-lg hover:scale-110 transition"
               />
             </div>
 
@@ -300,7 +292,6 @@ const Messages = () => {
         </div>
       )}
 
-      {/* Rating Modal - Matches Image ID: 4 Exactly */}
       {isRatingModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative">
