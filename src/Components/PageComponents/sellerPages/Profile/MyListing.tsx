@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { BsPlusLg } from "react-icons/bs";
 import { MdEdit, MdDelete } from "react-icons/md";
@@ -17,10 +18,12 @@ const MyListing = () => {
             Manage your property listings
           </h5>
         </div>
-        <button className="flex md:mt-0 mt-3 gap-x-1 items-center bg-[#0085FF] px-5 py-3 rounded-[12px] cursor-pointer text-white group hover:text-black hover:bg-transparent duration-300 ease-in-out border border-[#0085FF]">
-          <BsPlusLg className="text-white group-hover:text-black" />
-          Add New Listing
-        </button>
+        <Link href={"/seller/new-listing"}>
+          <button className="flex md:mt-0 mt-3 gap-x-1 items-center bg-[#0085FF] px-5 py-3 rounded-[12px] cursor-pointer text-white group hover:text-black hover:bg-transparent duration-300 ease-in-out border border-[#0085FF]">
+            <BsPlusLg className="text-white group-hover:text-black" />
+            Add New Listing
+          </button>
+        </Link>
       </div>
 
       <div className="mt-7.5">
