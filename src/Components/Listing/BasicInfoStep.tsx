@@ -46,6 +46,7 @@ export default function BasicInfoStep({
   watch,
   setValue,
 }: BasicInfoStepProps) {
+
   const priceUSD = watch("priceUSD");
   const priceHNL = watch("priceHNL");
 
@@ -258,4 +259,4 @@ export default function BasicInfoStep({
       </div>
     </div>
   );
-}
+};

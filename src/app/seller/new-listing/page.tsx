@@ -79,8 +79,8 @@ export default function CreateListingPage() {
   const {
     register,
     watch,
-    setValue,
     trigger,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = methods;
@@ -205,7 +205,7 @@ export default function CreateListingPage() {
                 onClick={onPrev}
                 disabled={currentStep === 1}
                 className={`px-8 py-3 rounded-lg font-medium transition cursor-pointer ${
-                  currentStep === 1
+                  currentStep === 1        
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
