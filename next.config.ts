@@ -20,13 +20,17 @@ const nextConfig = {
         hostname: domain,
         pathname: "/**",
       },
-
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
       // iBB image hosting (logo)
       {
         protocol: "https",
         hostname: "i.ibb.co.com",
         pathname: "/**",
       },
+
     ],
   },
 };
