@@ -59,7 +59,7 @@ const LoanCalculatorForm = () => {
                     type="number"
                     {...field}
                     placeholder="$ 950,000"
-                    className="w-full p-3 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 border border-[#CFCFCF] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 )}
               />
@@ -90,7 +90,7 @@ const LoanCalculatorForm = () => {
                     type="number"
                     {...field}
                     placeholder="$ 2,000"
-                    className="w-full p-3 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 border border-[#CFCFCF] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 )}
               />
@@ -121,7 +121,7 @@ const LoanCalculatorForm = () => {
                     type="number"
                     {...field}
                     placeholder="30"
-                    className="w-full p-3 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 border border-[#CFCFCF] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 )}
               />
@@ -152,7 +152,7 @@ const LoanCalculatorForm = () => {
                     type="number"
                     {...field}
                     placeholder="10%"
-                    className="w-full p-3 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 border border-[#CFCFCF] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 )}
               />

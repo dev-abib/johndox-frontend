@@ -4,6 +4,7 @@ import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListProp
 import BrowseDetails from "@/Components/PageComponents/mainPages/BrowseDetails/BrowseDetails";
 import BrowseDescription from "@/Components/PageComponents/mainPages/BrowseDetails/BrowseDescription";
 import LoanCalculatorForm from "@/Components/PageComponents/buyerPages/LoanCalculatorForm";
+import CurrencyConverter from "@/Components/PageComponents/buyerPages/CurrencyConverter";
 
 const page = () => {
   return (
@@ -11,7 +12,8 @@ const page = () => {
       <BrowseDetails />
       <BrowseDescription />
       <Maps />
-          <LoanCalculatorForm /> 
+      <LoanCalculatorForm />
+      <CurrencyConverter />
       <ListPropertyCTA />
     </>
   );

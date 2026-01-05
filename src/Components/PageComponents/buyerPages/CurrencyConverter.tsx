@@ -1,93 +1,95 @@
 "use client";
 
+import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import Container from "@/Components/Common/Container";
+
+type ConverterForm = {
+  lempira: string;
+  downPayment: string;
+};
 
 const CurrencyConverter = () => {
-  const { control, handleSubmit, setValue, formState: { errors } } = useForm();
-  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
-  const [currency, setCurrency] = useState("USD");
-  const [isReversed, setIsReversed] = useState(false);
+  const { register, handleSubmit, setValue, watch } = useForm<ConverterForm>({
+    defaultValues: {
+      lempira: "$ 950,000",
+      downPayment: "$ 2000",
+    },
+  });
 
-  const conversionRate = 1; // Define the conversion rate (e.g., 1 USD = 24 Lempira)
+  const [isSwapped, setIsSwapped] = useState(false);
 
-  const handleConversion = (data: any) => {
-    const amount = parseFloat(data.amount);
-    if (isNaN(amount)) {
-      alert("Please enter a valid number");
-      return;
-    }
-    const result = isReversed
-      ? amount / conversionRate
-      : amount * conversionRate;
-
-    setConvertedAmount(result);
+  const onSubmit = (data: ConverterForm) => {
+    console.log("Converter Data:", data);
   };
 
-  const handleSwitchCurrency = () => {
-    setIsReversed(prev => !prev);
-    setValue("amount", ""); // Reset the amount field when switching currencies
-    setConvertedAmount(null);
+  const handleSwap = () => {
+    const left = watch("lempira");
+    const right = watch("downPayment");
+
+    setValue("lempira", right);
+    setValue("downPayment", left);
+
+    setIsSwapped((prev) => !prev);
   };
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-lg w-full max-w-2xl mx-auto">
-      <h2 className="text-xl font-semibold text-[#212B36] mb-4">Currency Converter</h2>
+    <Container>
+      <div className="w-full mb-30">
+        {/* Title */}
+        <h2 className="text-xl font-semibold text-[#212B36] mb-4">
+          Currency Converter
+        </h2>
 
-      <form onSubmit={handleSubmit(handleConversion)} className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          {/* Amount Field */}
-          <div>
-            <label htmlFor="amount" className="text-sm font-medium text-[#5F5F5F]">
-              {isReversed ? "Amount in Lempira" : "Amount in USD"}
-            </label>
-            <Controller
-              name="amount"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Amount is required" }}
-              render={({ field }) => (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Gray Wrapper */}
+          <div className="bg-[#F9FAFB] rounded-xl px-6 py-8">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center">
+              {/* Left Input */}
+              <div>
+                <label className="block text-sm font-medium text-[#5F5F5F] mb-2">
+                  Lempira
+                </label>
                 <input
-                  type="number"
-                  {...field}
-                  placeholder="Enter amount"
-                  className="w-full p-3 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("lempira")}
+                  className="w-full border border-[#CFCFCF] bg-white px-4 py-3 rounded-lg text-sm text-[#212B36] focus:outline-none focus:ring-2 focus:ring-primary-blue"
                 />
-              )}
-            />
-            {errors.amount && <p className="text-sm text-red-500">{typeof errors.amount.message === 'string' ? errors.amount.message : ''}</p>}
+              </div>
+
+              {/* Swap Icon */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleSwap}
+                  className="w-10 h-10 rounded-full bg-[#ECECEC] flex items-center justify-center hover:bg-[#E0E0E0] transition cursor-pointer"
+                >
+                  <span className="text-lg text-[#212B36]">⇄</span>
+                </button>
+              </div>
+
+              {/* Right Input */}
+              <div>
+                <label className="block text-sm font-medium text-[#5F5F5F] mb-2">
+                  Down Payment
+                </label>
+                <input
+                  {...register("downPayment")}
+                  className="w-full border border-[#CFCFCF] bg-white px-4 py-3 rounded-lg text-sm text-[#212B36] focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Currency Switch Button */}
-          <div className="flex justify-center items-center">
-            <button
-              type="button"
-              onClick={handleSwitchCurrency}
-              className="text-xl text-[#0085FF] hover:text-blue-500"
-            >
-              ⇄
-            </button>
-          </div>
-        </div>
-
-        {/* Convert Button */}
-        <button
-          type="submit"
-          className="w-full bg-[#0085FF] text-white py-3 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300"
-        >
-          Convert
-        </button>
-
-        {/* Converted Amount */}
-        {convertedAmount !== null && (
-          <div className="mt-6 text-center text-[#212B36] font-semibold">
-            <p className="text-lg">
-              {isReversed ? `Amount in USD: $${convertedAmount.toFixed(2)}` : `Amount in Lempira: L${convertedAmount.toFixed(2)}`}
-            </p>
-          </div>
-        )}
-      </form>
-    </div>
+          {/* OK Button */}
+          <button
+            type="submit"
+            className="mt-6 w-[100px] bg-primary-blue text-white py-2 rounded-lg text-sm font-medium hover:opacity-90 transition cursor-pointer"
+          >
+            OK
+          </button>
+        </form>
+      </div>
+    </Container>
   );
 };
 
