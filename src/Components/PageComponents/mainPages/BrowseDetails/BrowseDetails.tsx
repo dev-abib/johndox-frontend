@@ -16,6 +16,10 @@ import {
   Star,
   Video,
 } from "@/Components/Svg/SvgContainer";
+import TourRequestModal from "../../buyerPages/TourRequestModal";
+import MessageModal from "../../buyerPages/MessageModal";
+
+
 
 const BrowseDetails: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -35,8 +39,27 @@ const BrowseDetails: React.FC = () => {
       setIsPlaying(false);
     }
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleTourRequestClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+
+  const openMessageModal = () => {
+    setIsMessageModalOpen(true);
+  };
+
+  const closeMessageModal = () => {
+    setIsMessageModalOpen(false);
+  };
 
   return (
+<>
     <section className="pt-10">
       <Container>
         <div className="flex flex-col lg:flex-row gap-y-4.5 lg:gap-x-4.5 2xl:gap-x-8.5">
@@ -159,12 +182,18 @@ const BrowseDetails: React.FC = () => {
               </div>
             </div>
             <div className="flex gap-x-7 mt-8">
-              <button className="w-full bg-[#0085FF] text-white font-medium text-[13px] 2xl:text-lg py-2 2xl:py-3 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
-                Request a tour
-              </button>
-              <button className="w-full hover:bg-[#0085FF] hover:text-white font-medium text-[13px]  2xl:text-lg py-2 2xl:py-3 rounded-2xl bg-transparent text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
-                Message
-              </button>
+      <button
+        onClick={handleTourRequestClick}
+        className="w-full bg-[#0085FF] text-white font-medium text-[13px] 2xl:text-lg py-2 2xl:py-3 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
+      >
+        Request a tour
+      </button>
+      <button
+        onClick={openMessageModal}
+        className="w-full hover:bg-[#0085FF] hover:text-white font-medium text-[13px] 2xl:text-lg py-2 2xl:py-3 rounded-2xl bg-transparent text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
+      >
+        Message
+      </button>
             </div>
           </div>
         </div>
@@ -227,6 +256,14 @@ const BrowseDetails: React.FC = () => {
         )}
       </Container>
     </section>
+    
+
+    {/* Modal */}
+      <TourRequestModal isOpen={isModalOpen} onClose={handleCloseModal} />
+
+       {/* Modal */}
+      <MessageModal isOpen={isMessageModalOpen} onClose={closeMessageModal} />
+</>
   );
 };
 
