@@ -9,6 +9,7 @@ import {
   Bathtub,
   Bed,
   Favourite,
+  Favourites,
   Location,
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
@@ -16,6 +17,18 @@ import Link from "next/link";
 const Featured = () => {
   const [showAll, setShowAll] = useState(false);
   const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 6);
+
+  // ✅ NEW: favorite state for each card
+  const [favoriteStates, setFavoriteStates] = useState(
+    Featuredata.map(() => false)
+  );
+
+  // ✅ NEW: toggle function
+  const toggleFavorite = (index: number) => {
+    setFavoriteStates(prev =>
+      prev.map((fav, i) => (i === index ? !fav : fav))
+    );
+  };
 
   return (
     <section className="py-16 md:py-24 xl:py-[150px]">
@@ -47,8 +60,12 @@ const Featured = () => {
                   />
                 </figure>
 
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors">
-                  <Favourite />
+                {/* ✅ UPDATED: Toggle Icon */}
+                <div
+                  onClick={() => toggleFavorite(index)}
+                  className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
+                >
+                  {favoriteStates[index] ? <Favourites /> : <Favourite />}
                 </div>
               </div>
 
@@ -66,7 +83,9 @@ const Featured = () => {
 
                 <div className="flex items-center gap-2.5 mt-4">
                   <Location
-                    className={"w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "}
+                    className={
+                      "w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "
+                    }
                   />
                   <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
                     {item.location}
@@ -86,7 +105,8 @@ const Featured = () => {
                     </div>
                   ))}
                 </div>
-                <Link href={`/browse/${item?.id}`}>
+
+                <Link href={`/buyerlayout/browse/${item?.id}`}>
                   <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                     Contact
                   </button>
