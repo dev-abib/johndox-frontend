@@ -16,7 +16,7 @@ const AccountSettingsPage = () => {
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [tempFirstName, setTempFirstName] = useState(firstName);
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); 
 
   const handleApplyName = () => {
     setFirstName(tempFirstName);
