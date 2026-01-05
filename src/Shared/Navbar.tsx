@@ -2,20 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { CgProfile } from "react-icons/cg";
-import { GoListUnordered } from "react-icons/go";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 import Container from "@/Components/Common/Container";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
-import { AngleBottomSvg, LoveSvg } from "@/Components/Svg/SvgContainer2";
+import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 
 const Navbar = () => {
-  // ✅ Static state for now (change it to "buyer" or "seller" to test)
-  const [userType, setUserType] = useState<"guest" | "buyer" | "seller">("seller");
-
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -32,284 +27,92 @@ const Navbar = () => {
   const [langOpen, setLangOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("English");
 
-  // ================================
-  // ✅ 3 ARRAYS CONFIG (LINKS + BUTTONS)
-  // ================================
-  const NAV_CONFIG = useMemo(() => {
-    return {
-      guest: {
-        logoHref: "/",
-        desktopLinks: [
-          {
-            type: "li-link",
-            label: "Home",
-            href: "/",
-            linkClassName: "hover:text-black transition",
-          },
-          {
-            type: "link-li",
-            label: "Browse Properties",
-            href: "/browse",
-            liClassName:
-              "flex items-center gap-1 cursor-pointer hover:text-black transition",
-          },
-          {
-            type: "li-link",
-            label: "For Sellers",
-            href: "/forseller",
-            linkClassName: "hover:text-black transition",
-          },
-          {
-            type: "li-link",
-            label: "About",
-            href: "/about",
-            linkClassName: "hover:text-black transition",
-          },
-        ],
-        desktopButtons: [
-          {
-            label: "Log In",
-            href: "/auth/login",
-            icon: undefined,
-            className:
-              "rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition",
-          },
-          {
-            label: "Sign Up",
-            href: "/auth/register",
-            icon: undefined,
-            className:
-              "rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue",
-          },
-        ],
-        mobileLinks: [
-          {
-            type: "li-link",
-            label: "Home",
-            href: "/",
-            closeOnClick: true,
-          },
-          {
-            type: "link-li",
-            label: "Browse Properties",
-            href: "/browse",
-            liClassName: "flex items-center gap-1 cursor-pointer",
-            closeOnClick: false,
-          },
-          {
-            type: "li-link",
-            label: "For Sellers",
-            href: "/forseller",
-            closeOnClick: true,
-          },
-          {
-            type: "li-link",
-            label: "About",
-            href: "/about",
-            closeOnClick: true,
-          },
-        ],
-        mobileButtons: [
-          {
-            label: "Log In",
-            href: "/auth/login",
-            icon: undefined,
-            className:
-              "rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue",
-          },
-          {
-            label: "Sign Up",
-            href: "/auth/register",
-            icon: undefined,
-            className:
-              "rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white",
-          },
-        ],
+  // ✅ Guest-only static config
+  const config = {
+    logoHref: "/",
+    desktopLinks: [
+      {
+        type: "li-link",
+        label: "Home",
+        href: "/",
+        linkClassName: "hover:text-black transition",
       },
-
-      buyer: {
-        logoHref: "/buyerlayout",
-        desktopLinks: [
-          {
-            type: "li-link",
-            label: "Home",
-            href: "/buyerlayout",
-            linkClassName: "hover:text-black transition",
-          },
-          {
-            type: "link-li",
-            label: "Browse Properties",
-            href: "/seller/pricing",
-            liClassName:
-              "flex items-center gap-1 cursor-pointer hover:text-black transition",
-          },
-          {
-            type: "li-link",
-            label: "About",
-            href: "/seller/about",
-            linkClassName: "hover:text-black transition",
-          },
-          {
-            type: "li-link",
-            label: "Contract Us",
-            href: "/seller/contact-us",
-            linkClassName: "hover:text-black transition",
-          },
-        ],
-        desktopButtons: [
-          {
-            label: "My Favorites",
-            href: "/seller/profile",
-            icon: <LoveSvg />,
-            className:
-              "rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center",
-          },
-          {
-            label: "Profile",
-            href: "/seller/profile",
-            icon: <CgProfile className="size-7" />,
-            className:
-              "rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue flex gap-x-2 items-center",
-          },
-        ],
-        mobileLinks: [
-          {
-            type: "li-link",
-            label: "Home",
-            href: "/seller/forseller",
-            closeOnClick: true,
-          },
-          {
-            type: "link-li",
-            label: "Browse Properties",
-            href: "/seller/pricing",
-            liClassName: "flex items-center gap-1 cursor-pointer",
-            closeOnClick: false,
-          },
-          {
-            type: "li-link",
-            label: "About",
-            href: "/seller/about",
-            closeOnClick: true,
-          },
-          {
-            type: "li-link",
-            label: "Contract Us",
-            href: "/seller/conatact-us",
-            closeOnClick: true,
-          },
-        ],
-        mobileButtons: [
-          {
-            label: "My Listings",
-            href: "/seller/profile",
-            icon: <GoListUnordered className="size-7" />,
-            className:
-              "rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue flex gap-x-2 items-center",
-          },
-          {
-            label: "Profile",
-            href: "/seller/profile",
-            icon: <CgProfile className="size-7" />,
-            className:
-              "rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white flex gap-x-2 items-center",
-          },
-        ],
+      {
+        type: "link-li",
+        label: "Browse Properties",
+        href: "/browse",
+        liClassName:
+          "flex items-center gap-1 cursor-pointer hover:text-black transition",
       },
-
-      seller: {
-        logoHref: "/",
-        desktopLinks: [
-          {
-            type: "li-link",
-            label: "For Sellers",
-            href: "/seller/forseller",
-            linkClassName: "hover:text-black transition",
-          },
-          {
-            type: "link-li",
-            label: "Subscription Plans",
-            href: "/seller/pricing",
-            liClassName:
-              "flex items-center gap-1 cursor-pointer hover:text-black transition",
-          },
-          {
-            type: "li-link",
-            label: "About",
-            href: "/seller/about",
-            linkClassName: "hover:text-black transition",
-          },
-          {
-            type: "li-link",
-            label: "Contract Us",
-            href: "/seller/contact-us",
-            linkClassName: "hover:text-black transition",
-          },
-        ],
-        desktopButtons: [
-          {
-            label: "My Listings",
-            href: "/seller/profile",
-            icon: <GoListUnordered className="size-7" />,
-            className:
-              "rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center",
-          },
-          {
-            label: "Profile",
-            href: "/seller/profile",
-            icon: <CgProfile className="size-7" />,
-            className:
-              "rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue flex gap-x-2 items-center",
-          },
-        ],
-        mobileLinks: [
-          {
-            type: "li-link",
-            label: "For Sellers",
-            href: "/seller/forseller",
-            closeOnClick: true,
-          },
-          {
-            type: "link-li",
-            label: "Subscription Plans",
-            href: "/seller/pricing",
-            liClassName: "flex items-center gap-1 cursor-pointer",
-            closeOnClick: false,
-          },
-          {
-            type: "li-link",
-            label: "About",
-            href: "/seller/about",
-            closeOnClick: true,
-          },
-          {
-            type: "li-link",
-            label: "Contract Us",
-            href: "/seller/conatact-us",
-            closeOnClick: true,
-          },
-        ],
-        mobileButtons: [
-          {
-            label: "My Listings",
-            href: "/seller/profile",
-            icon: <GoListUnordered className="size-7" />,
-            className:
-              "rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue flex gap-x-2 items-center",
-          },
-          {
-            label: "Profile",
-            href: "/seller/profile",
-            icon: <CgProfile className="size-7" />,
-            className:
-              "rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white flex gap-x-2 items-center",
-          },
-        ],
+      {
+        type: "li-link",
+        label: "For Sellers",
+        href: "/forseller",
+        linkClassName: "hover:text-black transition",
       },
-    };
-  }, []);
-
-  const config = NAV_CONFIG[userType as keyof typeof NAV_CONFIG] || NAV_CONFIG.guest;
+      {
+        type: "li-link",
+        label: "About",
+        href: "/about",
+        linkClassName: "hover:text-black transition",
+      },
+    ],
+    desktopButtons: [
+      {
+        label: "Log In",
+        href: "/auth/login",
+        className:
+          "rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition",
+      },
+      {
+        label: "Sign Up",
+        href: "/auth/register",
+        className:
+          "rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue",
+      },
+    ],
+    mobileLinks: [
+      {
+        type: "li-link",
+        label: "Home",
+        href: "/",
+        closeOnClick: true,
+      },
+      {
+        type: "link-li",
+        label: "Browse Properties",
+        href: "/browse",
+        liClassName: "flex items-center gap-1 cursor-pointer",
+        closeOnClick: false,
+      },
+      {
+        type: "li-link",
+        label: "For Sellers",
+        href: "/forseller",
+        closeOnClick: true,
+      },
+      {
+        type: "li-link",
+        label: "About",
+        href: "/about",
+        closeOnClick: true,
+      },
+    ],
+    mobileButtons: [
+      {
+        label: "Log In",
+        href: "/auth/login",
+        className:
+          "rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue",
+      },
+      {
+        label: "Sign Up",
+        href: "/auth/register",
+        className:
+          "rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white",
+      },
+    ],
+  };
 
   const renderDesktopLink = (item: any) => {
     if (item.type === "link-li") {
@@ -320,7 +123,6 @@ const Navbar = () => {
       );
     }
 
-    // li-link
     return (
       <li key={item.label}>
         <Link href={item.href} className={item.linkClassName}>
@@ -339,7 +141,6 @@ const Navbar = () => {
       );
     }
 
-    // li-link
     return (
       <li key={item.label}>
         <Link
@@ -378,7 +179,7 @@ const Navbar = () => {
             <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
               {config.desktopLinks.map(renderDesktopLink)}
 
-              {/* Language dropdown (keep same style) */}
+              {/* Language dropdown */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
@@ -401,7 +202,7 @@ const Navbar = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {languages.map(lang => (
+                  {languages.map((lang) => (
                     <button
                       key={lang}
                       onClick={() => {
@@ -418,9 +219,8 @@ const Navbar = () => {
             </ul>
 
             <div className="hidden xl:flex items-center gap-4">
-              {config.desktopButtons.map(btn => (
+              {config.desktopButtons.map((btn) => (
                 <Link key={btn.label} href={btn.href} className={btn.className}>
-                  {btn.icon ? btn.icon : null}
                   {btn.label}
                 </Link>
               ))}
@@ -470,13 +270,13 @@ const Navbar = () => {
                 </button>
 
                 <div
-                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark  transition-all duration-200 ${
+                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
                     langOpen
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {languages.map(lang => (
+                  {languages.map((lang) => (
                     <button
                       key={lang}
                       onClick={() => {
@@ -493,14 +293,13 @@ const Navbar = () => {
             </ul>
 
             <div className="px-6 flex flex-col gap-4">
-              {config.mobileButtons.map(btn => (
+              {config.mobileButtons.map((btn) => (
                 <Link
                   key={btn.label}
                   href={btn.href}
                   onClick={() => setIsOpen(false)}
                   className={btn.className}
                 >
-                  {btn.icon ? btn.icon : null}
                   {btn.label}
                 </Link>
               ))}
