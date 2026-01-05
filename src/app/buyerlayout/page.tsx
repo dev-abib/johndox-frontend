@@ -1,16 +1,18 @@
-import React from "react";
-import WhySell from "@/Components/PageComponents/mainPages/forseller/WhySell";
-import HowItWorks from "@/Components/PageComponents/mainPages/forseller/HowItWorks";
-import ReadytoSell from "@/Components/PageComponents/mainPages/forseller/ReadytoSell";
-import SellerPageHero from "@/Components/PageComponents/mainPages/forseller/SellerPageHero";
+import Browser from "@/Components/PageComponents/mainPages/Home/Browser";
+import Featured from "@/Components/PageComponents/mainPages/Home/Featured";
+import Hero from "@/Components/PageComponents/mainPages/Home/Hero";
+import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
+import WhyChoose from "@/Components/PageComponents/mainPages/Home/WhyChoose";
+
 
 const page = () => {
   return (
     <>
-      <SellerPageHero />
-      <WhySell />
-      <HowItWorks />
-      <ReadytoSell />
+      <Hero />
+      <Featured />
+      <Browser />
+      <WhyChoose />
+      <ListPropertyCTA />
     </>
   );
 };
