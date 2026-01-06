@@ -28,9 +28,10 @@ const propertyTypes = [
   "Studio",
   "Land",
 ];
-const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
+
 
 const USD_TO_HNL_RATE = 24.8; 
+const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
 
 export type BasicInfoStepProps = {
   register: UseFormRegister<FormData>;
@@ -45,10 +46,11 @@ export default function BasicInfoStep({
   watch,
   setValue,
 }: BasicInfoStepProps) {
+
   const priceUSD = watch("priceUSD");
   const priceHNL = watch("priceHNL");
 
-  // Sync USD → HNL
+  // Sync USD  HNL
   useEffect(() => {
     if (priceUSD && !isNaN(Number(priceUSD))) {
       const usd = parseFloat(priceUSD);
@@ -59,7 +61,7 @@ export default function BasicInfoStep({
     }
   }, [priceUSD, setValue]);
 
-  // Sync HNL → USD
+  // Sync HNL USD
   useEffect(() => {
     if (priceHNL && !isNaN(Number(priceHNL))) {
       const hnl = parseFloat(priceHNL);
@@ -163,7 +165,7 @@ export default function BasicInfoStep({
         </div>
       </div>
 
-      {/* Full Address */}
+      {/* Full Address  */}
       <div>
         <label className="block text-sm font-medium mb-2">
           Full Address <span className="text-red-500">*</span>
@@ -257,4 +259,4 @@ export default function BasicInfoStep({
       </div>
     </div>
   );
-}
+};
