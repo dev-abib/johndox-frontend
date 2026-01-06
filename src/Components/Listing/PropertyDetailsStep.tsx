@@ -11,7 +11,6 @@ export default function DetailsStep() {
     <div className="space-y-8 2xl:mx-20 mx-5">
       <h2 className="text-2xl font-semibold text-gray-900">Property Details</h2>
 
-      {/* Text Inputs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-5">
         <div>
           <label htmlFor="bedrooms" className="block text-sm font-medium mb-2">
@@ -49,7 +48,7 @@ export default function DetailsStep() {
             {...register("yearBuilt")}
           />
         </div>
-        <div></div> {/* Spacer */}
+        <div></div> 
         <div>
           <label htmlFor="area" className="block text-sm font-medium mb-2">
             Area (sq M)
@@ -81,7 +80,6 @@ export default function DetailsStep() {
         <label className="block text-sm font-medium mb-2">Amenities</label>
         <div className="">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Explicit checkboxes – fully type-safe */}
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"

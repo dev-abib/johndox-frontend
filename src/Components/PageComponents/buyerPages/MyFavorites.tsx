@@ -1,12 +1,8 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
-
 import { useState } from "react";
 import {  Location, Bed, Bathtub, Acceleration, Favourites } from "@/Components/Svg/SvgContainer";
-
-
 
 const favoritesData = [
   {
@@ -73,7 +69,6 @@ const favoritesData = [
 
 const MyFavorites = () => {
   const [favorites, setFavorites] = useState(favoritesData);
-
   const removeFavorite = (id: any) => {
     setFavorites(prev => prev.filter(item => item.id !== id));
   };
