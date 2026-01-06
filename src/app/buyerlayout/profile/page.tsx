@@ -8,12 +8,9 @@ import {
   Settings,
   Subscription,
 } from "@/Components/Svg/SvgContainer";
-import Setting from "@/Components/PageComponents/sellerPages/Profile/Setting";
-import Analytic from "@/Components/PageComponents/sellerPages/Profile/Analytic";
-import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
-import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListing";
-import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
 import MyFavorites from "@/Components/PageComponents/buyerPages/MyFavorites";
+import Setting from "@/Components/PageComponents/sellerPages/Profile/Setting";
+import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
 import SavedSearches from "@/Components/PageComponents/buyerPages/SavedSearches";
 
 interface Tab {
@@ -65,7 +62,7 @@ const page = () => {
           Manage your saved properties and searches
         </p>
 
-        <div className="lg:my-15 my-8 xl:flex lg:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
+        <div className="lg:my-15 my-8 md:flex md:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
           {tabs.map(item => {
             const isActive = activetab === item.label;
 
