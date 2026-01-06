@@ -70,7 +70,7 @@ const AccountSettingsPage = () => {
                     Personalize your profile pic with a custom photo.
                   </p>
                 </div>
-                <Link href={"/seller/upload-image"}>
+                <Link href={"/buyerlayout/upload-image"}>
                   <div className="flex items-center gap-4 cursor-pointer">
                     <div className="relative">
                       <Image
@@ -124,9 +124,9 @@ const AccountSettingsPage = () => {
                     placeholder="Enter your email"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                {/* <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
                   Verify
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
@@ -160,9 +160,11 @@ const AccountSettingsPage = () => {
                     placeholder="Set a unique password"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
-                  Change Password
-                </button>
+                <Link href={"/auth/change-password"}>
+                  <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                    Change Password
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

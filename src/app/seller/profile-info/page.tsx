@@ -16,7 +16,7 @@ const AccountSettingsPage = () => {
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [tempFirstName, setTempFirstName] = useState(firstName);
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false); 
+  const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
   const handleApplyName = () => {
     setFirstName(tempFirstName);
@@ -160,9 +160,11 @@ const AccountSettingsPage = () => {
                     placeholder="Set a unique password"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
-                  Change Password
-                </button>
+                <Link href={"/auth/change-password"}>
+                  <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                    Change Password
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
