@@ -49,16 +49,29 @@ export const useLogin = () => {
   return useClientApi({
     method: "post",
     key: ["login"],
-    endpoint: "/api/users/login",
+    endpoint: "/login",
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
-        setToken(data?.data?.token);
-        toast.success(data?.message);
-        router.push("/dashboard");
+        const token = data?.data?.token;
+        const role = data?.data?.role;
+
+        if (token) {
+          setToken(token);
+        }
+
+        toast.success(data?.message || "Login successful!");
+
+        if (role === "buyer") {
+          router.push("/buyerlayout");
+        } else if (role === "seller") {
+          router.push("/seller");
+        } else {
+          toast.error("Unknown user role");
+        }
       }
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message);
+      toast.error(err?.response?.data?.message || "Login failed");
     },
   });
 };
@@ -67,9 +80,9 @@ export const useLogin = () => {
 export const useVerifyOtp = () => {
   const router = useRouter();
   return useClientApi({
-    method: "post",
+    method: "put",
     key: ["verifyotp"],
-    endpoint: "/verify-otp",
+    endpoint: "/verify-acc",
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
         toast.success(data?.message);
