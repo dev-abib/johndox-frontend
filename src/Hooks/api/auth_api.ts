@@ -64,7 +64,7 @@ export const useLogin = () => {
 };
 
 // Verify-otp
-export const useVeifyOtp = () => {
+export const useVerifyOtp = () => {
   const router = useRouter();
   return useClientApi({
     method: "post",
@@ -84,9 +84,9 @@ export const useVeifyOtp = () => {
 // Resend Verify-otp
 export const useResendVeifyOtp = () => {
   return useClientApi({
-    method: "post",
+    method: "put",
     key: ["resendotp"],
-    endpoint: "/resend-otpp",
+    endpoint: "/resend-otp",
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
         toast.success(data?.message);
