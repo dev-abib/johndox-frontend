@@ -7,16 +7,17 @@ import {
   Favourite,
   Location,
 } from "@/Components/Svg/SvgContainer";
+import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
+import { Featuredata } from "@/Components/Data/data";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
   SideBarSvg,
 } from "@/Components/Svg/SvgContainer2";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
-import { Featuredata } from "@/Components/Data/data";
 
 const page = () => {
   const [showAll, setShowAll] = useState(false);
@@ -171,10 +172,11 @@ const page = () => {
                         </div>
                       ))}
                     </div>
-
-                    <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
-                      Contact
-                    </button>
+                    <Link href={`/buyerlayout/browse/${item?.id}`}>
+                      <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
+                        Contact
+                      </button>
+                    </Link>
                   </div>
                 </div>
               ))}
