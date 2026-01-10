@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const ListPropertyCTA = () => {
   return (
     <section
@@ -19,13 +21,16 @@ const ListPropertyCTA = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-          <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
-            Start Selling Today
-          </button>
-
-          <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl border-2 border-primary-blue text-primary-blue font-medium hover:bg-blue-50 transition">
-            View Pricing Plans
-          </button>
+          <Link href={"/browse"}>
+            <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
+              Start Selling Today
+            </button>
+          </Link>
+          <Link href={"/pricing"}>
+            <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl border-2 border-primary-blue text-primary-blue font-medium hover:bg-blue-50 transition">
+              View Pricing Plans
+            </button>
+          </Link>
         </div>
 
         <p className="text-[#212B36] xl:text-lg">

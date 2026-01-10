@@ -2,31 +2,43 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRegister } from "@/Hooks/api/auth_api";
 import Container from "@/Components/Common/Container";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type TabType = "Buyer" | "Seller";
 
 type LoginFormData = {
-  first_name: string;
-  last_name: string;
   email: string;
   password: string;
-  remember: boolean;
+  lastName: string;
+  firstName: string;
+  confirmPassword: string;
+  role: "buyer" | "seller";
+  termsAndConditions: boolean;
 };
 
 const Login = () => {
+  const { mutate, isPending } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("Buyer");
+  const [confirmshowPassword, confirmsetShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginFormData>();
 
+  const password = watch("password");
+
   const onSubmit = (data: LoginFormData) => {
-    console.log("Login Data:", data);
+    mutate({
+      ...data,
+      role: activeTab === "Buyer" ? "buyer" : "seller",
+    });
   };
 
   return (
@@ -40,40 +52,40 @@ const Login = () => {
           />
         </div>
 
-        {/* Right Form Section */}
         <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center lg:px-6 px-3">
           <div className="w-full ">
             <h1 className="Auth_section_title mb-2 xl:text-[36px] text-[28px] lg:text-start text-center">
               Create account
             </h1>
+
             <div className="bg-[#E6F3FF] py-2.5 px-2 mt-10 rounded-3xl lg:rounded-[40px] flex gap-x-2 lg:gap-x-3 mb-6 lg:mb-7">
               <button
                 type="button"
                 onClick={() => setActiveTab("Buyer")}
                 className={`rounded-3xl lg:rounded-[40px] py-2.5 px-6 lg:py-1 lg:px-0 w-full text-center font-medium transition-all duration-200 cursor-pointer lg:text-[20px] text-base
-                    ${
-                      activeTab === "Buyer"
-                        ? "bg-[#0085FF] text-white shadow-md"
-                        : "bg-transparent text-[#212B36] hover:bg-blue-50"
-                    }
-                  `}
+                  ${
+                    activeTab === "Buyer"
+                      ? "bg-[#0085FF] text-white shadow-md"
+                      : "bg-transparent text-[#212B36] hover:bg-blue-50"
+                  }`}
               >
                 Buyer
               </button>
+
               <button
                 type="button"
                 onClick={() => setActiveTab("Seller")}
                 className={`rounded-3xl lg:rounded-[40px] py-2.5 px-6 lg:py-1 lg:px-0 w-full text-center font-medium transition-all duration-200 cursor-pointer lg:text-[20px] text-base
-                    ${
-                      activeTab === "Seller"
-                        ? "bg-[#0085FF] text-white shadow-md"
-                        : "bg-transparent text-[#212B36] hover:bg-blue-50"
-                    }
-                  `}
+                  ${
+                    activeTab === "Seller"
+                      ? "bg-[#0085FF] text-white shadow-md"
+                      : "bg-transparent text-[#212B36] hover:bg-blue-50"
+                  }`}
               >
                 Seller
               </button>
             </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
                 <label className="block text-lg text-[#5F5F5F] mb-2 font-medium">
@@ -83,13 +95,13 @@ const Login = () => {
                   type="text"
                   placeholder="Enter your first name"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
-                  {...register("first_name", {
+                  {...register("firstName", {
                     required: "First name is required",
                   })}
                 />
-                {errors.first_name && (
+                {errors.firstName && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.first_name.message}
+                    {errors.firstName.message}
                   </p>
                 )}
               </div>
@@ -102,13 +114,13 @@ const Login = () => {
                   type="text"
                   placeholder="Enter your last name"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
-                  {...register("last_name", {
+                  {...register("lastName", {
                     required: "Last name is required",
                   })}
                 />
-                {errors.last_name && (
+                {errors.lastName && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.last_name.message}
+                    {errors.lastName.message}
                   </p>
                 )}
               </div>
@@ -147,9 +159,11 @@ const Login = () => {
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
                     {...register("password", {
                       required: "Password is required",
-                      minLength: {
-                        value: 6,
-                        message: "Minimum 6 characters required",
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#+])[A-Za-z\d@$!%*?&#+]{8,32}$/,
+                        message:
+                          "Password must be 8–32 characters with uppercase, lowercase, number & special character",
                       },
                     })}
                   />
@@ -168,20 +182,66 @@ const Login = () => {
                 )}
               </div>
 
+              <div>
+                <label className="block text-lg text-[#5F5F5F] mb-2 font-medium">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={confirmshowPassword ? "text" : "password"}
+                    placeholder="Confirm password"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
+                    {...register("confirmPassword", {
+                      required: "Confirm Password is required",
+                      validate: value =>
+                        value === password || "Passwords do not match",
+                    })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => confirmsetShowPassword(!confirmshowPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  >
+                    {confirmshowPassword ? (
+                      <IoEyeOffOutline />
+                    ) : (
+                      <IoEyeOutline />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
                   className="accent-primary-blue"
-                  {...register("remember")}
+                  {...register("termsAndConditions", {
+                    required: "You must accept the terms",
+                  })}
                 />
                 Remember Me
               </label>
+              {errors.termsAndConditions && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.termsAndConditions.message}
+                </p>
+              )}
 
               <button
                 type="submit"
-                className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition"
+                disabled={isPending}
+                className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition disabled:opacity-60 cursor-pointer"
               >
-                Next
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Next"
+                )}
               </button>
             </form>
           </div>
