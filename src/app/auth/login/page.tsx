@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { PiSpinnerBold } from "react-icons/pi";
+import { useLogin } from "@/Hooks/api/auth_api";
 import Container from "@/Components/Common/Container";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
@@ -12,6 +14,7 @@ type LoginFormData = {
 };
 
 const Login = () => {
+  const { mutate, isPending } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -21,7 +24,9 @@ const Login = () => {
   } = useForm<LoginFormData>();
 
   const onSubmit = (data: LoginFormData) => {
-    console.log("Login Data:", data);
+    mutate({
+      ...data,
+    });
   };
 
   return (
@@ -122,7 +127,11 @@ const Login = () => {
                 type="submit"
                 className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition cursor-pointer"
               >
-                Login
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Login"
+                )}
               </button>
 
               <div className="flex items-center gap-4">

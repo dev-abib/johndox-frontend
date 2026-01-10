@@ -1,7 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Container from "@/Components/Common/Container";
 
 type ConverterForm = {
@@ -30,7 +30,7 @@ const CurrencyConverter = () => {
     setValue("lempira", right);
     setValue("downPayment", left);
 
-    setIsSwapped((prev) => !prev);
+    setIsSwapped(prev => !prev);
   };
 
   return (
@@ -44,7 +44,7 @@ const CurrencyConverter = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Gray Wrapper */}
           <div className="bg-[#F9FAFB] rounded-xl px-6 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-end">
               {/* Left Input */}
               <div>
                 <label className="block text-sm font-medium text-[#5F5F5F] mb-2">
