@@ -10,10 +10,10 @@ export const useGetUserData = (token: any) => {
     method: "get",
     key: ["user", token],
     enabled: !!token,
-    endpoint: "/api/users/data",
+    endpoint: "/get-me",
     isPrivate: true,
     queryOptions: {
-      refetchInterval: 1000 * 60 * 60, // refetch every hour
+      refetchInterval: 1000 * 60 * 60,
     },
   });
 };
@@ -24,11 +24,15 @@ export const useRegister = () => {
   return useClientApi({
     method: "post",
     key: ["register"],
-    endpoint: "/api/users/register",
+    endpoint: "/register",
     onSuccess: (data: any) => {
+      console.log(data);
+
       if (data?.status || data?.success) {
         toast.success(data?.message);
-        router.push("/auth/login");
+        router.push(
+          `/auth/verify-otp?email=${encodeURIComponent(data?.data?.email)}`
+        );
       }
     },
     onError: (err: any) => {
@@ -51,6 +55,41 @@ export const useLogin = () => {
         setToken(data?.data?.token);
         toast.success(data?.message);
         router.push("/dashboard");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Verify-otp
+export const useVeifyOtp = () => {
+  const router = useRouter();
+  return useClientApi({
+    method: "post",
+    key: ["verifyotp"],
+    endpoint: "/verify-otp",
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        router.push("/auth/login");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+// Resend Verify-otp
+export const useResendVeifyOtp = () => {
+  return useClientApi({
+    method: "post",
+    key: ["resendotp"],
+    endpoint: "/resend-otpp",
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
       }
     },
     onError: (err: any) => {

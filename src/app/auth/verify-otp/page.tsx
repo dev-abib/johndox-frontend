@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import Container from "@/Components/Common/Container";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
+import { useResendVeifyOtp, useVeifyOtp } from "@/Hooks/api/auth_api";
 
 type OTPFormData = {
   otp: string;
+  email: string;
 };
 
 const Page = () => {
@@ -22,8 +25,12 @@ const Page = () => {
     },
   });
 
-  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  const { mutate, isPending } = useVeifyOtp();
+  const { mutate:resendotp } = useResendVeifyOtp();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
 
   useEffect(() => {
     const fullOtp = otpDigits.join("");
@@ -68,7 +75,10 @@ const Page = () => {
   };
 
   const onSubmit = (data: OTPFormData) => {
-    console.log("Submitted OTP:", data.otp);
+    mutate({
+      ...data,
+      email,
+    });
   };
 
   return (
@@ -133,11 +143,9 @@ const Page = () => {
                   </p>
                 )}
               </div>
-              <p className=" text-gray-500">
-                Resend OTP in{" "}
-                <a className="text-primary-blue font-medium hover:underline">
-                  58 s
-                </a>
+              <p className=" text-gray-500 cursor-pointer">
+                Resend OTP
+                
               </p>
               <p className=" text-gray-500">
                 Know your password?{" "}
