@@ -1,22 +1,20 @@
-// Components/PrivateRoute.tsx
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import useAuth from "@/Hooks/useAuth";
+import { useRouter } from "next/navigation";
 
-type Role = "buyer" | "seller" | "any"; // "any" = authenticated user of any role
+type Role = "buyer" | "seller" | "any"; 
 
 interface PrivateRouteProps {
   children: React.ReactNode;
-  allowedRoles: Role[]; // e.g. ["buyer"] or ["seller"] or ["buyer", "seller"]
-  redirectTo?: string; // optional custom redirect
+  allowedRoles: Role[]; 
+  redirectTo?: string;
 }
 
 const PrivateRoute = ({
   children,
   allowedRoles,
-  redirectTo,
 }: PrivateRouteProps) => {
   const { user, token, loading } = useAuth();
   const router = useRouter();
@@ -26,7 +24,6 @@ const PrivateRoute = ({
   useEffect(() => {
     if (loading) return;
 
-    // Not authenticated → go to login
     if (!token || !user) {
       router.push("/auth/login");
       return;
@@ -38,11 +35,10 @@ const PrivateRoute = ({
       (userRole && allowedRoles.includes(userRole));
 
     if (!hasAccess) {
-      // Redirect based on role
       if (userRole === "seller") {
-        router.push("/seller/dashboard"); // or "/seller/my-listings"
+        router.push("/seller"); 
       } else if (userRole === "buyer") {
-        router.push("/"); // or "/buyer/favorites"
+        router.push("/buyerlayout"); 
       } else {
         router.push("/");
       }

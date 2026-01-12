@@ -75,7 +75,7 @@ export const useLogin = () => {
   });
 };
 
-// Verify-otp
+// Verify-Acc
 export const useVerifyOtp = () => {
   const router = useRouter();
   return useClientApi({
@@ -93,6 +93,24 @@ export const useVerifyOtp = () => {
     },
   });
 };
+// Verify-otp
+export const useVerify_Otp = () => {
+  const router = useRouter();
+  return useClientApi({
+    method: "post",
+    key: ["verifyotp"],
+    endpoint: "/verify-otp",
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        router.push("/auth/reset-password");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
 
 // Resend Verify-otp
 export const useResendVeifyOtp = () => {
@@ -103,6 +121,26 @@ export const useResendVeifyOtp = () => {
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
         toast.success(data?.message);
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+export const useForgotPassWord = () => {
+  const router = useRouter();
+
+  return useClientApi({
+    method: "post",
+    key: ["forgot-password"],
+    endpoint: "/verify-email",
+    onSuccess: (data: any, variables: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        sessionStorage.setItem("verify_email", variables.email);
+        router.push("/auth/verify-account");
       }
     },
     onError: (err: any) => {
