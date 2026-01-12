@@ -27,7 +27,6 @@ export const useRegister = () => {
     endpoint: "/register",
     onSuccess: (data: any) => {
       console.log(data);
-
       if (data?.status || data?.success) {
         toast.success(data?.message);
         router.push(
@@ -76,7 +75,7 @@ export const useLogin = () => {
   });
 };
 
-// Verify-otp
+// Verify-Acc
 export const useVerifyOtp = () => {
   const router = useRouter();
   return useClientApi({
@@ -94,6 +93,31 @@ export const useVerifyOtp = () => {
     },
   });
 };
+// Verify-otp
+export const useVerify_Otp = () => {
+  const router = useRouter();
+  const { setToken } = useAuth();
+
+  return useClientApi({
+    method: "post",
+    key: ["verifyotp"],
+    endpoint: "/verify-otp",
+    isPrivate: false,
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        const token = data?.data?.token;
+        setToken(token);
+        localStorage.setItem("reset_token", token);
+        toast.success(data?.message);
+        router.push("/auth/reset-password");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
 // Resend Verify-otp
 export const useResendVeifyOtp = () => {
   return useClientApi({
@@ -103,6 +127,51 @@ export const useResendVeifyOtp = () => {
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
         toast.success(data?.message);
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Forgot Password
+export const useForgotPassWord = () => {
+  const router = useRouter();
+
+  return useClientApi({
+    method: "post",
+    key: ["forgot-password"],
+    endpoint: "/verify-email",
+    onSuccess: (data: any, variables: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        sessionStorage.setItem("verify_email", variables.email);
+        router.push("/auth/verify-account");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Reset Password
+export const UseResetPassword = () => {
+  const router = useRouter();
+  const token = localStorage.getItem("reset_token");
+  return useClientApi({
+    method: "post",
+    key: ["reset-password"],
+    endpoint: "/reset-pass",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        router.push("/auth/login");
       }
     },
     onError: (err: any) => {
