@@ -1,15 +1,17 @@
-import React from "react";
-import Footer from "@/Shared/Footer";
 import SellerNav from "@/Shared/SellerNav";
+import Footer from "@/Shared/Footer";
+import PrivateRoute from "@/Private/PrivateLayout";
 
-const SellerLayout = ({ children }: { children: React.ReactNode }) => {
+export default function SellerLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <>
+    <PrivateRoute allowedRoles={["seller"]}>
       <SellerNav />
-      <main className="mt-28">{children}</main>
+      <main className="min-h-screen mt-28">{children}</main>
       <Footer />
-    </>
+    </PrivateRoute>
   );
-};
-
-export default SellerLayout;
+}

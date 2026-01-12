@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import Container from "@/Components/Common/Container";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
+import { useForgotPassWord } from "@/Hooks/api/auth_api";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type LoginFormData = {
   email: string;
 };
 
 const page = () => {
+  const { mutate, isPending } = useForgotPassWord();
   const {
     register,
     handleSubmit,
@@ -17,7 +20,9 @@ const page = () => {
   } = useForm<LoginFormData>();
 
   const onSubmit = (data: LoginFormData) => {
-    console.log("Login Data:", data);
+    mutate({
+      ...data,
+    });
   };
 
   return (
@@ -72,7 +77,11 @@ const page = () => {
                 type="submit"
                 className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition cursor-pointer"
               >
-                Send
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Send"
+                )}
               </button>
               <p className="text-center text-gray-500">
                 Know your password?

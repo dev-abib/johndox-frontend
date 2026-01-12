@@ -1,29 +1,69 @@
 "use client";
+
+import { useEffect } from "react";
 import useAuth from "@/Hooks/useAuth";
-import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const PrivateLayout = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
+type Role = "buyer" | "seller" | "any"; 
+
+interface PrivateRouteProps {
+  children: React.ReactNode;
+  allowedRoles: Role[]; 
+  redirectTo?: string;
+}
+
+const PrivateRoute = ({
+  children,
+  allowedRoles,
+}: PrivateRouteProps) => {
   const { user, token, loading } = useAuth();
+  const router = useRouter();
+
+  const userRole = user?.role?.toLowerCase() as "buyer" | "seller" | undefined;
 
   useEffect(() => {
-    if (!loading && !token && !user) {
+    if (loading) return;
+
+    if (!token || !user) {
       router.push("/auth/login");
+      return;
     }
-  }, [loading, token, user, router]);
+
+    // Authenticated but wrong role
+    const hasAccess =
+      allowedRoles.includes("any") ||
+      (userRole && allowedRoles.includes(userRole));
+
+    if (!hasAccess) {
+      if (userRole === "seller") {
+        router.push("/seller"); 
+      } else if (userRole === "buyer") {
+        router.push("/buyerlayout"); 
+      } else {
+        router.push("/");
+      }
+    }
+  }, [loading, token, user, userRole, allowedRoles, router]);
+
 
   if (loading) {
     return (
-      <div className="h-svh flex justify-center items-center">Loading.....</div>
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
     );
   }
 
-  if (token || user) {
-    return <>{children}</>;
-  }
 
-  return null;
+  if (!token || !user) return null;
+
+  const hasAccess =
+    allowedRoles.includes("any") ||
+    (userRole && allowedRoles.includes(userRole));
+
+  if (!hasAccess) return null;
+
+  return <>{children}</>;
 };
 
-export default PrivateLayout;
+export default PrivateRoute;
