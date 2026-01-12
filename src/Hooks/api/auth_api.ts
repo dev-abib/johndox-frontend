@@ -27,7 +27,6 @@ export const useRegister = () => {
     endpoint: "/register",
     onSuccess: (data: any) => {
       console.log(data);
-
       if (data?.status || data?.success) {
         toast.success(data?.message);
         router.push(
@@ -94,6 +93,7 @@ export const useVerifyOtp = () => {
     },
   });
 };
+
 // Resend Verify-otp
 export const useResendVeifyOtp = () => {
   return useClientApi({

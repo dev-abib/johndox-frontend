@@ -36,7 +36,7 @@ const SellerNav = () => {
       <Container>
         <header className="w-full text-black">
           <div className="flex items-center justify-between py-[26px]">
-            <Link href="/" className="flex items-center">
+            <Link href="/seller" className="flex items-center">
               <Image
                 src="https://i.ibb.co.com/2YMddrBt/Group-1321314777.png"
                 alt="Terralink Logo"

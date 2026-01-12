@@ -66,7 +66,7 @@ const BuyerNav = () => {
                   href="/buyerlayout/about"
                   className="hover:text-black transition"
                 >
-                 About
+                  About
                 </Link>
               </li>
 
@@ -170,7 +170,10 @@ const BuyerNav = () => {
               </Link>
 
               <li>
-                <Link href="/buyerlayout/about" onClick={() => setIsOpen(false)}>
+                <Link
+                  href="/buyerlayout/about"
+                  onClick={() => setIsOpen(false)}
+                >
                   About
                 </Link>
               </li>

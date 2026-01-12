@@ -19,7 +19,7 @@ const PrivateLayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (token || user) {
+  if (token || user) {  
     return <>{children}</>;
   }
 
