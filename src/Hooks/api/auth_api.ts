@@ -93,6 +93,7 @@ export const useVerifyOtp = () => {
     },
   });
 };
+
 // Verify-otp
 export const useVerify_Otp = () => {
   const router = useRouter();
@@ -164,6 +165,30 @@ export const UseResetPassword = () => {
     method: "post",
     key: ["reset-password"],
     endpoint: "/reset-pass",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        router.push("/auth/login");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Change Password
+export const useChnagePassword = () => {
+  const router = useRouter();
+  const token = localStorage.getItem("token");
+  return useClientApi ({
+    method: "put",
+    key: ["changepassword"],
+    endpoint: "/change-password",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

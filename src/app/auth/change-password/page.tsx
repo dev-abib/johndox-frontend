@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { PiSpinnerBold } from "react-icons/pi";
 import Container from "@/Components/Common/Container";
+import { useChnagePassword } from "@/Hooks/api/auth_api";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 type LoginFormData = {
-  current_password: string;
-  new_password: string;
-  confirm_password: string;
+  prevPassword: string;
+  password: string;
+  confirmPassword: string;
 };
 
 const page = () => {
+  const { mutate, isPending } = useChnagePassword();
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -23,7 +26,9 @@ const page = () => {
   } = useForm<LoginFormData>();
 
   const onSubmit = (data: LoginFormData) => {
-    console.log("Login Data:", data);
+    mutate({
+      ...data,
+    });
   };
 
   return (
@@ -59,7 +64,7 @@ const page = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your current password"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
-                    {...register("current_password", {
+                    {...register("prevPassword", {
                       required: "Current password is required",
                       minLength: {
                         value: 6,
@@ -77,9 +82,9 @@ const page = () => {
                   </button>
                 </div>
 
-                {errors.current_password && (
+                {errors.prevPassword && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.current_password.message}
+                    {errors.prevPassword.message}
                   </p>
                 )}
               </div>
@@ -95,7 +100,7 @@ const page = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter new password"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
-                    {...register("new_password", {
+                    {...register("password", {
                       required: "New password is required",
                       minLength: {
                         value: 6,
@@ -113,9 +118,9 @@ const page = () => {
                   </button>
                 </div>
 
-                {errors.new_password && (
+                {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.new_password.message}
+                    {errors.password.message}
                   </p>
                 )}
               </div>
@@ -131,10 +136,10 @@ const page = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Confirm new password"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-blue"
-                    {...register("confirm_password", {
+                    {...register("confirmPassword", {
                       required: "Confirm password is required",
                       validate: value =>
-                        value === watch("new_password") ||
+                        value === watch("confirmPassword") ||
                         "Passwords do not match",
                     })}
                   />
@@ -148,9 +153,9 @@ const page = () => {
                   </button>
                 </div>
 
-                {errors.confirm_password && (
+                {errors.confirmPassword && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.confirm_password.message}
+                    {errors.confirmPassword.message}
                   </p>
                 )}
               </div>
@@ -160,7 +165,11 @@ const page = () => {
                 type="submit"
                 className="w-full bg-primary-blue text-white py-3 rounded-lg hover:bg-blue-600 transition cursor-pointer"
               >
-                Update Password
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  " Update Password"
+                )}
               </button>
             </form>
 
