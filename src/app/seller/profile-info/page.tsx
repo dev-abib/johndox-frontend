@@ -8,7 +8,11 @@ import React, { useEffect, useState } from "react";
 import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
-import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
+import {
+  useGetUserData,
+  useLogout,
+  useUpdateUserBuyer,
+} from "@/Hooks/api/auth_api";
 
 const AccountSettingsPage = () => {
   const token = localStorage.getItem("token");
@@ -22,6 +26,7 @@ const AccountSettingsPage = () => {
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   useEffect(() => {
     if (data?.data) {
@@ -193,6 +198,16 @@ const AccountSettingsPage = () => {
                     Change Password
                   </button>
                 </Link>
+              </div>
+              <div className="mt-10 flex justify-end">
+                <button
+                  onClick={() => logout()}
+                  disabled={isLoggingOut}
+                  className="bg-red-500 text-white px-8 py-3 rounded-xl text-lg font-medium hover:bg-red-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+                >
+                  {isLoggingOut && <PiSpinnerBold className="animate-spin" />}
+                  Logout
+                </button>
               </div>
             </div>
           </div>

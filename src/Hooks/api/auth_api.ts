@@ -226,3 +226,27 @@ export const useUpdateUserBuyer = () => {
     },
   });
 };
+
+// Logout
+export const useLogout = () => {
+  const token = localStorage.getItem("token");
+  return useClientApi({
+    method: "post",
+    key: ["logout"],
+    endpoint: "/log-out",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        localStorage.removeItem("token");
+        window.location.href = "/auth/login";
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Logout failed");
+    },
+  });
+};
