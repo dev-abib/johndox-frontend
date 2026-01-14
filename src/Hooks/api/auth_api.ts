@@ -93,6 +93,7 @@ export const useVerifyOtp = () => {
     },
   });
 };
+
 // Verify-otp
 export const useVerify_Otp = () => {
   const router = useRouter();
@@ -176,6 +177,86 @@ export const UseResetPassword = () => {
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Change Password
+export const useChnagePassword = () => {
+  const router = useRouter();
+  const token = localStorage.getItem("token");
+  return useClientApi({
+    method: "put",
+    key: ["changepassword"],
+    endpoint: "/change-password",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        router.push("/auth/login");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Update User
+export const useUpdateUserBuyer = () => {
+  const router = useRouter();
+  const token = localStorage.getItem("token");
+  const { data: user, isLoading } = useGetUserData(token);
+
+  return useClientApi({
+    method: "put",
+    key: ["updateuser"],
+    endpoint: "/update-user",
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) toast.success(data?.message);
+      const role = user?.data?.role?.trim().toLowerCase();
+
+      if (role === "seller") {
+        router.push("/seller/profile-info");
+      } else if (role === "buyer") {
+        router.push("/buyerlayout/profile-info");
+      } else {
+        router.push("/");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Something went wrong");
+    },
+  });
+};
+
+// Logout
+export const useLogout = () => {
+  const token = localStorage.getItem("token");
+  return useClientApi({
+    method: "post",
+    key: ["logout"],
+    endpoint: "/log-out",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+        localStorage.removeItem("token");
+        window.location.href = "/auth/login";
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Logout failed");
     },
   });
 };

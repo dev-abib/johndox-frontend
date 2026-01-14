@@ -4,47 +4,39 @@ import { useEffect } from "react";
 import useAuth from "@/Hooks/useAuth";
 import { useRouter } from "next/navigation";
 
-type Role = "buyer" | "seller" | "any"; 
+type Role = "buyer" | "seller" | "any";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
-  allowedRoles: Role[]; 
-  redirectTo?: string;
+  allowedRoles: Role[];
 }
 
-const PrivateRoute = ({
-  children,
-  allowedRoles,
-}: PrivateRouteProps) => {
+const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
   const { user, token, loading } = useAuth();
   const router = useRouter();
 
-  const userRole = user?.role?.toLowerCase() as "buyer" | "seller" | undefined;
+  const userRole = user?.role?.toLowerCase() as Role | undefined;
 
   useEffect(() => {
     if (loading) return;
 
-    if (!token || !user) {
+    if (!token && !user) {
       router.push("/auth/login");
       return;
     }
 
-    // Authenticated but wrong role
     const hasAccess =
       allowedRoles.includes("any") ||
       (userRole && allowedRoles.includes(userRole));
 
-    if (!hasAccess) {
+    if (!hasAccess && userRole) {
       if (userRole === "seller") {
-        router.push("/seller"); 
+        router.push("/seller");
       } else if (userRole === "buyer") {
-        router.push("/buyerlayout"); 
-      } else {
-        router.push("/");
+        router.push("/buyerlayout");
       }
     }
   }, [loading, token, user, userRole, allowedRoles, router]);
-
 
   if (loading) {
     return (
@@ -54,8 +46,7 @@ const PrivateRoute = ({
     );
   }
 
-
-  if (!token || !user) return null;
+  if (!token && !user) return null;
 
   const hasAccess =
     allowedRoles.includes("any") ||

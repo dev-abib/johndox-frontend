@@ -1,11 +1,16 @@
 "use client";
 import React, { SVGProps, useState } from "react";
 import Container from "@/Components/Common/Container";
-import MyFavorites from "@/Components/PageComponents/buyerPages/MyFavorites";
-import Setting from "@/Components/PageComponents/sellerPages/Profile/Setting";
-import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
 import SavedSearches from "@/Components/PageComponents/buyerPages/SavedSearches";
-import { Analytics,Listing,Message,Settings} from "@/Components/Svg/SvgContainer";
+import {
+  Analytics,
+  Listing,
+  Message,
+  Settings,
+} from "@/Components/Svg/SvgContainer";
+import MyFavorites from "@/Components/PageComponents/buyerPages/MyFavorites";
+import Messages from "@/Components/PageComponents/buyerPage/Profile/Messages";
+import Setting from "@/Components/PageComponents/buyerPage/Profile/Setting";
 
 interface Tab {
   label: string;
