@@ -1,29 +1,25 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
+import React, { useEffect, useState } from "react";
 import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
 import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
-import { PiSpinnerBold } from "react-icons/pi";
 
 const AccountSettingsPage = () => {
   const token = localStorage.getItem("token");
   const { data } = useGetUserData(token);
-
-  const { mutate, isPending } = useUpdateUserBuyer();
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-
-  const [tempFirstName, setTempFirstName] = useState("");
+  const { mutate, isPending } = useUpdateUserBuyer();
   const [tempLastName, setTempLastName] = useState("");
+  const [tempFirstName, setTempFirstName] = useState("");
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
-
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
@@ -106,11 +102,11 @@ const AccountSettingsPage = () => {
                   <div className="flex items-center gap-4 cursor-pointer">
                     <div className="relative">
                       <Image
-                        src={Profilepic}
+                        src={data?.data?.profilePicture || Profilepic}
                         alt="Profile"
                         width={90}
                         height={90}
-                        className="rounded-full object-cover border-4 border-white shadow-md"
+                        className="rounded-full object-cover border-4 border-white shadow-md w-22 h-22"
                       />
                     </div>
                     <FaRegEdit className="text-[#0085FF] text-2xl" />

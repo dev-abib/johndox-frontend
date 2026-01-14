@@ -214,7 +214,7 @@ export const useUpdateUserBuyer = () => {
     key: ["updateuser"],
     endpoint: "/update-user",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`,
     },
     onSuccess: (data: any) => {
