@@ -221,14 +221,7 @@ export const useUpdateUserBuyer = () => {
     },
     onSuccess: (data: any) => {
       if (data?.status || data?.success) toast.success(data?.message);
-
-      if (!user) {
-        console.log("User data not loaded yet");
-        return;
-      }
-
       const role = user?.data?.role?.trim().toLowerCase();
-      console.log("User role:", role);
 
       if (role === "seller") {
         router.push("/seller/profile-info");
@@ -243,7 +236,6 @@ export const useUpdateUserBuyer = () => {
     },
   });
 };
-
 
 // Logout
 export const useLogout = () => {
