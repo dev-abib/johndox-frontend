@@ -103,7 +103,7 @@ const AccountSettingsPage = () => {
                     Personalize your profile pic with a custom photo.
                   </p>
                 </div>
-                <Link href={"/buyerlayout/upload-image"}>
+                <Link href={"/seller/upload-image"}>
                   <div className="flex items-center gap-4 cursor-pointer">
                     <div className="relative">
                       <Image

@@ -209,6 +209,8 @@ export const useChnagePassword = () => {
 export const useUpdateUserBuyer = () => {
   const router = useRouter();
   const token = localStorage.getItem("token");
+  const { data: user, isLoading } = useGetUserData(token);
+
   return useClientApi({
     method: "put",
     key: ["updateuser"],
@@ -219,13 +221,29 @@ export const useUpdateUserBuyer = () => {
     },
     onSuccess: (data: any) => {
       if (data?.status || data?.success) toast.success(data?.message);
-      router.push("/buyerlayout/profile-info");
+
+      if (!user) {
+        console.log("User data not loaded yet");
+        return;
+      }
+
+      const role = user?.data?.role?.trim().toLowerCase();
+      console.log("User role:", role);
+
+      if (role === "seller") {
+        router.push("/seller/profile-info");
+      } else if (role === "buyer") {
+        router.push("/buyerlayout/profile-info");
+      } else {
+        router.push("/");
+      }
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message);
+      toast.error(err?.response?.data?.message || "Something went wrong");
     },
   });
 };
+
 
 // Logout
 export const useLogout = () => {
