@@ -185,7 +185,7 @@ export const UseResetPassword = () => {
 export const useChnagePassword = () => {
   const router = useRouter();
   const token = localStorage.getItem("token");
-  return useClientApi ({
+  return useClientApi({
     method: "put",
     key: ["changepassword"],
     endpoint: "/change-password",
@@ -198,6 +198,28 @@ export const useChnagePassword = () => {
         toast.success(data?.message);
         router.push("/auth/login");
       }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
+// Update User
+export const useUpdateUserBuyer = () => {
+  const router = useRouter();
+  const token = localStorage.getItem("token");
+  return useClientApi({
+    method: "put",
+    key: ["updateuser"],
+    endpoint: "/update-user",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) toast.success(data?.message);
+      router.push("/buyerlayout/profile-info");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message);

@@ -1,24 +1,50 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
+import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
+import { PiSpinnerBold } from "react-icons/pi";
 
 const AccountSettingsPage = () => {
+  const token = localStorage.getItem("token");
+  const { data } = useGetUserData(token);
+
+  const { mutate, isPending } = useUpdateUserBuyer();
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [lastName, setLastName] = useState("Taylor");
-  const [firstName, setFirstName] = useState("Robert");
-  const [tempLastName, setTempLastName] = useState(lastName);
+
+  const [tempFirstName, setTempFirstName] = useState("");
+  const [tempLastName, setTempLastName] = useState("");
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
-  const [tempFirstName, setTempFirstName] = useState(firstName);
+
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (data?.data) {
+      setFirstName(data.data.firstName || "");
+      setLastName(data.data.lastName || "");
+      setPhoneNumber(data.data.phoneNumber || "");
+
+      setTempFirstName(data.data.firstName || "");
+      setTempLastName(data.data.lastName || "");
+      setTempPhoneNumber(data.data.phoneNumber || "");
+    }
+  }, [data]);
+
   const handleApplyName = () => {
+    mutate({
+      firstName: tempFirstName,
+      lastName: tempLastName,
+    });
+
     setFirstName(tempFirstName);
     setLastName(tempLastName);
     setIsNameModalOpen(false);
@@ -31,8 +57,14 @@ const AccountSettingsPage = () => {
   };
 
   const handleApplyPhone = () => {
+    mutate({
+      phoneNumber: tempPhoneNumber,
+    });
+
     setPhoneNumber(tempPhoneNumber);
-    setIsPhoneModalOpen(false);
+    setTimeout(() => {
+      setIsPhoneModalOpen(false);
+    }, 1000);
   };
 
   const handleCancelPhone = () => {
@@ -217,9 +249,13 @@ const AccountSettingsPage = () => {
               </button>
               <button
                 onClick={handleApplyName}
-                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
+                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition cursor-pointer"
               >
-                Apply
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Apply"
+                )}
               </button>
             </div>
           </div>
@@ -256,9 +292,13 @@ const AccountSettingsPage = () => {
             <div className="flex justify-center gap-3 mt-8">
               <button
                 onClick={handleApplyPhone}
-                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
+                className="px-6 lg:py-3 py-2 cursor-pointer rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
               >
-                Next
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Next"
+                )}
               </button>
             </div>
           </div>
