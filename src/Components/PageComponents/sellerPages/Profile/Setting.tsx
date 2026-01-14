@@ -16,7 +16,7 @@ const Setting = () => {
         </h5>
 
         <div className="mt-7 flex flex-col gap-6">
-          <Link href={"/buyerlayout/profile-info"}>
+          <Link href={"/seller/profile-info"}>
             <div className="rounded-[18px] border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] lg:p-5 p-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:shadow-md transition-shadow">
               <div className="flex gap-x-4 sm:gap-x-5 items-start sm:items-center w-full">
                 <CiUser className="size-10 sm:size-13 flex-shrink-0 fill-[#0085FF]" />
@@ -36,7 +36,7 @@ const Setting = () => {
               </div>
             </div>
           </Link>
-          <Link href={"/buyerlayout/notifications"}>
+          <Link href={"/seller/notifications"}>
             <div className="rounded-[18px] border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] lg:p-5 p-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:shadow-md transition-shadow">
               <div className="flex gap-x-4 sm:gap-x-5 items-start sm:items-center w-full">
                 <Notification className="size-10 sm:size-13 flex-shrink-0" />
@@ -55,7 +55,7 @@ const Setting = () => {
               </div>
             </div>
           </Link>
-          <Link href={"/buyerlayout/upload-documents"}>
+          <Link href={"/seller/upload-documents"}>
             <div className="rounded-[18px] border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] lg:p-5 p-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:shadow-md transition-shadow">
               <div className="flex gap-x-4 sm:gap-x-5 items-start sm:items-center w-full">
                 <Document className="size-10 sm:size-13 flex-shrink-0 " />
