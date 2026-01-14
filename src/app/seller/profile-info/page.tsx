@@ -1,24 +1,46 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
+import React, { useEffect, useState } from "react";
 import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
 import Profilepic from "../../../Assets/profilepic.png";
+import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
 
 const AccountSettingsPage = () => {
+  const token = localStorage.getItem("token");
+  const { data } = useGetUserData(token);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [lastName, setLastName] = useState("Taylor");
-  const [firstName, setFirstName] = useState("Robert");
-  const [tempLastName, setTempLastName] = useState(lastName);
+  const { mutate, isPending } = useUpdateUserBuyer();
+  const [tempLastName, setTempLastName] = useState("");
+  const [tempFirstName, setTempFirstName] = useState("");
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
-  const [tempFirstName, setTempFirstName] = useState(firstName);
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (data?.data) {
+      setFirstName(data.data.firstName || "");
+      setLastName(data.data.lastName || "");
+      setPhoneNumber(data.data.phoneNumber || "");
+
+      setTempFirstName(data.data.firstName || "");
+      setTempLastName(data.data.lastName || "");
+      setTempPhoneNumber(data.data.phoneNumber || "");
+    }
+  }, [data]);
+
   const handleApplyName = () => {
+    mutate({
+      firstName: tempFirstName,
+      lastName: tempLastName,
+    });
+
     setFirstName(tempFirstName);
     setLastName(tempLastName);
     setIsNameModalOpen(false);
@@ -31,8 +53,14 @@ const AccountSettingsPage = () => {
   };
 
   const handleApplyPhone = () => {
+    mutate({
+      phoneNumber: tempPhoneNumber,
+    });
+
     setPhoneNumber(tempPhoneNumber);
-    setIsPhoneModalOpen(false);
+    setTimeout(() => {
+      setIsPhoneModalOpen(false);
+    }, 1000);
   };
 
   const handleCancelPhone = () => {
@@ -70,15 +98,15 @@ const AccountSettingsPage = () => {
                     Personalize your profile pic with a custom photo.
                   </p>
                 </div>
-                <Link href={"/seller/upload-image"}>
+                <Link href={"/buyerlayout/upload-image"}>
                   <div className="flex items-center gap-4 cursor-pointer">
                     <div className="relative">
                       <Image
-                        src={Profilepic}
+                        src={data?.data?.profilePicture || Profilepic}
                         alt="Profile"
                         width={90}
                         height={90}
-                        className="rounded-full object-cover border-4 border-white shadow-md"
+                        className="rounded-full object-cover border-4 border-white shadow-md w-22 h-22"
                       />
                     </div>
                     <FaRegEdit className="text-[#0085FF] text-2xl" />
@@ -124,9 +152,9 @@ const AccountSettingsPage = () => {
                     placeholder="Enter your email"
                   />
                 </div>
-                <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
+                {/* <button className="text-[#0085FF] border border-[#0085FF] px-2.5 py-1.5 rounded-xl cursor-pointer text-xl lg:text-2xl font-medium whitespace-nowrap">
                   Verify
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="border-b border-[#B5B5B5] pb-5 lg:mb-10 mb-5">
@@ -217,9 +245,13 @@ const AccountSettingsPage = () => {
               </button>
               <button
                 onClick={handleApplyName}
-                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
+                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition cursor-pointer"
               >
-                Apply
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Apply"
+                )}
               </button>
             </div>
           </div>
@@ -256,9 +288,13 @@ const AccountSettingsPage = () => {
             <div className="flex justify-center gap-3 mt-8">
               <button
                 onClick={handleApplyPhone}
-                className="px-6 lg:py-3 py-2 rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
+                className="px-6 lg:py-3 py-2 cursor-pointer rounded-lg bg-[#0085FF] text-white hover:bg-[#006edc] transition"
               >
-                Next
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Next"
+                )}
               </button>
             </div>
           </div>
