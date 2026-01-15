@@ -6,18 +6,8 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { Convert } from "../Svg/SvgContainer";
-
-type FormData = {
-  propertyName: string;
-  description: string;
-  propertyType: string;
-  listingType: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  priceUSD: string;
-  priceHNL: string;
-};
+import { ListingFormData } from "@/app/seller/new-listing/page";
+import { useCategory } from "@/Hooks/api/dashboard_api";
 
 const propertyTypes = [
   "Apartment",
@@ -29,15 +19,15 @@ const propertyTypes = [
   "Land",
 ];
 
+const USD_TO_HNL_RATE = 24.8;
 
-const USD_TO_HNL_RATE = 24.8; 
 const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
 
 export type BasicInfoStepProps = {
-  register: UseFormRegister<FormData>;
-  errors: FieldErrors<FormData>;
-  watch: UseFormWatch<FormData>;
-  setValue: UseFormSetValue<FormData>;
+  register: UseFormRegister<ListingFormData>;
+  errors: FieldErrors<ListingFormData>;
+  watch: UseFormWatch<ListingFormData>;
+  setValue: UseFormSetValue<ListingFormData>;
 };
 
 export default function BasicInfoStep({
@@ -46,31 +36,31 @@ export default function BasicInfoStep({
   watch,
   setValue,
 }: BasicInfoStepProps) {
-
   const priceUSD = watch("priceUSD");
-  const priceHNL = watch("priceHNL");
+  const price = watch("price");
+  const token = localStorage.getItem("token");
+  const { data } = useCategory(token);
+  console.log(data?.data?.categories);
 
-  // Sync USD  HNL
   useEffect(() => {
     if (priceUSD && !isNaN(Number(priceUSD))) {
       const usd = parseFloat(priceUSD);
-      const hnl = (usd * USD_TO_HNL_RATE).toFixed(2);
-      setValue("priceHNL", hnl, { shouldValidate: true });
+      const local = (usd * USD_TO_HNL_RATE).toFixed(2);
+      setValue("price", local, { shouldValidate: true });
     } else if (priceUSD === "") {
-      setValue("priceHNL", "");
+      setValue("price", "");
     }
   }, [priceUSD, setValue]);
 
-  // Sync HNL USD
   useEffect(() => {
-    if (priceHNL && !isNaN(Number(priceHNL))) {
-      const hnl = parseFloat(priceHNL);
-      const usd = (hnl / USD_TO_HNL_RATE).toFixed(2);
+    if (price && !isNaN(Number(price))) {
+      const local = parseFloat(price);
+      const usd = (local / USD_TO_HNL_RATE).toFixed(2);
       setValue("priceUSD", usd, { shouldValidate: true });
-    } else if (priceHNL === "") {
+    } else if (price === "") {
       setValue("priceUSD", "");
     }
-  }, [priceHNL, setValue]);
+  }, [price, setValue]);
 
   return (
     <div className="space-y-5 mx-20">
@@ -95,17 +85,18 @@ export default function BasicInfoStep({
         )}
       </div>
 
-      {/* Description (ID Frame example) */}
+      {/* Description */}
       <div>
         <label className="block text-sm font-medium mb-2">
           Description <span className="text-red-500">*</span>
         </label>
         <textarea
-          {...register("description", { required: "Description is required" })}
+          {...register("description", {
+            required: "Description is required",
+          })}
           rows={5}
           className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-          placeholder="ID Frame 2147230166"
-          defaultValue="Describe your property in detail..."
+          placeholder="Describe your property in detail..."
         />
         {errors.description && (
           <p className="text-red-500 text-sm mt-1">
@@ -165,7 +156,7 @@ export default function BasicInfoStep({
         </div>
       </div>
 
-      {/* Full Address  */}
+      {/* Full Address */}
       <div>
         <label className="block text-sm font-medium mb-2">
           Full Address <span className="text-red-500">*</span>
@@ -183,22 +174,19 @@ export default function BasicInfoStep({
           </p>
         )}
       </div>
+
       <div className="grid grid-cols-2 gap-16 mb-4">
         <div>
           <label className="block text-sm font-medium mb-2">
             City <span className="text-red-500">*</span>
           </label>
           <input
-            {...register("streetAddress", {
-              required: "Street address is required",
-            })}
+            {...register("city", { required: "City is required" })}
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="e.g., Playa del Carmen"
           />
-          {errors.streetAddress && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.streetAddress.message}
-            </p>
+          {errors.city && (
+            <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
           )}
         </div>
         <div>
@@ -206,51 +194,78 @@ export default function BasicInfoStep({
             State <span className="text-red-500">*</span>
           </label>
           <input
-            {...register("streetAddress", {
-              required: "Street address is required",
-            })}
+            {...register("state", { required: "State is required" })}
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="e.g. Quintana Roo"
           />
-          {errors.streetAddress && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.streetAddress.message}
-            </p>
+          {errors.state && (
+            <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>
           )}
         </div>
       </div>
-      <div className="grid lg:grid-cols-2 grid-cols-1 gap-16 ">
-        <div className="">
+      <div className="grid grid-cols-2 gap-16 w-full">
+        {/* Listing Type */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Category <span className="text-red-500">*</span>
+          </label>
+          <select
+            {...register("category", {
+              required: "categoryis required",
+            })}
+            className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Select type</option>
+            {data?.data?.categories?.map((cat: any) => (
+              <option key={cat._id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          {errors.category && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.category.message}
+            </p>
+          )}
+        </div>
+
+        {/* Price */}
+        <div>
           <label className="block text-sm font-medium mb-2">
             Price <span className="text-red-500">*</span>
           </label>
-          <div className="bg-gray-50 flex justify-between items-center">
-            <div>
+
+          <div className="bg-gray-50 flex items-center gap-4">
+            {/* USD */}
+            <div className="flex-1">
               <input
-                {...register("streetAddress", {
-                  required: "Street address is required",
+                {...register("priceUSD", {
+                  required: "USD price is required",
                 })}
-                className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="100 $     Dollar"
+                className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="100 $ Dollar"
               />
-              {errors.streetAddress && (
+              {errors.priceUSD && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.streetAddress.message}
+                  {errors.priceUSD.message}
                 </p>
               )}
             </div>
+
             <Convert />
-            <div>
+
+            {/* Local price */}
+            <div className="flex-1">
               <input
-                {...register("streetAddress", {
-                  required: "Street address is required",
+                {...register("price", {
+                  required: "Local price is required",
                 })}
-                className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="  Lempira   L  1000"
+                className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="L 1000"
               />
-              {errors.streetAddress && (
+              {errors.price && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.streetAddress.message}
+                  {errors.price.message}
                 </p>
               )}
             </div>
@@ -259,4 +274,4 @@ export default function BasicInfoStep({
       </div>
     </div>
   );
-};
+}

@@ -24,3 +24,17 @@ export const useAddListing = () => {
     },
   });
 };
+
+// Get Categories
+export const useCategory = (token: any) => {
+  return useClientApi({
+    method: "get",
+    key: ["category", token],
+    enabled: !!token,
+    endpoint: "/get-category-section",
+    isPrivate: true,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
