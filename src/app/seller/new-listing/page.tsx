@@ -1,12 +1,13 @@
 "use client";
-import { IoIosArrowBack } from "react-icons/io";
 import React, { useState } from "react";
+import { PiSpinnerBold } from "react-icons/pi";
+import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
 import { useForm, FormProvider } from "react-hook-form";
+import { useAddListing } from "@/Hooks/api/dashboard_api";
 import MediaStep from "@/Components/Listing/PhotosMediaStep";
 import BasicInfoStep from "@/Components/Listing/BasicInfoStep";
 import DetailsStep from "@/Components/Listing/PropertyDetailsStep";
-import { useAddListing } from "@/Hooks/api/dashboard_api";
 
 export type ListingFormData = {
   propertyName: string;
@@ -38,7 +39,7 @@ export type ListingFormData = {
     balcony?: boolean;
     petFriendly?: boolean;
   };
-  images?: FileList | null;
+  photos?: FileList | null;
   video?: FileList | null;
 };
 
@@ -52,7 +53,7 @@ const TOTAL_STEPS = steps.length;
 
 export default function CreateListingPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const { mutate: addListing } = useAddListing();
+  const { mutate: addListing, isPending } = useAddListing();
 
   const methods = useForm<ListingFormData>({
     mode: "onChange",
@@ -73,7 +74,7 @@ export default function CreateListingPage() {
       lotSize: "",
       category: "",
       amenities: {},
-      images: null,
+      photos: null,
       video: null,
     },
   });
@@ -89,35 +90,42 @@ export default function CreateListingPage() {
     formState: { errors },
   } = methods;
 
-  const images = watch("images");
+  const photos = watch("photos");
 
- const validateCurrentStep = async () => {
-   switch (currentStep) {
-     case 1:
-       return await trigger([
-         "propertyName",
-         "description",
-         "propertyType",
-         "listingType",
-         "streetAddress",
-         "city",
-         "state",
-         "priceUSD",
-         "category",
-       ]);
-     case 2:
-       return true; // Optional step
-     case 3:
-       if (!images || images.length === 0) {
-         setError("images", { message: "At least one photo is required" });
-         return false;
-       }
-       clearErrors("images");
-       return true;
-     default:
-       return true;
-   }
- };
+  const validateCurrentStep = async () => {
+    switch (currentStep) {
+      case 1:
+        return await trigger([
+          "propertyName",
+          "description",
+          "propertyType",
+          "listingType",
+          "streetAddress",
+          "city",
+          "state",
+          "priceUSD",
+          "category",
+        ]);
+      case 2:
+        return await trigger([
+          "bedrooms",
+          "bathrooms",
+          "area",
+          "yearBuilt",
+          "lotSize",
+        ]);
+
+      case 3:
+        if (!photos || photos.length === 0) {
+          setError("photos", { message: "At least one photo is required" });
+          return false;
+        }
+        clearErrors("photos");
+        return true;
+      default:
+        return true;
+    }
+  };
 
   const onNext = async () => {
     const ok = await validateCurrentStep();
@@ -133,52 +141,52 @@ export default function CreateListingPage() {
   };
 
   const onSubmit = (data: ListingFormData) => {
-     const formData = new FormData();
+    console.log(data);
+    const formData = new FormData();
 
-     formData.append("propertyName", data.propertyName);
-     formData.append("description", data.description);
-     formData.append("propertyType", data.propertyType.toLowerCase());
-     formData.append("listingType", data.listingType.toLowerCase());
-     formData.append("fullAddress", data.streetAddress);
-     formData.append("city", data.city);
-     formData.append("state", data.state);
-     formData.append("price", data.priceUSD);
+    formData.append("propertyName", data.propertyName);
+    formData.append("description", data.description);
+    formData.append("propertyType", data.propertyType.toLowerCase());
+    formData.append("listingType", data.listingType.toLowerCase());
+    formData.append("fullAddress", data.streetAddress);
+    formData.append("city", data.city);
+    formData.append("state", data.state);
+    formData.append("price", data.priceUSD);
 
-     if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
-     if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
-     if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt);
-     if (data.area) formData.append("areaInMeter", data.area);
-     if (data.lotSize) formData.append("areaInSqMeter", data.lotSize);
+    if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
+    if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
+    if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt);
+    if (data.area) formData.append("areaInMeter", data.area);
+    if (data.lotSize) formData.append("areaInSqMeter", data.lotSize);
 
-     if (data.amenities) {
-       Object.entries(data.amenities).forEach(([key, value]) => {
-         if (value) {
-           formData.append(
-             "amenities",
-             key.charAt(0).toUpperCase() + key.slice(1)
-           );
-         }
-       });
-     }
+    if (data.amenities) {
+      Object.entries(data.amenities).forEach(([key, value]) => {
+        if (value) {
+          formData.append(
+            "amenities",
+            key.charAt(0).toUpperCase() + key.slice(1)
+          );
+        }
+      });
+    }
 
-     formData.append("category", data.category); // ← Now correct from dropdown
+    formData.append("category", data.category);
 
-     // CRITICAL: Photos must be appended correctly
-     if (data.images && data.images.length > 0) {
-       Array.from(data.images).forEach(file => {
-         formData.append("photos", file); // Backend expects "photos"
-       });
-     } else {
-       console.warn("No photos uploaded");
-     }
+    if (data.photos && data.photos.length > 0) {
+      Array.from(data.photos).forEach(file => {
+        formData.append("photos", file);
+      });
+    } else {
+      console.warn("No photos uploaded");
+    }
 
-     if (data.video && data.video.length > 0) {
-       formData.append("video", data.video[0]);
-     }
+    if (data.video) {
+      formData.append("video", data.video[0]);
+    }
 
-     console.log("Submitting formData with photos:", data.images?.length || 0);
+    console.log("Submitting formData with photos:", data.photos?.length || 0);
 
-     addListing(formData);
+    addListing(formData);
   };
 
   return (
@@ -208,9 +216,7 @@ export default function CreateListingPage() {
               />
               <p
                 className={`mt-3 font-medium ${
-                  step.id <= currentStep
-                    ? "text-[#0085FF]"
-                    : "text-black/40"
+                  step.id <= currentStep ? "text-[#0085FF]" : "text-black/40"
                 }`}
               >
                 {step.name}
@@ -235,9 +241,9 @@ export default function CreateListingPage() {
           {currentStep === 3 && (
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <MediaStep />
-              {errors.images && (
+              {errors.photos && (
                 <p className="text-red-500 text-sm mt-4 text-center">
-                  {errors.images.message}
+                  {errors.photos.message}
                 </p>
               )}
 
@@ -252,9 +258,13 @@ export default function CreateListingPage() {
 
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium"
+                  className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium cursor-pointer"
                 >
-                  Create Listing
+                  {isPending ? (
+                    <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                  ) : (
+                    " Create Listing"
+                  )}
                 </button>
               </div>
             </form>
@@ -274,7 +284,7 @@ export default function CreateListingPage() {
               <button
                 type="button"
                 onClick={onNext}
-                className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium"
+                className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium cursor-pointer"
               >
                 Continue
               </button>

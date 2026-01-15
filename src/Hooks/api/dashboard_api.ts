@@ -13,6 +13,7 @@ export const useAddListing = () => {
     endpoint: "/add-new-property",
     headers: {
       Authorization: `Bearer ${token ?? ""}`,
+      "Content-Type": "multipart/form-data",
     },
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {

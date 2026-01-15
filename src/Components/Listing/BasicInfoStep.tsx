@@ -6,8 +6,8 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { Convert } from "../Svg/SvgContainer";
-import { ListingFormData } from "@/app/seller/new-listing/page";
 import { useCategory } from "@/Hooks/api/dashboard_api";
+import { ListingFormData } from "@/app/seller/new-listing/page";
 
 const propertyTypes = [
   "Apartment",
