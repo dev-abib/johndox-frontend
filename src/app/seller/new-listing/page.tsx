@@ -24,20 +24,7 @@ export type ListingFormData = {
   area?: string;
   yearBuilt?: string;
   lotSize?: string;
-  amenities?: {
-    pool?: boolean;
-    garden?: boolean;
-    parking?: boolean;
-    airConditioning?: boolean;
-    gym?: boolean;
-    security?: boolean;
-    oceanView?: boolean;
-    mountainView?: boolean;
-    beachAccess?: boolean;
-    rooftopTerrace?: boolean;
-    balcony?: boolean;
-    petFriendly?: boolean;
-  };
+  amenities?: Record<string, boolean>;
   images?: FileList | null;
   video?: FileList | null;
 };
@@ -92,43 +79,41 @@ export default function CreateListingPage() {
   const images = watch("images");
 
   const validateCurrentStep = async () => {
-    switch (currentStep) {
-      case 1:
-        return await trigger([
-          "propertyName",
-          "description",
-          "propertyType",
-          "listingType",
-          "streetAddress",
-          "city",
-          "state",
-          "priceUSD",
-          "category",
-        ]);
-      case 2:
-        return true; // Optional step
-      case 3:
-        if (!images || images.length === 0) {
-          setError("images", { message: "At least one photo is required" });
-          return false;
-        }
-        clearErrors("images");
-        return true;
-      default:
-        return true;
+    if (currentStep === 1) {
+      return trigger([
+        "propertyName",
+        "description",
+        "propertyType",
+        "listingType",
+        "streetAddress",
+        "city",
+        "state",
+        "priceUSD",
+        "category",
+      ]);
     }
+
+    if (currentStep === 3) {
+      if (!images || images.length === 0) {
+        setError("images", { message: "At least one photo is required" });
+        return false;
+      }
+      clearErrors("images");
+    }
+
+    return true;
   };
 
   const onNext = async () => {
-    const isValid = await validateCurrentStep();
-    if (isValid && currentStep < TOTAL_STEPS) {
-      setCurrentStep(prev => prev + 1);
+    const ok = await validateCurrentStep();
+    if (ok && currentStep < TOTAL_STEPS) {
+      setCurrentStep(s => s + 1);
     }
   };
 
   const onPrev = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep(s => s - 1);
     }
   };
 
@@ -143,40 +128,14 @@ export default function CreateListingPage() {
     formData.append("city", data.city);
     formData.append("state", data.state);
     formData.append("price", data.priceUSD);
+    formData.append("category", data.category);
 
-    if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
-    if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
-    if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt);
-    if (data.area) formData.append("areaInMeter", data.area);
-    if (data.lotSize) formData.append("areaInSqMeter", data.lotSize);
-
-    if (data.amenities) {
-      Object.entries(data.amenities).forEach(([key, value]) => {
-        if (value) {
-          formData.append(
-            "amenities",
-            key.charAt(0).toUpperCase() + key.slice(1)
-          );
-        }
-      });
+    if (data.images) {
+      Array.from(data.images).forEach(f => formData.append("photos", f));
     }
-
-    formData.append("category", data.category); // ← Now correct from dropdown
-
-    // CRITICAL: Photos must be appended correctly
-    if (data.images && data.images.length > 0) {
-      Array.from(data.images).forEach(file => {
-        formData.append("photos", file); // Backend expects "photos"
-      });
-    } else {
-      console.warn("No photos uploaded");
-    }
-
-    if (data.video && data.video.length > 0) {
+    if (data.video?.[0]) {
       formData.append("video", data.video[0]);
     }
-
-    console.log("Submitting formData with photos:", data.images?.length || 0);
 
     addListing(formData);
   };
@@ -202,13 +161,15 @@ export default function CreateListingPage() {
           {steps.map(step => (
             <div key={step.id} className="flex-1">
               <div
-                className={`h-3 rounded-full transition-colors ${
+                className={`h-3 rounded-full ${
                   step.id <= currentStep ? "bg-[#0085FF]" : "bg-gray-200"
                 }`}
               />
               <p
                 className={`mt-3 font-medium ${
-                  step.id <= currentStep ? "text-[#0085FF]" : "text-black/40"
+                  step.id <= currentStep
+                    ? "text-[#0085FF]"
+                    : "text-black/40"
                 }`}
               >
                 {step.name}
@@ -218,67 +179,66 @@ export default function CreateListingPage() {
         </div>
 
         <FormProvider {...methods}>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            onKeyDown={e => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (currentStep < TOTAL_STEPS) {
-                  onNext();
-                }
-              }
-            }}
-            noValidate
-          >
-            {currentStep === 1 && (
-              <BasicInfoStep
-                register={register}
-                errors={errors}
-                watch={watch}
-                setValue={setValue}
-              />
-            )}
-            {currentStep === 2 && <DetailsStep />}
-            {currentStep === 3 && <MediaStep />}
+          {/* STEP CONTENT */}
+          {currentStep === 1 && (
+            <BasicInfoStep
+              register={register}
+              errors={errors}
+              watch={watch}
+              setValue={setValue}
+            />
+          )}
 
-            {errors.images && (
-              <p className="text-red-500 text-sm mt-4 text-center">
-                {errors.images.message}
-              </p>
-            )}
+          {currentStep === 2 && <DetailsStep />}
 
-            <div className="flex md:flex-row flex-col justify-end gap-10 mt-12">
+          {currentStep === 3 && (
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <MediaStep />
+              {errors.images && (
+                <p className="text-red-500 text-sm mt-4 text-center">
+                  {errors.images.message}
+                </p>
+              )}
+
+              <div className="flex md:flex-row flex-col justify-end gap-10 mt-12">
+                <button
+                  type="button"
+                  onClick={onPrev}
+                  className="px-8 py-3 bg-gray-100 rounded-lg font-medium"
+                >
+                  Previous
+                </button>
+
+                <button
+                  type="submit"
+                  className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium"
+                >
+                  Create Listing
+                </button>
+              </div>
+            </form>
+          )}
+
+          {currentStep < 3 && (
+            <div className="flex justify-end gap-10 mt-12">
               <button
                 type="button"
                 onClick={onPrev}
                 disabled={currentStep === 1}
-                className={`px-8 py-3 rounded-lg font-medium transition cursor-pointer ${
-                  currentStep === 1
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-100 hover:bg-gray-200"
-                }`}
+                className="px-8 py-3 bg-gray-100 rounded-lg font-medium"
               >
                 Previous
               </button>
 
-              {currentStep < TOTAL_STEPS ? (
-                <button
-                  type="button"
-                  onClick={onNext}
-                  className="px-8 py-3 cursor-pointer bg-[#0085FF] text-white rounded-lg font-medium hover:bg-blue-600 transition"
-                >
-                  Continue
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className="px-8 py-3 cursor-pointer bg-[#0085FF] text-white rounded-lg font-medium hover:bg-blue-600 transition"
-                >
-                  Create Listing
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={onNext}
+                className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium"
+              >
+                Continue
+              </button>
             </div>
-          </form>
+          )}
         </FormProvider>
       </Container>
     </section>
