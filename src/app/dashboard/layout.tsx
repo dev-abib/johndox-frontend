@@ -21,7 +21,7 @@ export default function DashboardLayout({
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <PrivateLayout>
+    <PrivateLayout allowedRoles={["seller", "buyer"]}>
       <section className="min-h-screen max-h-screen flex flex-col">
         {/* Dashboard Header */}
         <header className="bg-white border-b h-[84px] flex justify-between items-center px-10 fixed w-full left-0 right-0 z-40">
