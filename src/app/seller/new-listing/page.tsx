@@ -1,11 +1,12 @@
 "use client";
 import { IoIosArrowBack } from "react-icons/io";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Container from "@/Components/Common/Container";
 import { useForm, FormProvider } from "react-hook-form";
 import MediaStep from "@/Components/Listing/PhotosMediaStep";
 import BasicInfoStep from "@/Components/Listing/BasicInfoStep";
 import DetailsStep from "@/Components/Listing/PropertyDetailsStep";
+import { useAddListing } from "@/Hooks/api/dashboard_api";
 
 export type ListingFormData = {
   propertyName: string;
@@ -16,9 +17,10 @@ export type ListingFormData = {
   city: string;
   state: string;
   priceUSD: string;
-  priceHNL: string;
+  price: string;
   bedrooms?: string;
   bathrooms?: string;
+  category: string;
   area?: string;
   yearBuilt?: string;
   lotSize?: string;
@@ -36,7 +38,6 @@ export type ListingFormData = {
     balcony?: boolean;
     petFriendly?: boolean;
   };
-
   images?: FileList | null;
   video?: FileList | null;
 };
@@ -51,7 +52,7 @@ const TOTAL_STEPS = steps.length;
 
 export default function CreateListingPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const { mutate: addListing } = useAddListing();
 
   const methods = useForm<ListingFormData>({
     mode: "onChange",
@@ -64,12 +65,13 @@ export default function CreateListingPage() {
       city: "",
       state: "",
       priceUSD: "",
-      priceHNL: "",
+      price: "",
       bedrooms: "",
       bathrooms: "",
       area: "",
       yearBuilt: "",
       lotSize: "",
+      category: "",
       amenities: {},
       images: null,
       video: null,
@@ -82,23 +84,12 @@ export default function CreateListingPage() {
     trigger,
     setValue,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
   } = methods;
 
-  const watchedImages = watch("images");
-
-  useEffect(() => {
-    if (watchedImages && watchedImages.length > 0) {
-      const urls = Array.from(watchedImages).map((file: File) =>
-        URL.createObjectURL(file)
-      );
-      setImagePreviews(urls);
-
-      return () => urls.forEach(url => URL.revokeObjectURL(url));
-    } else {
-      setImagePreviews([]);
-    }
-  }, [watchedImages]);
+  const images = watch("images");
 
   const validateCurrentStep = async () => {
     switch (currentStep) {
@@ -112,17 +103,17 @@ export default function CreateListingPage() {
           "city",
           "state",
           "priceUSD",
+          "category",
         ]);
       case 2:
-        return await trigger([
-          "bedrooms",
-          "bathrooms",
-          "area",
-          "yearBuilt",
-          "lotSize",
-        ]);
+        return true; // Optional step
       case 3:
-        return await trigger(["images"]);
+        if (!images || images.length === 0) {
+          setError("images", { message: "At least one photo is required" });
+          return false;
+        }
+        clearErrors("images");
+        return true;
       default:
         return true;
     }
@@ -142,18 +133,62 @@ export default function CreateListingPage() {
   };
 
   const onSubmit = (data: ListingFormData) => {
-    console.log("Final Submitted Data:", data);
-    alert("Listing created successfully!");
+    const formData = new FormData();
+
+    formData.append("propertyName", data.propertyName);
+    formData.append("description", data.description);
+    formData.append("propertyType", data.propertyType.toLowerCase());
+    formData.append("listingType", data.listingType.toLowerCase());
+    formData.append("fullAddress", data.streetAddress);
+    formData.append("city", data.city);
+    formData.append("state", data.state);
+    formData.append("price", data.priceUSD);
+
+    if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
+    if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
+    if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt);
+    if (data.area) formData.append("areaInMeter", data.area);
+    if (data.lotSize) formData.append("areaInSqMeter", data.lotSize);
+
+    if (data.amenities) {
+      Object.entries(data.amenities).forEach(([key, value]) => {
+        if (value) {
+          formData.append(
+            "amenities",
+            key.charAt(0).toUpperCase() + key.slice(1)
+          );
+        }
+      });
+    }
+
+    formData.append("category", data.category); // ← Now correct from dropdown
+
+    // CRITICAL: Photos must be appended correctly
+    if (data.images && data.images.length > 0) {
+      Array.from(data.images).forEach(file => {
+        formData.append("photos", file); // Backend expects "photos"
+      });
+    } else {
+      console.warn("No photos uploaded");
+    }
+
+    if (data.video && data.video.length > 0) {
+      formData.append("video", data.video[0]);
+    }
+
+    console.log("Submitting formData with photos:", data.images?.length || 0);
+
+    addListing(formData);
   };
 
   return (
-    <section className="py-10 ">
+    <section className="py-10">
       <Container>
-        {/* Back Button */}
         <button className="flex items-center gap-2 text-2xl lg:text-3xl font-medium text-[#0085FF] mb-12 hover:underline">
           <IoIosArrowBack className="size-8" />
           Back
         </button>
+
         <div className="mb-5">
           <h2 className="text-[#404040] lg:text-[32px] text-[20px] font-medium">
             Create New Listing
@@ -163,7 +198,6 @@ export default function CreateListingPage() {
           </p>
         </div>
 
-        {/* Progress Steps */}
         <div className="flex gap-6 mb-12">
           {steps.map(step => (
             <div key={step.id} className="flex-1">
@@ -173,7 +207,7 @@ export default function CreateListingPage() {
                 }`}
               />
               <p
-                className={`mt-3  font-medium ${
+                className={`mt-3 font-medium ${
                   step.id <= currentStep ? "text-[#0085FF]" : "text-black/40"
                 }`}
               >
@@ -183,9 +217,19 @@ export default function CreateListingPage() {
           ))}
         </div>
 
-        {/* Form */}
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            onKeyDown={e => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (currentStep < TOTAL_STEPS) {
+                  onNext();
+                }
+              }
+            }}
+            noValidate
+          >
             {currentStep === 1 && (
               <BasicInfoStep
                 register={register}
@@ -194,10 +238,14 @@ export default function CreateListingPage() {
                 setValue={setValue}
               />
             )}
-
             {currentStep === 2 && <DetailsStep />}
+            {currentStep === 3 && <MediaStep />}
 
-            {currentStep === 3 && <MediaStep imagePreviews={imagePreviews} />}
+            {errors.images && (
+              <p className="text-red-500 text-sm mt-4 text-center">
+                {errors.images.message}
+              </p>
+            )}
 
             <div className="flex md:flex-row flex-col justify-end gap-10 mt-12">
               <button
@@ -205,7 +253,7 @@ export default function CreateListingPage() {
                 onClick={onPrev}
                 disabled={currentStep === 1}
                 className={`px-8 py-3 rounded-lg font-medium transition cursor-pointer ${
-                  currentStep === 1        
+                  currentStep === 1
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
