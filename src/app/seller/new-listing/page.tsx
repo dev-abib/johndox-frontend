@@ -24,7 +24,20 @@ export type ListingFormData = {
   area?: string;
   yearBuilt?: string;
   lotSize?: string;
-  amenities?: Record<string, boolean>;
+  amenities?: {
+    pool?: boolean;
+    garden?: boolean;
+    parking?: boolean;
+    airConditioning?: boolean;
+    gym?: boolean;
+    security?: boolean;
+    oceanView?: boolean;
+    mountainView?: boolean;
+    beachAccess?: boolean;
+    rooftopTerrace?: boolean;
+    balcony?: boolean;
+    petFriendly?: boolean;
+  };
   images?: FileList | null;
   video?: FileList | null;
 };
@@ -78,31 +91,33 @@ export default function CreateListingPage() {
 
   const images = watch("images");
 
-  const validateCurrentStep = async () => {
-    if (currentStep === 1) {
-      return trigger([
-        "propertyName",
-        "description",
-        "propertyType",
-        "listingType",
-        "streetAddress",
-        "city",
-        "state",
-        "priceUSD",
-        "category",
-      ]);
-    }
-
-    if (currentStep === 3) {
-      if (!images || images.length === 0) {
-        setError("images", { message: "At least one photo is required" });
-        return false;
-      }
-      clearErrors("images");
-    }
-
-    return true;
-  };
+ const validateCurrentStep = async () => {
+   switch (currentStep) {
+     case 1:
+       return await trigger([
+         "propertyName",
+         "description",
+         "propertyType",
+         "listingType",
+         "streetAddress",
+         "city",
+         "state",
+         "priceUSD",
+         "category",
+       ]);
+     case 2:
+       return true; // Optional step
+     case 3:
+       if (!images || images.length === 0) {
+         setError("images", { message: "At least one photo is required" });
+         return false;
+       }
+       clearErrors("images");
+       return true;
+     default:
+       return true;
+   }
+ };
 
   const onNext = async () => {
     const ok = await validateCurrentStep();
@@ -118,26 +133,52 @@ export default function CreateListingPage() {
   };
 
   const onSubmit = (data: ListingFormData) => {
-    const formData = new FormData();
+     const formData = new FormData();
 
-    formData.append("propertyName", data.propertyName);
-    formData.append("description", data.description);
-    formData.append("propertyType", data.propertyType.toLowerCase());
-    formData.append("listingType", data.listingType.toLowerCase());
-    formData.append("fullAddress", data.streetAddress);
-    formData.append("city", data.city);
-    formData.append("state", data.state);
-    formData.append("price", data.priceUSD);
-    formData.append("category", data.category);
+     formData.append("propertyName", data.propertyName);
+     formData.append("description", data.description);
+     formData.append("propertyType", data.propertyType.toLowerCase());
+     formData.append("listingType", data.listingType.toLowerCase());
+     formData.append("fullAddress", data.streetAddress);
+     formData.append("city", data.city);
+     formData.append("state", data.state);
+     formData.append("price", data.priceUSD);
 
-    if (data.images) {
-      Array.from(data.images).forEach(f => formData.append("photos", f));
-    }
-    if (data.video?.[0]) {
-      formData.append("video", data.video[0]);
-    }
+     if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
+     if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
+     if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt);
+     if (data.area) formData.append("areaInMeter", data.area);
+     if (data.lotSize) formData.append("areaInSqMeter", data.lotSize);
 
-    addListing(formData);
+     if (data.amenities) {
+       Object.entries(data.amenities).forEach(([key, value]) => {
+         if (value) {
+           formData.append(
+             "amenities",
+             key.charAt(0).toUpperCase() + key.slice(1)
+           );
+         }
+       });
+     }
+
+     formData.append("category", data.category); // ← Now correct from dropdown
+
+     // CRITICAL: Photos must be appended correctly
+     if (data.images && data.images.length > 0) {
+       Array.from(data.images).forEach(file => {
+         formData.append("photos", file); // Backend expects "photos"
+       });
+     } else {
+       console.warn("No photos uploaded");
+     }
+
+     if (data.video && data.video.length > 0) {
+       formData.append("video", data.video[0]);
+     }
+
+     console.log("Submitting formData with photos:", data.images?.length || 0);
+
+     addListing(formData);
   };
 
   return (
