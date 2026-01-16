@@ -1,10 +1,12 @@
 // All Dashboard API
-
+"use client";
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
+import { useRouter } from "next/navigation";
 
 // Add Listing
 export const useAddListing = () => {
+  const router = useRouter();
   const token = localStorage.getItem("token");
 
   return useClientApi({
@@ -18,6 +20,7 @@ export const useAddListing = () => {
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
         toast.success(data?.message || "Listing created successfully!");
+        router.push("/seller/profile");
       }
     },
     onError: (err: any) => {
@@ -33,6 +36,19 @@ export const useCategory = (token: any) => {
     key: ["category", token],
     enabled: !!token,
     endpoint: "/get-category-section",
+    isPrivate: true,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
+// Get All Listing
+export const useAlllisting = (token: any) => {
+  return useClientApi({
+    method: "get",
+    key: ["listing", token],
+    enabled: !!token,
+    endpoint: "/my-listings?page=1&limit=10",
     isPrivate: true,
     queryOptions: {
       refetchInterval: 1000 * 60 * 60,

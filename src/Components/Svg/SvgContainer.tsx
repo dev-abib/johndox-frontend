@@ -16,7 +16,7 @@ export function PlanetSvg() {
       />
       <path
         d="M8.00156 3H9.00156C7.05156 8.84 7.05156 15.16 9.00156 21H8.00156"
-        stroke="#5F5F5F"
+        stroke="#5F5F5F"         
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1543,14 +1543,14 @@ export function Document({ className }: { className?: string }) {
         stroke="#0085FF"
         strokeWidth="2"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
       <path
         d="M15.168 34.6666H32.5013"
         stroke="#0085FF"
         strokeWidth="2"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1570,14 +1570,14 @@ export function Notification({ className }: { className?: string }) {
         stroke="#0085FF"
         strokeWidth="2"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
       <path
         d="M21.6542 4.37971C16.2409 4.15051 12.0586 4.77413 12.0586 4.77413C9.41778 4.96294 4.35686 6.44348 4.3569 15.09C4.35694 23.663 4.30092 34.2319 4.3569 38.4453C4.3569 41.0194 5.95075 47.0239 11.4674 47.3458C18.1729 47.737 30.2512 47.8201 35.7931 47.3458C37.2765 47.2621 42.2154 46.0975 42.8405 40.724C43.488 35.1571 43.3591 31.2883 43.3591 30.3675"
         stroke="#0085FF"
         strokeWidth="2"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
       <path
         d="M47.668 15.2005C47.668 21.1836 42.813 26.0339 36.8242 26.0339C30.8354 26.0339 25.9805 21.1836 25.9805 15.2005C25.9805 9.21744 30.8354 4.36719 36.8242 4.36719C42.813 4.36719 47.668 9.21744 47.668 15.2005Z"
@@ -1613,13 +1613,13 @@ export function Mail({ className }: { className?: string }) {
         stroke="#0085FF"
         strokeWidth="6"
         strokeLinecap="round"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
       <path
         d="M18.4766 123.526C19.0758 151.627 19.3755 165.677 29.7441 176.085C40.1128 186.494 54.5434 186.856 83.4046 187.581C101.192 188.028 118.805 188.028 136.593 187.581C165.454 186.856 179.885 186.494 190.253 176.085C200.622 165.677 200.922 151.627 201.521 123.526C201.714 114.491 201.714 105.509 201.521 96.4733C200.922 68.3726 200.622 54.3222 190.253 43.9141C179.885 33.506 165.454 33.1434 136.593 32.4182C118.805 31.9713 101.192 31.9713 83.4046 32.4182C54.5434 33.1433 40.1128 33.5058 29.7441 43.9139C19.3754 54.3221 19.0758 68.3724 18.4765 96.4731C18.2839 105.509 18.2839 114.491 18.4766 123.526Z"
         stroke="#0085FF"
         strokeWidth="6"
-        stroke-linejoin="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1627,10 +1627,10 @@ export function Mail({ className }: { className?: string }) {
 export function Convert({ className }: { className?: string }) {
   return (
    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M5.83464 17.5003L20.233 17.5003C21.4064 17.5003 21.9931 17.5003 22.1391 17.8604C22.2851 18.2205 21.8703 18.6443 21.0405 19.492L18.4219 22.167" stroke="#404040" strokeWidth="1.5" strokeLinecap="round" stroke-linejoin="round"/>
-<path d="M5.83464 17.5003L20.233 17.5003C21.4064 17.5003 21.9931 17.5003 22.1391 17.8604C22.2851 18.2205 21.8703 18.6443 21.0405 19.492L18.4219 22.167" stroke="black" stroke-opacity="0.2" strokeWidth="1.5" strokeLinecap="round" stroke-linejoin="round"/>
-<path d="M22.168 10.5L7.76963 10.5C6.5962 10.5 6.00949 10.5 5.86347 10.1399C5.71746 9.7798 6.13233 9.35599 6.96207 8.50837L9.58069 5.83333" stroke="#404040" strokeWidth="1.5" strokeLinecap="round" stroke-linejoin="round"/>
-<path d="M22.168 10.5L7.76963 10.5C6.5962 10.5 6.00949 10.5 5.86347 10.1399C5.71746 9.7798 6.13233 9.35599 6.96207 8.50837L9.58069 5.83333" stroke="black" stroke-opacity="0.2" strokeWidth="1.5" strokeLinecap="round" stroke-linejoin="round"/>
+<path d="M5.83464 17.5003L20.233 17.5003C21.4064 17.5003 21.9931 17.5003 22.1391 17.8604C22.2851 18.2205 21.8703 18.6443 21.0405 19.492L18.4219 22.167" stroke="#404040" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M5.83464 17.5003L20.233 17.5003C21.4064 17.5003 21.9931 17.5003 22.1391 17.8604C22.2851 18.2205 21.8703 18.6443 21.0405 19.492L18.4219 22.167" stroke="black" strokeOpacity="0.2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M22.168 10.5L7.76963 10.5C6.5962 10.5 6.00949 10.5 5.86347 10.1399C5.71746 9.7798 6.13233 9.35599 6.96207 8.50837L9.58069 5.83333" stroke="#404040" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M22.168 10.5L7.76963 10.5C6.5962 10.5 6.00949 10.5 5.86347 10.1399C5.71746 9.7798 6.13233 9.35599 6.96207 8.50837L9.58069 5.83333" stroke="black" strokeOpacity="0.2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 
   );
