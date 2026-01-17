@@ -31,7 +31,6 @@ export default function EditPhotoMediaStep({
   // 1. Initialize API Data
   useEffect(() => {
     if (listing?.media) {
-      // Assuming media is an array of objects: [{url: '...', type: 'image'}, ...]
       const imagesFromApi = listing.media
         .filter(
           (m: any) =>
@@ -46,7 +45,6 @@ export default function EditPhotoMediaStep({
       setExistingImages(imagesFromApi);
       setExistingVideo(videoFromApi || "");
 
-      // We also store these in a hidden field so the backend knows which to keep
       setValue("existingMedia" as any, imagesFromApi);
     }
   }, [listing, setValue]);
@@ -66,7 +64,7 @@ export default function EditPhotoMediaStep({
   const removeExistingImage = (urlToRemove: string) => {
     const updated = existingImages.filter(url => url !== urlToRemove);
     setExistingImages(updated);
-    setValue("existingMedia" as any, updated); // Update hidden state
+    setValue("existingMedia" as any, updated); 
   };
 
   // Remove New Image (Local)

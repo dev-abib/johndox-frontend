@@ -45,7 +45,6 @@ export default function EditBasicinfo({
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { data: categoryData } = useCategory(token);
 
-  // This state ensures the currency conversion logic doesn't wipe out values on initial load
   const [isInitializing, setIsInitializing] = useState(true);
 
   // 1. Sync API data to Form State
@@ -53,7 +52,6 @@ export default function EditBasicinfo({
     if (lisiting) {
       reset({
         ...lisiting,
-        // Match lowercase API values to your capitalized dropdown options
         propertyType: lisiting.propertyType
           ? lisiting.propertyType.charAt(0).toUpperCase() +
             lisiting.propertyType.slice(1)
@@ -64,9 +62,7 @@ export default function EditBasicinfo({
             : lisiting.listingType === "for sale"
               ? "For Sale"
               : lisiting.listingType,
-        // Map fullAddress from API to streetAddress for the form
         streetAddress: lisiting.fullAddress,
-        // Ensure price is handled
         price: lisiting.price?.toString(),
         priceUSD: (lisiting.price / USD_TO_HNL_RATE).toFixed(2),
       });
