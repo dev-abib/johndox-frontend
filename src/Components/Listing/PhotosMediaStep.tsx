@@ -1,10 +1,11 @@
 import { FiUpload, FiX } from "react-icons/fi";
 import { useFormContext } from "react-hook-form";
+import { useEffect, useState, useRef } from "react";
 import { ListingFormData } from "@/app/seller/new-listing/page";
-import { useEffect, useState } from "react";
 
 export default function MediaStep() {
   const {
+    register,
     setValue,
     watch,
     formState: { errors },
@@ -15,61 +16,50 @@ export default function MediaStep() {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState<string>("");
 
+  // Watch registered files
+  const watchedImages = watch("photos");
+  const watchedVideo = watch("video");
+
+  // Update local state and previews when files change
   useEffect(() => {
-    const urls = images.map(file => URL.createObjectURL(file));
-    setImageUrls(urls);
-    return () => urls.forEach(url => URL.revokeObjectURL(url));
-  }, [images]);
+    if (watchedImages && watchedImages.length > 0) {
+      const files = Array.from(watchedImages);
+      setImages(files);
+
+      const urls = files.map(file => URL.createObjectURL(file));
+      setImageUrls(urls);
+      return () => urls.forEach(url => URL.revokeObjectURL(url));
+    } else {
+      setImages([]);
+      setImageUrls([]);
+    }
+  }, [watchedImages]);
 
   useEffect(() => {
-    if (video) {
-      const url = URL.createObjectURL(video);
-      setVideoUrl(url);
-      return () => URL.revokeObjectURL(url);
+    if (watchedVideo && watchedVideo.length > 0) {
+      const file = watchedVideo[0];
+      setVideo(file);
+      setVideoUrl(URL.createObjectURL(file));
     } else {
+      setVideo(null);
       setVideoUrl("");
     }
-  }, [video]);
+  }, [watchedVideo]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-
-    const newFiles = Array.from(e.target.files);
-    const updatedFiles = [...images, ...newFiles].slice(0, 10);
-
-    setImages(updatedFiles);
-
-    // Convert to real FileList
-    const dataTransfer = new DataTransfer();
-    updatedFiles.forEach(file => dataTransfer.items.add(file));
-
-    setValue("images", dataTransfer.files, { shouldValidate: true });
-  };
-
+  // Remove image
   const removeImage = (index: number) => {
     const updatedFiles = images.filter((_, i) => i !== index);
     setImages(updatedFiles);
 
-    const dataTransfer = new DataTransfer();
-    updatedFiles.forEach(file => dataTransfer.items.add(file));
-
-    setValue("images", dataTransfer.files, { shouldValidate: true });
+    const dt = new DataTransfer();
+    updatedFiles.forEach(file => dt.items.add(file));
+    setValue("photos", dt.files, { shouldValidate: true });
   };
 
-  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0]) return;
-
-    const file = e.target.files[0];
-    setVideo(file);
-
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-
-    setValue("video", dataTransfer.files, { shouldValidate: true });
-  };
-
+  // Remove video
   const removeVideo = () => {
     setVideo(null);
+    setVideoUrl("");
     setValue("video", null, { shouldValidate: true });
   };
 
@@ -90,35 +80,64 @@ export default function MediaStep() {
         </p>
       </div>
 
+      {/* Hidden registered inputs */}
+      <input
+        id="imageRef"
+        type="file"
+        accept="image/*"
+        multiple
+        {...register("photos", {
+          required: "At least one photo is required",
+        })}
+        className="hidden"
+        onChange={e => {
+          register("photos").onChange(e);
+          if (e.target.files) {
+            console.log(e.target.files[0]);
+          }
+        }}
+      />
+
+      <input
+        type="file"
+        id="videoRef"
+        accept="video/*"
+        {...register("video")}
+        className="hidden"
+        onChange={e => {
+          register("video").onChange(e);
+          const files = e.target.files;
+          if (files && files.length > 0) {
+            console.log("Uploaded video:", files[0]);
+          }
+        }}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <label className="cursor-pointer bg-white border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center h-64 hover:border-gray-400 transition">
+        {/* Upload Photos Button */}
+        <label
+          htmlFor="imageRef"
+          className="cursor-pointer bg-white border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center h-64 hover:border-gray-400 transition"
+        >
           <FiUpload className="text-4xl text-gray-400 mb-3" />
           <span className="text-sm font-medium text-gray-700">
             Upload Photos
           </span>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={handleImageChange}
-          />
         </label>
 
-        <label className="cursor-pointer bg-white border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center h-64 hover:border-gray-400 transition">
+        {/* Upload Video Button */}
+        <label
+          htmlFor="videoRef"
+          className="cursor-pointer bg-white border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center h-64 hover:border-gray-400 transition"
+        >
           <FiUpload className="text-4xl text-gray-400 mb-3" />
           <span className="text-sm font-medium text-gray-700">
             Upload Video
           </span>
-          <input
-            type="file"
-            accept="video/*"
-            className="hidden"
-            onChange={handleVideoChange}
-          />
         </label>
       </div>
 
+      {/* Image Previews */}
       {imageUrls.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-6">
           {imageUrls.map((src, index) => (
@@ -140,6 +159,7 @@ export default function MediaStep() {
         </div>
       )}
 
+      {/* Video Preview */}
       {videoUrl && (
         <div className="mt-6 relative">
           <p className="text-sm font-medium mb-2">Video Preview:</p>
@@ -157,6 +177,12 @@ export default function MediaStep() {
         </div>
       )}
 
+      {/* Error Message */}
+      {errors.photos && (
+        <p className="text-red-500 text-sm mt-4">{errors.photos.message}</p>
+      )}
+
+      {/* Info */}
       <div className="text-sm text-gray-600 mt-2">
         <p>
           You can upload up to <strong>10 photos</strong> and{" "}
@@ -169,4 +195,3 @@ export default function MediaStep() {
     </div>
   );
 }
-    

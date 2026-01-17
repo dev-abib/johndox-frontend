@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   UseFormRegister,
   FieldErrors,
   UseFormWatch,
   UseFormSetValue,
+  UseFormReset,
 } from "react-hook-form";
 import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
@@ -18,49 +19,78 @@ const propertyTypes = [
   "Studio",
   "Land",
 ];
-
-const USD_TO_HNL_RATE = 24.8;
-
 const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
+const USD_TO_HNL_RATE = 24.8;
 
 export type BasicInfoStepProps = {
   register: UseFormRegister<ListingFormData>;
   errors: FieldErrors<ListingFormData>;
   watch: UseFormWatch<ListingFormData>;
   setValue: UseFormSetValue<ListingFormData>;
+  reset: UseFormReset<ListingFormData>;
+  data?: any;
 };
 
-export default function BasicInfoStep({
+export default function EditBasicinfo({
+  data: lisiting,
   register,
   errors,
   watch,
   setValue,
+  reset,
 }: BasicInfoStepProps) {
   const priceUSD = watch("priceUSD");
   const price = watch("price");
-  const token = localStorage.getItem("token");
-  const { data } = useCategory(token);
-  console.log(data?.data?.categories);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const { data: categoryData } = useCategory(token);
 
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // 1. Sync API data to Form State
   useEffect(() => {
-    if (priceUSD && !isNaN(Number(priceUSD))) {
+    if (lisiting) {
+      reset({
+        ...lisiting,
+        propertyType: lisiting.propertyType
+          ? lisiting.propertyType.charAt(0).toUpperCase() +
+            lisiting.propertyType.slice(1)
+          : "",
+        listingType:
+          lisiting.listingType === "for rent"
+            ? "For Rent"
+            : lisiting.listingType === "for sale"
+              ? "For Sale"
+              : lisiting.listingType,
+        streetAddress: lisiting.fullAddress,
+        price: lisiting.price?.toString(),
+        priceUSD: (lisiting.price / USD_TO_HNL_RATE).toFixed(2),
+      });
+      setTimeout(() => setIsInitializing(false), 200);
+    }
+  }, [lisiting, reset]);
+
+  // 2. Conversion: USD to Local
+  useEffect(() => {
+    if (!isInitializing && priceUSD && !isNaN(Number(priceUSD))) {
       const usd = parseFloat(priceUSD);
       const local = (usd * USD_TO_HNL_RATE).toFixed(2);
       setValue("price", local, { shouldValidate: true });
-    } else if (priceUSD === "") {
+    } else if (!isInitializing && priceUSD === "") {
       setValue("price", "");
     }
-  }, [priceUSD, setValue]);
+  }, [priceUSD, setValue, isInitializing]);
 
+  // 3. Conversion: Local to USD
   useEffect(() => {
-    if (price && !isNaN(Number(price))) {
+    if (!isInitializing && price && !isNaN(Number(price))) {
       const local = parseFloat(price);
       const usd = (local / USD_TO_HNL_RATE).toFixed(2);
       setValue("priceUSD", usd, { shouldValidate: true });
-    } else if (price === "") {
+    } else if (!isInitializing && price === "") {
       setValue("priceUSD", "");
     }
-  }, [price, setValue]);
+  }, [price, setValue, isInitializing]);
 
   return (
     <div className="space-y-5 mx-20">
@@ -76,7 +106,6 @@ export default function BasicInfoStep({
             required: "Property name is required",
           })}
           className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="e.g. Ocean View Villa in Riviera Maya"
         />
         {errors.propertyName && (
           <p className="text-red-500 text-sm mt-1">
@@ -91,9 +120,7 @@ export default function BasicInfoStep({
           Description <span className="text-red-500">*</span>
         </label>
         <textarea
-          {...register("description", {
-            required: "Description is required",
-          })}
+          {...register("description", { required: "Description is required" })}
           rows={5}
           className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
           placeholder="Describe your property in detail..."
@@ -203,21 +230,20 @@ export default function BasicInfoStep({
           )}
         </div>
       </div>
+
       <div className="grid grid-cols-2 gap-16 w-full">
-        {/* Listing Type */}
+        {/* Category */}
         <div>
           <label className="block text-sm font-medium mb-2">
             Category <span className="text-red-500">*</span>
           </label>
           <select
-            {...register("category", {
-              required: "categoryis required",
-            })}
+            {...register("category", { required: "Category is required" })}
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Select type</option>
-            {data?.data?.categories?.map((cat: any) => (
-              <option key={cat._id} value={cat.name}>
+            {categoryData?.data?.categories?.map((cat: any) => (
+              <option key={cat._id} value={cat?.name}>
                 {cat.name}
               </option>
             ))}
@@ -234,17 +260,12 @@ export default function BasicInfoStep({
           <label className="block text-sm font-medium mb-2">
             Price <span className="text-red-500">*</span>
           </label>
-
-          <div className="bg-gray-50 flex items-center gap-4">
-            {/* USD */}
+          <div className="flex items-center gap-4">
             <div className="flex-1">
               <input
-                {...register("priceUSD", {
-                  required: "USD price is required",
-                })}
+                {...register("priceUSD", { required: "USD price is required" })}
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="100 $ Dollar"
-    
               />
               {errors.priceUSD && (
                 <p className="text-red-500 text-sm mt-1">
@@ -255,12 +276,9 @@ export default function BasicInfoStep({
 
             <Convert />
 
-            {/* Local price */}
             <div className="flex-1">
               <input
-                {...register("price", {
-                  required: "Local price is required",
-                })}
+                {...register("price", { required: "Local price is required" })}
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="L 1000"
               />

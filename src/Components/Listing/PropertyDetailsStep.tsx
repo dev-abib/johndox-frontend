@@ -17,7 +17,7 @@ export default function DetailsStep() {
             Bedrooms
           </label>
           <input
-            type="text"
+            type="number"
             id="bedrooms"
             placeholder="e.g. 3"
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -29,7 +29,7 @@ export default function DetailsStep() {
             Bathrooms
           </label>
           <input
-            type="text"
+            type="number"
             id="bathrooms"
             placeholder="e.g. 2"
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -41,20 +41,20 @@ export default function DetailsStep() {
             Year Built
           </label>
           <input
-            type="text"
+            type="number"
             id="yearBuilt"
             placeholder="e.g. 2000"
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             {...register("yearBuilt")}
           />
         </div>
-        <div></div> 
+        <div></div>
         <div>
           <label htmlFor="area" className="block text-sm font-medium mb-2">
             Area (sq M)
           </label>
           <input
-            type="text"
+            type="number"
             id="area"
             placeholder="e.g. 2000"
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -66,7 +66,7 @@ export default function DetailsStep() {
             Lot Size (sq M)
           </label>
           <input
-            type="text"
+            type="number"
             id="lotSize"
             placeholder="e.g. 5000"
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
