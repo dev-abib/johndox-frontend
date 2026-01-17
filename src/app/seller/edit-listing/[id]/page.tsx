@@ -4,12 +4,12 @@ import { useParams } from "next/navigation";
 import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm, FormProvider } from "react-hook-form";
 import EditBasicinfo from "@/Components/edit-listing/EditBasicinfo";
 import { useAlllisting, useEditListing } from "@/Hooks/api/dashboard_api";
 import EditPhotoMediaStep from "@/Components/edit-listing/EditPhotoMediaStep";
 import EditPropertyDetails from "@/Components/edit-listing/EditPropertyDetails";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 export type ListingFormData = {
   propertyName: string;
