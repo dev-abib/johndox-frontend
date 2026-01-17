@@ -1,9 +1,15 @@
+import { useEffect, useState } from "react";
 import { FiUpload, FiX } from "react-icons/fi";
 import { useFormContext } from "react-hook-form";
-import { useEffect, useState, useRef } from "react";
 import { ListingFormData } from "@/app/seller/new-listing/page";
 
-export default function EditPhotoMediaStep() {
+interface EditPhotoMediaStepProps {
+  data?: any;
+}
+
+export default function EditPhotoMediaStep({
+  data: listing,
+}: EditPhotoMediaStepProps) {
   const {
     register,
     setValue,
@@ -11,56 +17,64 @@ export default function EditPhotoMediaStep() {
     formState: { errors },
   } = useFormContext<ListingFormData>();
 
-  const [images, setImages] = useState<File[]>([]);
-  const [video, setVideo] = useState<File | null>(null);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [videoUrl, setVideoUrl] = useState<string>("");
+  // State for existing media (Strings from API)
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [existingVideo, setExistingVideo] = useState<string>("");
 
-  // Watch registered files
-  const watchedImages = watch("photos");
+  // State for newly uploaded media (Files)
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [newImageUrls, setNewImageUrls] = useState<string[]>([]);
+
+  const watchedPhotos = watch("photos");
   const watchedVideo = watch("video");
 
-  // Update local state and previews when files change
+  // 1. Initialize API Data
   useEffect(() => {
-    if (watchedImages && watchedImages.length > 0) {
-      const files = Array.from(watchedImages);
-      setImages(files);
+    if (listing?.media) {
+      // Assuming media is an array of objects: [{url: '...', type: 'image'}, ...]
+      const imagesFromApi = listing.media
+        .filter(
+          (m: any) =>
+            m.type === "image" || m.url.match(/\.(jpg|jpeg|png|webp)$/i),
+        )
+        .map((m: any) => m.url);
 
+      const videoFromApi = listing.media.find(
+        (m: any) => m.type === "video" || m.url.match(/\.(mp4|mov|avi)$/i),
+      )?.url;
+
+      setExistingImages(imagesFromApi);
+      setExistingVideo(videoFromApi || "");
+
+      // We also store these in a hidden field so the backend knows which to keep
+      setValue("existingMedia" as any, imagesFromApi);
+    }
+  }, [listing, setValue]);
+
+  // 2. Handle New Local Image Previews
+  useEffect(() => {
+    if (watchedPhotos && watchedPhotos instanceof FileList) {
+      const files = Array.from(watchedPhotos);
+      setNewImages(files);
       const urls = files.map(file => URL.createObjectURL(file));
-      setImageUrls(urls);
+      setNewImageUrls(urls);
       return () => urls.forEach(url => URL.revokeObjectURL(url));
-    } else {
-      setImages([]);
-      setImageUrls([]);
     }
-  }, [watchedImages]);
+  }, [watchedPhotos]);
 
-  useEffect(() => {
-    if (watchedVideo && watchedVideo.length > 0) {
-      const file = watchedVideo[0];
-      setVideo(file);
-      setVideoUrl(URL.createObjectURL(file));
-    } else {
-      setVideo(null);
-      setVideoUrl("");
-    }
-  }, [watchedVideo]);
-
-  // Remove image
-  const removeImage = (index: number) => {
-    const updatedFiles = images.filter((_, i) => i !== index);
-    setImages(updatedFiles);
-
-    const dt = new DataTransfer();
-    updatedFiles.forEach(file => dt.items.add(file));
-    setValue("photos", dt.files, { shouldValidate: true });
+  // Remove Existing Image (API)
+  const removeExistingImage = (urlToRemove: string) => {
+    const updated = existingImages.filter(url => url !== urlToRemove);
+    setExistingImages(updated);
+    setValue("existingMedia" as any, updated); // Update hidden state
   };
 
-  // Remove video
-  const removeVideo = () => {
-    setVideo(null);
-    setVideoUrl("");
-    setValue("video", null, { shouldValidate: true });
+  // Remove New Image (Local)
+  const removeNewImage = (index: number) => {
+    const updatedFiles = newImages.filter((_, i) => i !== index);
+    const dt = new DataTransfer();
+    updatedFiles.forEach(file => dt.items.add(file));
+    setValue("photos", dt.files);
   };
 
   return (
@@ -70,128 +84,134 @@ export default function EditPhotoMediaStep() {
         <div className="absolute left-0 -bottom-1 w-48 h-1 bg-[#0085FF] rounded-full"></div>
       </div>
 
-      <div>
-        <p className="text-lg font-medium text-gray-900">
-          Property Photos <span className="text-red-500">*</span>
-        </p>
-        <p className="text-sm text-gray-600 mt-2">
-          Upload high-quality photos of your property. The first image will be
-          the cover photo.
-        </p>
-      </div>
-
-      {/* Hidden registered inputs */}
-      <input
-        id="imageRef"
-        type="file"
-        accept="image/*"
-        multiple
-        {...register("photos", {
-          required: "At least one photo is required",
-        })}
-        className="hidden"
-        onChange={e => {
-          register("photos").onChange(e);
-          if (e.target.files) {
-            console.log(e.target.files[0]);
-          }
-        }}
-      />
-
-      <input
-        type="file"
-        id="videoRef"
-        accept="video/*"
-        {...register("video")}
-        className="hidden"
-        onChange={e => {
-          register("video").onChange(e);
-          const files = e.target.files;
-          if (files && files.length > 0) {
-            console.log("Uploaded video:", files[0]);
-          }
-        }}
-      />
-
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Upload Photos Button */}
         <label
           htmlFor="imageRef"
           className="cursor-pointer bg-white border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center h-64 hover:border-gray-400 transition"
         >
           <FiUpload className="text-4xl text-gray-400 mb-3" />
           <span className="text-sm font-medium text-gray-700">
-            Upload Photos
+            Upload New Photos
           </span>
         </label>
 
-        {/* Upload Video Button */}
         <label
           htmlFor="videoRef"
           className="cursor-pointer bg-white border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center h-64 hover:border-gray-400 transition"
         >
           <FiUpload className="text-4xl text-gray-400 mb-3" />
           <span className="text-sm font-medium text-gray-700">
-            Upload Video
+            Upload New Video
           </span>
         </label>
       </div>
 
-      {/* Image Previews */}
-      {imageUrls.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mt-6">
-          {imageUrls.map((src, index) => (
-            <div key={index} className="relative group">
-              <img
-                src={src}
-                alt={`Preview ${index + 1}`}
-                className="w-full h-32 object-cover rounded-lg shadow-sm"
-              />
-              <button
-                type="button"
-                onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 bg-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
-              >
-                <FiX className="text-red-500 w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <input
+        id="imageRef"
+        type="file"
+        accept="image/*"
+        multiple
+        {...register("photos")}
+        className="hidden"
+      />
+      <input
+        id="videoRef"
+        type="file"
+        accept="video/*"
+        {...register("video")}
+        className="hidden"
+      />
 
-      {/* Video Preview */}
-      {videoUrl && (
-        <div className="mt-6 relative">
+      {/* Media Gallery */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-6">
+        {/* Render Existing API Images */}
+        {existingImages.map((url, index) => (
+          <div
+            key={`existing-${index}`}
+            className="relative group border-2 border-blue-200 rounded-lg p-1"
+          >
+            <img
+              src={url}
+              alt="Existing"
+              className="w-full h-32 object-cover rounded-md"
+            />
+            <div className="absolute top-1 left-1 bg-blue-500 text-white text-[10px] px-1 rounded">
+              Saved
+            </div>
+            <button
+              type="button"
+              onClick={() => removeExistingImage(url)}
+              className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm"
+            >
+              <FiX className="text-red-500 w-4 h-4" />
+            </button>
+          </div>
+        ))}
+
+        {/* Render New Local Images */}
+        {newImageUrls.map((url, index) => (
+          <div
+            key={`new-${index}`}
+            className="relative group border-2 border-green-200 rounded-lg p-1"
+          >
+            <img
+              src={url}
+              alt="New"
+              className="w-full h-32 object-cover rounded-md"
+            />
+            <div className="absolute top-1 left-1 bg-green-500 text-white text-[10px] px-1 rounded">
+              New
+            </div>
+            <button
+              type="button"
+              onClick={() => removeNewImage(index)}
+              className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm"
+            >
+              <FiX className="text-red-500 w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Video Preview (Existing or New) */}
+      {(existingVideo || watchedVideo?.[0]) && (
+        <div className="mt-6 relative max-w-xl">
           <p className="text-sm font-medium mb-2">Video Preview:</p>
-          <video controls className="w-full max-h-96 rounded-lg shadow-md">
-            <source src={videoUrl} type={video?.type} />
-            Your browser does not support the video tag.
+          <video
+            key={
+              watchedVideo?.[0]
+                ? URL.createObjectURL(watchedVideo[0])
+                : existingVideo
+            }
+            controls
+            className="w-full rounded-lg shadow-md"
+          >
+            <source
+              src={
+                watchedVideo?.[0]
+                  ? URL.createObjectURL(watchedVideo[0])
+                  : existingVideo
+              }
+            />
           </video>
           <button
             type="button"
-            onClick={removeVideo}
-            className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md"
+            onClick={() => {
+              setExistingVideo("");
+              setValue("video", null);
+            }}
+            className="absolute top-10 right-2 bg-white rounded-full p-1 shadow-md"
           >
             <FiX className="text-red-500 w-5 h-5" />
           </button>
         </div>
       )}
 
-      {/* Error Message */}
       {errors.photos && (
-        <p className="text-red-500 text-sm mt-4">{errors.photos.message}</p>
+        <p className="text-red-500 text-sm mt-4">
+          {errors.photos.message as string}
+        </p>
       )}
-
-      {/* Info */}
-      <div className="text-sm text-gray-600 mt-2">
-        <p>
-          You can upload up to <strong>10 photos</strong> and{" "}
-          <strong>1 video</strong>.
-        </p>
-        <p className="mt-1">
-          Recommended size: <strong>1920x1080px</strong>
-        </p>
-      </div>
     </div>
   );
 }

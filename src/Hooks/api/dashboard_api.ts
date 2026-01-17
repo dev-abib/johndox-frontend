@@ -36,7 +36,7 @@ export const useEditListing = (listingId: string) => {
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   return useClientApi({
-    method: "post",
+    method: "put",
     key: ["edit-listing", listingId],
     endpoint: `/update-property/${listingId}`,
     headers: {

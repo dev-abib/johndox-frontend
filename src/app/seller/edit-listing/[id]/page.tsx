@@ -4,7 +4,7 @@ import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
 import { useForm, FormProvider } from "react-hook-form";
-import { useAddListing, useAlllisting, useEditListing } from "@/Hooks/api/dashboard_api";
+import { useAlllisting, useEditListing } from "@/Hooks/api/dashboard_api";
 import EditBasicinfo from "@/Components/edit-listing/EditBasicinfo";
 import EditPropertyDetails from "@/Components/edit-listing/EditPropertyDetails";
 import EditPhotoMediaStep from "@/Components/edit-listing/EditPhotoMediaStep";
@@ -95,6 +95,7 @@ export default function CreateListingPage() {
     setValue,
     handleSubmit,
     setError,
+    reset,
     clearErrors,
     formState: { errors },
   } = methods;
@@ -243,6 +244,7 @@ export default function CreateListingPage() {
               errors={errors}
               watch={watch}
               setValue={setValue}
+              reset={reset}
             />
           )}
 
