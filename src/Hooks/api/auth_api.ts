@@ -30,7 +30,7 @@ export const useRegister = () => {
       if (data?.status || data?.success) {
         toast.success(data?.message);
         router.push(
-          `/auth/verify-otp?email=${encodeURIComponent(data?.data?.email)}`
+          `/auth/verify-otp?email=${encodeURIComponent(data?.data?.email)}`,
         );
       }
     },
@@ -160,7 +160,7 @@ export const useForgotPassWord = () => {
 // Reset Password
 export const UseResetPassword = () => {
   const router = useRouter();
-  const token = localStorage.getItem("reset_token");
+  const token = typeof window !== "undefined" ? localStorage.getItem("reset_token") : null;
   return useClientApi({
     method: "post",
     key: ["reset-password"],
@@ -184,7 +184,8 @@ export const UseResetPassword = () => {
 // Change Password
 export const useChnagePassword = () => {
   const router = useRouter();
-  const token = localStorage.getItem("token");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("reset_token") : null;
   return useClientApi({
     method: "put",
     key: ["changepassword"],
