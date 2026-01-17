@@ -29,6 +29,32 @@ export const useAddListing = () => {
   });
 };
 
+// Edit Listing
+export const useEditListing = (listingId: string) => {
+  const router = useRouter();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  return useClientApi({
+    method: "post",
+    key: ["edit-listing", listingId],
+    endpoint: `/update-property/${listingId}`,
+    headers: {
+      Authorization: `Bearer ${token ?? ""}`,
+      "Content-Type": "multipart/form-data",
+    },
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message || "Listing updated successfully!");
+        router.push("/seller/profile");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to update listing");
+    },
+  });
+};
+
 // Get Categories
 export const useCategory = (token: any) => {
   return useClientApi({
@@ -42,6 +68,7 @@ export const useCategory = (token: any) => {
     },
   });
 };
+
 // Get All Listing
 export const useAlllisting = (token: any) => {
   return useClientApi({

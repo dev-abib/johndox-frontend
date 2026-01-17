@@ -5,10 +5,15 @@ import { BsPlusLg } from "react-icons/bs";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { useAlllisting } from "@/Hooks/api/dashboard_api";
 import { BsEye, BsFillChatDotsFill, BsCalendar3 } from "react-icons/bs";
+import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 
 const MyListing = () => {
   const token = localStorage.getItem("token");
-  const { data: alllisting } = useAlllisting(token);
+  const { data: alllisting, isLoading } = useAlllisting(token);
+
+  if (isLoading) {
+    return <MyListingSkeleton />;
+  }
 
   return (
     <>
@@ -73,9 +78,11 @@ const MyListing = () => {
                     <button className="flex items-center cursor-pointer gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
                       <BsEye className="text-lg" /> View Post
                     </button>
-                    <button className="flex items-center cursor-pointer gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
-                      <MdEdit className="text-lg" /> Edit
-                    </button>
+                    <Link href={`/seller/edit-listing/${item._id}`}>
+                      <button className="flex items-center cursor-pointer  gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
+                        <MdEdit className="text-lg" /> Edit
+                      </button>
+                    </Link>
                     <button className="flex items-center cursor-pointer gap-1 border border-[#FCC9CB] text-[#E7000B] px-2.5 py-1 rounded-[12px] bg-[#FFE9EA]">
                       <MdDelete className="text-lg" /> Delete
                     </button>

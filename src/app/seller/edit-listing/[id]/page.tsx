@@ -4,10 +4,11 @@ import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
 import { useForm, FormProvider } from "react-hook-form";
-import { useAddListing } from "@/Hooks/api/dashboard_api";
-import MediaStep from "@/Components/Listing/PhotosMediaStep";
-import BasicInfoStep from "@/Components/Listing/BasicInfoStep";
-import DetailsStep from "@/Components/Listing/PropertyDetailsStep";
+import { useAddListing, useAlllisting, useEditListing } from "@/Hooks/api/dashboard_api";
+import EditBasicinfo from "@/Components/edit-listing/EditBasicinfo";
+import EditPropertyDetails from "@/Components/edit-listing/EditPropertyDetails";
+import EditPhotoMediaStep from "@/Components/edit-listing/EditPhotoMediaStep";
+import { useParams } from "next/navigation";
 
 export type ListingFormData = {
   propertyName: string;
@@ -52,8 +53,16 @@ const steps = [
 const TOTAL_STEPS = steps.length;
 
 export default function CreateListingPage() {
+  const token = localStorage.getItem("token");
+  const { data } = useAlllisting(token);
+  const params = useParams();
+  const listingId = params?.id?.toString() || "";
+  const singleListingData = data?.data?.items?.find(
+    (item: any) => item._id === listingId,
+  );
+
   const [currentStep, setCurrentStep] = useState(1);
-  const { mutate: addListing, isPending } = useAddListing();
+  const { mutate: EditListing, isPending } = useEditListing(listingId);
 
   const methods = useForm<ListingFormData>({
     mode: "onChange",
@@ -141,7 +150,7 @@ export default function CreateListingPage() {
   };
 
   const onSubmit = (data: ListingFormData) => {
-
+    console.log(data);
     const formData = new FormData();
 
     formData.append("propertyName", data.propertyName);
@@ -164,7 +173,7 @@ export default function CreateListingPage() {
         if (value) {
           formData.append(
             "amenities",
-            key.charAt(0).toUpperCase() + key.slice(1)
+            key.charAt(0).toUpperCase() + key.slice(1),
           );
         }
       });
@@ -186,7 +195,7 @@ export default function CreateListingPage() {
 
     console.log("Submitting formData with photos:", data.photos?.length || 0);
 
-    addListing(formData);
+    EditListing(formData);
   };
 
   return (
@@ -228,7 +237,8 @@ export default function CreateListingPage() {
         <FormProvider {...methods}>
           {/* STEP CONTENT */}
           {currentStep === 1 && (
-            <BasicInfoStep
+            <EditBasicinfo
+              data={singleListingData}
               register={register}
               errors={errors}
               watch={watch}
@@ -236,11 +246,13 @@ export default function CreateListingPage() {
             />
           )}
 
-          {currentStep === 2 && <DetailsStep />}
+          {currentStep === 2 && (
+            <EditPropertyDetails data={singleListingData} />
+          )}
 
           {currentStep === 3 && (
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <MediaStep />
+              <EditPhotoMediaStep data={ singleListingData} />
               {errors.photos && (
                 <p className="text-red-500 text-sm mt-4 text-center">
                   {errors.photos.message}

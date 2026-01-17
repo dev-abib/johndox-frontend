@@ -28,9 +28,11 @@ export type BasicInfoStepProps = {
   errors: FieldErrors<ListingFormData>;
   watch: UseFormWatch<ListingFormData>;
   setValue: UseFormSetValue<ListingFormData>;
+  data?: any;
 };
 
-export default function BasicInfoStep({
+export default function EditBasicinfo({
+  data: lisiting,
   register,
   errors,
   watch,
@@ -40,7 +42,7 @@ export default function BasicInfoStep({
   const price = watch("price");
   const token = localStorage.getItem("token");
   const { data } = useCategory(token);
-  console.log(data?.data?.categories);
+  console.log(lisiting);
 
   useEffect(() => {
     if (priceUSD && !isNaN(Number(priceUSD))) {
@@ -76,7 +78,8 @@ export default function BasicInfoStep({
             required: "Property name is required",
           })}
           className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="e.g. Ocean View Villa in Riviera Maya"
+          // placeholder="e.g. Ocean View Villa in Riviera Maya"
+          value={lisiting?.propertyName}
         />
         {errors.propertyName && (
           <p className="text-red-500 text-sm mt-1">
@@ -96,7 +99,8 @@ export default function BasicInfoStep({
           })}
           rows={5}
           className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-          placeholder="Describe your property in detail..."
+          // placeholder="Describe your property in detail..."
+          value={lisiting?.propertyName}
         />
         {errors.description && (
           <p className="text-red-500 text-sm mt-1">
@@ -244,7 +248,6 @@ export default function BasicInfoStep({
                 })}
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="100 $ Dollar"
-    
               />
               {errors.priceUSD && (
                 <p className="text-red-500 text-sm mt-1">
