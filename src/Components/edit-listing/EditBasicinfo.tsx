@@ -243,7 +243,7 @@ export default function EditBasicinfo({
           >
             <option value="">Select type</option>
             {categoryData?.data?.categories?.map((cat: any) => (
-              <option key={cat._id} value={cat._id}>
+              <option key={cat._id} value={cat?.name}>
                 {cat.name}
               </option>
             ))}

@@ -9,6 +9,7 @@ import EditBasicinfo from "@/Components/edit-listing/EditBasicinfo";
 import { useAlllisting, useEditListing } from "@/Hooks/api/dashboard_api";
 import EditPhotoMediaStep from "@/Components/edit-listing/EditPhotoMediaStep";
 import EditPropertyDetails from "@/Components/edit-listing/EditPropertyDetails";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 export type ListingFormData = {
   propertyName: string;
@@ -53,14 +54,15 @@ const steps = [
 const TOTAL_STEPS = steps.length;
 
 export default function CreateListingPage() {
+  const params = useParams();
   const token = localStorage.getItem("token");
   const { data } = useAlllisting(token);
-  const params = useParams();
   const listingId = params?.id?.toString() || "";
   const singleListingData = data?.data?.items?.find(
     (item: any) => item._id === listingId,
   );
 
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
   const { mutate: EditListing, isPending } = useEditListing(listingId);
 
@@ -150,53 +152,57 @@ export default function CreateListingPage() {
     }
   };
 
-  const onSubmit = (data: ListingFormData) => {
-    console.log(data);
-    const formData = new FormData();
+  const onSubmit = async (data: ListingFormData) => {
+    try {
+      const formData = new FormData();
 
-    formData.append("propertyName", data.propertyName);
-    formData.append("description", data.description);
-    formData.append("propertyType", data.propertyType.toLowerCase());
-    formData.append("listingType", data.listingType.toLowerCase());
-    formData.append("fullAddress", data.streetAddress);
-    formData.append("city", data.city);
-    formData.append("state", data.state);
-    formData.append("price", data.priceUSD);
+      formData.append("propertyName", data.propertyName);
+      formData.append("description", data.description);
+      formData.append("propertyType", data.propertyType.toLowerCase());
+      formData.append("listingType", data.listingType.toLowerCase());
+      formData.append("fullAddress", data.streetAddress);
+      formData.append("city", data.city);
+      formData.append("state", data.state);
+      formData.append("price", data.priceUSD.toString());
+      formData.append("category", data.category);
 
-    if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
-    if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
-    if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt);
-    if (data.area) formData.append("areaInMeter", data.area);
-    if (data.lotSize) formData.append("areaInSqMeter", data.lotSize);
+      if (data.bedrooms) formData.append("bedrooms", data.bedrooms.toString());
+      if (data.bathrooms)
+        formData.append("bathrooms", data.bathrooms.toString());
+      if (data.yearBuilt)
+        formData.append("yearBuilt", data.yearBuilt.toString());
+      if (data.area) formData.append("areaInMeter", data.area.toString());
+      if (data.lotSize)
+        formData.append("areaInSqMeter", data.lotSize.toString());
 
-    if (data.amenities) {
-      Object.entries(data.amenities).forEach(([key, value]) => {
-        if (value) {
-          formData.append(
-            "amenities",
-            key.charAt(0).toUpperCase() + key.slice(1),
-          );
-        }
+      if (data.amenities) {
+        Object.entries(data.amenities).forEach(([key, value]) => {
+          if (value) {
+            const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
+            formData.append("amenities", formattedKey);
+          }
+        });
+      }
+
+      if (data.photos && data.photos.length > 0) {
+        Array.from(data.photos).forEach(file => {
+          formData.append("photos", file);
+        });
+      }
+
+      if (data.video && data.video.length > 0) {
+        formData.append("video", data.video[0]);
+      }
+
+      await EditListing(formData);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["listing"],
+        exact: false,
       });
+    } catch (error) {
+      console.error("Error updating listing:", error);
     }
-
-    formData.append("category", data.category);
-
-    if (data.photos && data.photos.length > 0) {
-      Array.from(data.photos).forEach(file => {
-        formData.append("photos", file);
-      });
-    } else {
-      console.warn("No photos uploaded");
-    }
-
-    if (data.video) {
-      formData.append("video", data.video[0]);
-    }
-
-    console.log("Submitting formData with photos:", data.photos?.length || 0);
-
-    EditListing(formData);
   };
 
   return (
@@ -254,7 +260,7 @@ export default function CreateListingPage() {
 
           {currentStep === 3 && (
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <EditPhotoMediaStep data={ singleListingData} />
+              <EditPhotoMediaStep data={singleListingData} />
               {errors.photos && (
                 <p className="text-red-500 text-sm mt-4 text-center">
                   {errors.photos.message}

@@ -122,7 +122,6 @@ export default function EditPhotoMediaStep({
 
       {/* Media Gallery */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-6">
-        {/* Render Existing API Images */}
         {existingImages.map((url, index) => (
           <div
             key={`existing-${index}`}
