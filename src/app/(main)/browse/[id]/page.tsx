@@ -1,14 +1,29 @@
+"use client";
 import React from "react";
+import { useParams } from "next/navigation";
+import { useGetProperties } from "@/Hooks/api/cms_api";
 import Maps from "@/Components/PageComponents/mainPages/BrowseDetails/Maps";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 import BrowseDetails from "@/Components/PageComponents/mainPages/BrowseDetails/BrowseDetails";
 import BrowseDescription from "@/Components/PageComponents/mainPages/BrowseDetails/BrowseDescription";
+import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
 
 const page = () => {
+  const params = useParams();
+  const SingproductId = params.id;
+  const { data, isLoading } = useGetProperties();
+
+  if (isLoading) {
+    return <BrowseDetailsSkeleton />;
+  }
+
+  const singleProductDetails = data?.data?.items?.find(
+    (item: any) => item?._id === SingproductId,
+  );
   return (
     <>
-      <BrowseDetails />
-      <BrowseDescription />
+      <BrowseDetails data={singleProductDetails} />
+      <BrowseDescription data={singleProductDetails} />
       <Maps />
       <ListPropertyCTA />
     </>

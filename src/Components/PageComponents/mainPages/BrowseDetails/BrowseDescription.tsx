@@ -1,27 +1,31 @@
 "use client";
 
-import Container from "@/Components/Common/Container";
 import React, { useState } from "react";
+import Container from "@/Components/Common/Container";
 
-const BrowseDescription: React.FC = () => {
+interface BrowswProps {
+  data: any;
+}
+
+const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const [showMoreImages, setShowMoreImages] = useState<boolean>(false);
 
-  const imageUrls: string[] = [
-    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600210492493-0946911123ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  // Fallback images if the API media array is short
+  const apiImages = data?.media?.map((m: any) => m.url) || [];
+  const fallbackImages = [
+    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=800&q=80",
   ];
 
-  const visibleImages = imageUrls.slice(0, 4);
-  const hiddenImages = imageUrls.slice(4);
+  const allImages = [...apiImages];
+  const visibleImages = allImages.slice(0, 4);
+  const hiddenImages = allImages.slice(4);
 
   return (
     <section className="xxl:pt-0 lg:pt-10 pt-5">
       <Container>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* IMAGE GALLERY */}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               {visibleImages.map((url, index) => (
@@ -32,9 +36,8 @@ const BrowseDescription: React.FC = () => {
                   <img
                     src={url}
                     alt={`Property image ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
-
                   {index === 3 &&
                     hiddenImages.length > 0 &&
                     !showMoreImages && (
@@ -69,157 +72,131 @@ const BrowseDescription: React.FC = () => {
             )}
           </div>
 
-          <div className="space-y-8 lg:mt-8 mt-4">
+          {/* DESCRIPTION & DETAILS */}
+          <div className="space-y-8 lg:mt-0 mt-4">
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] mb-4 uppercase">
                 Description
               </h2>
               <p className="lg:text-[18px] text-base text-[#404040] font-normal leading-relaxed">
-                Nestled in a charming suburban area, this stunning home rests on
-                a spacious lot, offering picturesque views of the nearby rolling
-                hills. Located in the tranquil heart of Pleasantville, it
-                features contemporary design elements that make it truly
-                exceptional. With expansive frontage on a peaceful cul-de-sac
-                and all essential utilities in place, this is the ideal setting
-                for your dream family home.
-                <br />
-                <br /> If serene living is what you're after, this property is a
-                must-see! Located within the 200-acre Green Valley community,
-                managed by Heritage Developments, this area is renowned as the
-                most family-friendly and well-planned suburb in Ohio. Green
-                Valley's standout features include its meticulous landscaping
-                and thoughtfully designed layout, evident throughout the entire
-                community.
+                {data?.description ||
+                  "No description available for this property."}
               </p>
             </div>
 
+            {/* ADDRESS SECTION */}
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] uppercase mb-4">
                 Address
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <p className="font-normal text-[12px] text-[#919EAB] mb-4">
-                    State
+                  <p className="font-normal text-[12px] text-[#919EAB] mb-1">
+                    Full Address
                   </p>
                   <p className="font-normal text-[14px] text-[#404040]">
-                    Hope Bvd, no 45
+                    {data?.fullAddress}
                   </p>
                 </div>
                 <div>
-                  <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
+                  <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
                     City
                   </p>
                   <p className="font-normal text-[14px] text-[#404040]">
-                    Comayagua
+                    {data?.city}
                   </p>
                 </div>
                 <div>
-                  <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                    Country
+                  <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
+                    State
                   </p>
                   <p className="font-normal text-[14px] text-[#404040]">
-                    Bangladesh
+                    {data?.state}
                   </p>
                 </div>
               </div>
             </div>
+
+            {/* DETAILS SECTION */}
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] uppercase mb-4">
                 DETAILS
               </h2>
-              <div className="flex flex-col gap-6">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+              <div className="flex flex-col gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] mb-4 underline">
+                    <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
                       Property Id
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      31746
+                    <p className="font-normal text-[14px] text-[#404040] truncate">
+                      {data?._id?.slice(-6).toUpperCase()}
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                      Price Info
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      $ 2,450 / M
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4 shrink-0 text-nowrap">
-                      Property Lot Size
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      Size 1,000 M
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                      Bedrooms
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      1 Room
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                      Garages
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      3 cars
-                    </p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] mb-4 underline">
-                      Area/Landmark
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      Greenville
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                      State
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
-                      Honduras
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4 shrink-0 text-nowrap">
-                      Country
-                    </p>
-                    <p className="font-normal text-[14px] text-[#404040] text-nowrap">
-                      Central America
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
                       Price
                     </p>
                     <p className="font-normal text-[14px] text-[#404040]">
-                      $ 950,000
+                      $ {new Intl.NumberFormat().format(data?.price)}
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                      Property Size
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                      Land Area
                     </p>
                     <p className="font-normal text-[14px] text-[#404040]">
-                      560 M
+                      {data?.areaInMeter} M²
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-4">
-                      Structure Type
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                      Bedrooms
                     </p>
                     <p className="font-normal text-[14px] text-[#404040]">
-                      Apartment
+                      {data?.bedrooms} Rooms
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                      Bathrooms
+                    </p>
+                    <p className="font-normal text-[14px] text-[#404040]">
+                      {data?.bathrooms} Baths
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 border-t pt-6">
+                  <div>
+                    <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
+                      Listing Type
+                    </p>
+                    <p className="font-normal text-[14px] text-[#404040] capitalize">
+                      {data?.listingType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                      Structure
+                    </p>
+                    <p className="font-normal text-[14px] text-[#404040] capitalize">
+                      {data?.propertyType}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                      Year Built
+                    </p>
+                    <p className="font-normal text-[14px] text-[#404040]">
+                      {data?.yearBuilt}
+                    </p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                      Amenities
+                    </p>
+                    <p className="font-normal text-[14px] text-[#404040]">
+                      {data?.amenities?.join(" • ")}
                     </p>
                   </div>
                 </div>

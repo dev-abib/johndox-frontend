@@ -1,35 +1,61 @@
 "use client";
-
 import {
   Acceleration,
   Bathtub,
   Bed,
   Favourite,
+  Favourites,
   Location,
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
-import { Featuredata } from "@/Components/Data/data";
+import { useEffect, useState } from "react";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
   SideBarSvg,
 } from "@/Components/Svg/SvgContainer2";
+import { useGetProperties } from "@/Hooks/api/cms_api";
+import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 
 const page = () => {
+  const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 4);
+  const { data, isLoading } = useGetProperties();
+  const [selected, setSelected] = useState("Newest First");
+
+  const displayedProperties = showAll
+    ? data?.data?.items
+    : data?.data?.items?.slice(0, 4);
+
+  const [favoriteStates, setFavoriteStates] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  useEffect(() => {
+    const items = data?.data?.items;
+    if (items && items.length > 0) {
+      const initialFavorites = Object.fromEntries(
+        items.map((item: any) => [item._id, item.isFavorite || false]),
+      );
+      setFavoriteStates(initialFavorites);
+    }
+  }, [data]);
+
+  const toggleFavorite = (id: string) => {
+    setFavoriteStates(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
   const options = [
     "Newest First",
     "Price: Low to High",
     "Price: High to Low",
     "Most Popular",
   ];
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("Newest First");
 
   const [openn, setOpenn] = useState({
     propertyType: true,
@@ -46,6 +72,9 @@ const page = () => {
   const [propertyType, setPropertyType] = useState("All");
   const [bedrooms, setBedrooms] = useState<number | null>(null);
   const [bathrooms, setBathrooms] = useState<number | null>(null);
+  if (isLoading) {
+    return <BrowseDetailsSkeleton />;
+  }
   return (
     <>
       <div className="px-4 sm:px-6 mb-[100px] sm:mb-[150px]">
@@ -113,66 +142,77 @@ const page = () => {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-          {/* First Column: Property Cards (and filter on small devices) */}
           <div className="w-full lg:flex-grow lg:w-[60%] order-1 lg:order-2">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 xl:gap-11">
-              {displayedProperties.map((item, index) => (
+              {displayedProperties?.map((item: any) => (
                 <div
-                  key={index}
+                  key={item._id}
                   className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
                 >
                   <div className="relative overflow-hidden">
                     <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
                       <Image
-                        src={item.Image}
-                        alt={item.title}
+                        src={item.media?.[0]?.url}
+                        alt={item.propertyName}
                         width={500}
                         height={300}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
                       />
                     </figure>
 
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors">
-                      <Favourite />
+                    <div
+                      onClick={() => toggleFavorite(item._id)}
+                      className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
+                    >
+                      {favoriteStates[item._id] ? (
+                        <Favourites />
+                      ) : (
+                        <Favourite />
+                      )}
                     </div>
                   </div>
 
                   <div className="mt-5">
-                    <h3 className=" text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
-                      {item.price.replace(" USD", "")}
+                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
+                      {new Intl.NumberFormat().format(item.price)}
                       <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>
                     </h3>
 
                     <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
-                      {item.title}
+                      {item.propertyName}
                     </h4>
 
                     <div className="flex items-center gap-2.5 mt-4">
-                      <Location
-                        className={
-                          "w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "
-                        }
-                      />
+                      <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
                       <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
-                        {item.location}
+                        {item.city}, {item.state}
                       </p>
                     </div>
 
                     <div className="flex flex-wrap gap-5 mt-5">
-                      {item.details.split(" • ").map((feature, i) => (
-                        <div key={i} className="flex items-center gap-2.5">
-                          {i === 0 && <Bed />}
-                          {i === 1 && <Bathtub />}
-                          {i === 2 && <Acceleration />}
-                          <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap inline-block">
-                            {feature.trim()}
-                          </span>
-                        </div>
-                      ))}
+                      <div className="flex items-center gap-2.5">
+                        <Bed className="shrink-0" />
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          {item.bedrooms} Bed
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <Bathtub className="shrink-0" />
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          {item.bathrooms} Bath
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <Acceleration className="shrink-0" />
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          {item.areaInSqMeter} sqft
+                        </span>
+                      </div>
                     </div>
-                    <Link href={`/buyerlayout/browse/${item?.id}`}>
+
+                    <Link href={`/browse/${item._id}`}>
                       <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                         Contact
                       </button>
@@ -180,6 +220,16 @@ const page = () => {
                   </div>
                 </div>
               ))}
+              {!showAll && data?.data?.items?.length > 4 && (
+                <div className="text-center">
+                  <button
+                    onClick={() => setShowAll(true)}
+                    className="bg-[#0085FF] text-white font-medium text-lg px-10 py-4 rounded-2xl transition-all shadow-lg hover:bg-white hover:text-black border border-blue-600 cursor-pointer flex justify-end"
+                  >
+                    View All Properties
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="block lg:hidden mt-6">
@@ -346,7 +396,6 @@ const page = () => {
             </div>
           </div>
 
-          {/* Second Column: Map */}
           <div className="w-full lg:flex-grow lg:w-[40%] h-[300px] sm:h-[400px] lg:h-auto order-2 lg:order-1">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58420.16573309009!2d90.36343509144125!3d23.77374133110238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c769ad5e7f6f%3A0x1d928a50d9cbcc90!2sSKS%20Shopping%20Mall!5e0!3m2!1sen!2sbd!4v1766118436976!5m2!1sen!2sbd"
@@ -360,7 +409,6 @@ const page = () => {
             />
           </div>
 
-          {/* Third Column: Sidebar for large devices only (original position) */}
           <div
             className={`hidden lg:block flex-grow transition-all duration-300 overflow-hidden order-3 ${
               showSidebar ? "max-w-[320px] opacity-100" : "max-w-0 opacity-0"

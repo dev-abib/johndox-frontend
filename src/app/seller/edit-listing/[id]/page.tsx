@@ -27,22 +27,11 @@ export type ListingFormData = {
   area?: string;
   yearBuilt?: string;
   lotSize?: string;
-  amenities?: {
-    pool?: boolean;
-    garden?: boolean;
-    parking?: boolean;
-    airConditioning?: boolean;
-    gym?: boolean;
-    security?: boolean;
-    oceanView?: boolean;
-    mountainView?: boolean;
-    beachAccess?: boolean;
-    rooftopTerrace?: boolean;
-    balcony?: boolean;
-    petFriendly?: boolean;
-  };
+  amenities?: Record<string, boolean>;
   photos?: FileList | null;
   video?: FileList | null;
+  existingMedia?: string[];
+  deletedImages?: string[];
 };
 
 const steps = [
@@ -50,27 +39,27 @@ const steps = [
   { id: 2, name: "Details" },
   { id: 3, name: "Media" },
 ];
-
 const TOTAL_STEPS = steps.length;
 
-export default function CreateListingPage() {
+export default function EditListingPage() {
   const params = useParams();
-  const token = localStorage.getItem("token");
-  const { data } = useAlllisting(token);
+  const queryClient = useQueryClient();
+  const [currentStep, setCurrentStep] = useState(1);
   const listingId = params?.id?.toString() || "";
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  const { data } = useAlllisting(token);
+  const { mutate: EditListing, isPending } = useEditListing(listingId);
+
   const singleListingData = data?.data?.items?.find(
     (item: any) => item._id === listingId,
   );
-
-  const queryClient = useQueryClient();
-  const [currentStep, setCurrentStep] = useState(1);
-  const { mutate: EditListing, isPending } = useEditListing(listingId);
 
   const methods = useForm<ListingFormData>({
     mode: "onChange",
     defaultValues: {
       propertyName: "",
-      description: "Describe your property in detail...",
+      description: "",
       propertyType: "",
       listingType: "",
       streetAddress: "",
@@ -78,15 +67,8 @@ export default function CreateListingPage() {
       state: "",
       priceUSD: "",
       price: "",
-      bedrooms: "",
-      bathrooms: "",
-      area: "",
-      yearBuilt: "",
-      lotSize: "",
-      category: "",
       amenities: {},
-      photos: null,
-      video: null,
+      deletedImages: [],
     },
   });
 
@@ -103,6 +85,7 @@ export default function CreateListingPage() {
   } = methods;
 
   const photos = watch("photos");
+  const existingMedia = watch("existingMedia") || [];
 
   const validateCurrentStep = async () => {
     switch (currentStep) {
@@ -126,9 +109,9 @@ export default function CreateListingPage() {
           "yearBuilt",
           "lotSize",
         ]);
-
       case 3:
-        if (!photos || photos.length === 0) {
+        // Validation: Must have either existing photos OR new photos
+        if (existingMedia.length === 0 && (!photos || photos.length === 0)) {
           setError("photos", { message: "At least one photo is required" });
           return false;
         }
@@ -138,102 +121,90 @@ export default function CreateListingPage() {
         return true;
     }
   };
+const onSubmit = async (data: ListingFormData) => {
+  try {
+    const formData = new FormData();
 
-  const onNext = async () => {
-    const ok = await validateCurrentStep();
-    if (ok && currentStep < TOTAL_STEPS) {
-      setCurrentStep(s => s + 1);
-    }
-  };
+    // 1. Basic Information
+    formData.append("propertyName", data.propertyName);
+    formData.append("description", data.description);
+    formData.append("propertyType", data.propertyType.toLowerCase());
+    formData.append("listingType", data.listingType.toLowerCase());
+    formData.append("fullAddress", data.streetAddress);
+    formData.append("city", data.city);
+    formData.append("state", data.state);
+    formData.append("price", data.priceUSD.toString());
+    formData.append("category", data.category);
 
-  const onPrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(s => s - 1);
-    }
-  };
+    // 2. Property Details (Numeric fields converted to string)
+    if (data.bedrooms) formData.append("bedrooms", data.bedrooms.toString());
+    if (data.bathrooms) formData.append("bathrooms", data.bathrooms.toString());
+    if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt.toString());
+    if (data.area) formData.append("areaInMeter", data.area.toString());
+    if (data.lotSize) formData.append("areaInSqMeter", data.lotSize.toString());
 
-  const onSubmit = async (data: ListingFormData) => {
-    try {
-      const formData = new FormData();
-
-      formData.append("propertyName", data.propertyName);
-      formData.append("description", data.description);
-      formData.append("propertyType", data.propertyType.toLowerCase());
-      formData.append("listingType", data.listingType.toLowerCase());
-      formData.append("fullAddress", data.streetAddress);
-      formData.append("city", data.city);
-      formData.append("state", data.state);
-      formData.append("price", data.priceUSD.toString());
-      formData.append("category", data.category);
-
-      if (data.bedrooms) formData.append("bedrooms", data.bedrooms.toString());
-      if (data.bathrooms)
-        formData.append("bathrooms", data.bathrooms.toString());
-      if (data.yearBuilt)
-        formData.append("yearBuilt", data.yearBuilt.toString());
-      if (data.area) formData.append("areaInMeter", data.area.toString());
-      if (data.lotSize)
-        formData.append("areaInSqMeter", data.lotSize.toString());
-
-      if (data.amenities) {
-        Object.entries(data.amenities).forEach(([key, value]) => {
-          if (value) {
-            const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
-            formData.append("amenities", formattedKey);
-          }
-        });
-      }
-
-      if (data.photos && data.photos.length > 0) {
-        Array.from(data.photos).forEach(file => {
-          formData.append("photos", file);
-        });
-      }
-
-      if (data.video && data.video.length > 0) {
-        formData.append("video", data.video[0]);
-      }
-
-      await EditListing(formData);
-
-      await queryClient.invalidateQueries({
-        queryKey: ["listing"],
-        exact: false,
+    // 3. Amenities (Array of strings)
+    if (data.amenities) {
+      Object.entries(data.amenities).forEach(([key, value]) => {
+        if (value) {
+          const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
+          formData.append("amenities", formattedKey);
+        }
       });
-    } catch (error) {
-      console.error("Error updating listing:", error);
     }
-  };
+
+    // 4. NEW Media (Files)
+    if (data.photos && data.photos.length > 0) {
+      Array.from(data.photos).forEach(file => {
+        formData.append("photos", file);
+      });
+    }
+
+    if (data.video && data.video.length > 0) {
+      formData.append("video", data.video[0]);
+    }
+
+    if (data.existingMedia && data.existingMedia.length > 0) {
+      data.existingMedia.forEach((url: string) => {
+        formData.append("existingMedia", url);
+      });
+    }
+
+    // 6. DELETED Images - FIXED FOR JSON ARRAY ERROR
+    if (data.deletedImages && data.deletedImages.length > 0) {
+      formData.append("deleteImages", JSON.stringify(data.deletedImages));
+    }
+
+    // 7. API Call & Cache Invalidation
+    await EditListing(formData);
+
+    await queryClient.invalidateQueries({
+      queryKey: ["listing"],
+      exact: false,
+    });
+  } catch (error) {
+    console.error("Error updating listing:", error);
+  }
+};
 
   return (
     <section className="py-10">
       <Container>
-        <button className="flex items-center gap-2 text-2xl lg:text-3xl font-medium text-[#0085FF] mb-12 hover:underline">
-          <IoIosArrowBack className="size-8" />
-          Back
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center gap-2 text-2xl font-medium text-[#0085FF] mb-12 hover:underline"
+        >
+          <IoIosArrowBack /> Back
         </button>
-
-        <div className="mb-5">
-          <h2 className="text-[#404040] lg:text-[32px] text-[20px] font-medium">
-            Create New Listing
-          </h2>
-          <p className="text-[#5F5F5F] lg:text-[18px] text-base mt-3">
-            Fill in the details to list your property
-          </p>
-        </div>
 
         <div className="flex gap-6 mb-12">
           {steps.map(step => (
             <div key={step.id} className="flex-1">
               <div
-                className={`h-3 rounded-full ${
-                  step.id <= currentStep ? "bg-[#0085FF]" : "bg-gray-200"
-                }`}
+                className={`h-3 rounded-full ${step.id <= currentStep ? "bg-[#0085FF]" : "bg-gray-200"}`}
               />
               <p
-                className={`mt-3 font-medium ${
-                  step.id <= currentStep ? "text-[#0085FF]" : "text-black/40"
-                }`}
+                className={`mt-3 font-medium ${step.id <= currentStep ? "text-[#0085FF]" : "text-black/40"}`}
               >
                 {step.name}
               </p>
@@ -242,7 +213,6 @@ export default function CreateListingPage() {
         </div>
 
         <FormProvider {...methods}>
-          {/* STEP CONTENT */}
           {currentStep === 1 && (
             <EditBasicinfo
               data={singleListingData}
@@ -253,58 +223,49 @@ export default function CreateListingPage() {
               reset={reset}
             />
           )}
-
           {currentStep === 2 && (
             <EditPropertyDetails data={singleListingData} />
           )}
-
           {currentStep === 3 && (
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <EditPhotoMediaStep data={singleListingData} />
-              {errors.photos && (
-                <p className="text-red-500 text-sm mt-4 text-center">
-                  {errors.photos.message}
-                </p>
-              )}
-
-              <div className="flex md:flex-row flex-col justify-end gap-10 mt-12">
+              <div className="flex justify-end gap-10 mt-12">
                 <button
                   type="button"
-                  onClick={onPrev}
-                  className="px-8 py-3 bg-gray-100 rounded-lg font-medium"
+                  onClick={() => setCurrentStep(2)}
+                  className="px-8 py-3 bg-gray-100 rounded-lg cursor-pointer"
                 >
                   Previous
                 </button>
-
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium cursor-pointer"
+                  className="px-8 py-3 bg-[#0085FF] text-white rounded-lg min-w-[160px] cursor-pointer"
                 >
                   {isPending ? (
-                    <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                    <PiSpinnerBold className="animate-spin mx-auto" />
                   ) : (
-                    " Create Listing"
+                    "Update Listing"
                   )}
                 </button>
               </div>
             </form>
           )}
-
           {currentStep < 3 && (
             <div className="flex justify-end gap-10 mt-12">
               <button
                 type="button"
-                onClick={onPrev}
                 disabled={currentStep === 1}
-                className="px-8 py-3 bg-gray-100 rounded-lg font-medium"
+                onClick={() => setCurrentStep(s => s - 1)}
+                className="px-8 py-3 bg-gray-100 rounded-lg disabled:opacity-50 "
               >
                 Previous
               </button>
-
               <button
                 type="button"
-                onClick={onNext}
-                className="px-8 py-3 bg-[#0085FF] text-white rounded-lg font-medium cursor-pointer"
+                onClick={async () =>
+                  (await validateCurrentStep()) && setCurrentStep(s => s + 1)
+                }
+                className="px-8 py-3 bg-[#0085FF] text-white rounded-lg cursor-pointer"
               >
                 Continue
               </button>
