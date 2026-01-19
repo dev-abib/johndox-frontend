@@ -164,7 +164,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium ">
                   AGENT INFORMATION
                 </h5>
-                <div className="flex flex-col sm:flex-row gap-x-5 mt-2.5 2xl:mt-5 sm:items-end">
+                <div className="flex flex-col sm:flex-row gap-x-5 mt-2.5 2xl:mt-5">
                   <figure>
                     <Image src={User} alt="User" width={70} height={70} />
                   </figure>
@@ -180,7 +180,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                       4.8 (127 review)
                     </li>
                   </ul>
-                  <ul className="flex flex-col gap-1">
+                  <ul className="flex flex-col gap-1 justify-end">
                     <li className="flex gap-x-2  text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] lg:mt-0 mt-2">
                       <Mobile />
                       +52 384 123 4568
