@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
-import User from "../../../../Assets/user.png";
+import User from "../../../../Assets/dummy.jpg";
 import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
 import {
@@ -166,28 +166,41 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </h5>
                 <div className="flex flex-col sm:flex-row gap-x-5 mt-2.5 2xl:mt-5">
                   <figure>
-                    <Image src={User} alt="User" width={70} height={70} />
+                    <Image
+                      src={
+                        data?.author?.profilePicture
+                          ? data?.author?.profilePicture
+                          : User
+                      }
+                      alt="User"
+                      width={70}
+                      height={70}
+                      className="rounded-full"
+                    />
                   </figure>
                   <ul className="flex flex-col gap-1">
                     <li className="text-[18px] 2xl:text-[24px] font-medium text-[#0085FF]">
-                      Jessy King
+                      {data?.author?.firstName}
                     </li>
                     <li className="text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F]">
                       Senior Real Estate Agent
                     </li>
                     <li className="flex gap-x-2 text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] mt-2">
                       <Star />
-                      4.8 (127 review)
+                      {data?.author?.rating?.ratingCount} (
+                      {data?.author?.rating?.ratingCount} review)
                     </li>
                   </ul>
                   <ul className="flex flex-col gap-1 justify-end">
                     <li className="flex gap-x-2  text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] lg:mt-0 mt-2">
                       <Mobile />
-                      +52 384 123 4568
+                      {data?.author?.phoneNumber
+                        ? data?.author?.phoneNumber
+                        : "+52 384 123 4568"}
                     </li>
                     <li className="flex gap-x-2  text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] mt-2">
                       <Email />
-                      jessayking@gmail.com
+                      {data?.author?.email}
                     </li>
                   </ul>
                 </div>
