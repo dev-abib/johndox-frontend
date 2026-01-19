@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
@@ -31,7 +31,7 @@ export type ListingFormData = {
   photos?: FileList | null;
   video?: FileList | null;
   existingMedia?: string[];
-  deletedImages?: string[]; // Added for explicit deletion
+  deletedImages?: string[];
 };
 
 const steps = [
@@ -185,10 +185,6 @@ const onSubmit = async (data: ListingFormData) => {
       queryKey: ["listing"],
       exact: false,
     });
-
-    console.log("Listing updated successfully!");
-    // Optional: Add navigation or toast here
-    // router.push("/seller/dashboard");
   } catch (error) {
     console.error("Error updating listing:", error);
   }

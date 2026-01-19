@@ -8,10 +8,13 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import Container from "@/Components/Common/Container";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
+import { useGetUserData } from "@/Hooks/api/auth_api";
 
 const SellerNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const token = localStorage.getItem("token");
+  const { data } = useGetUserData(token);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -130,7 +133,17 @@ const SellerNav = () => {
                 href="/seller/profile"
                 className="rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue flex gap-x-2 items-center"
               >
-                <CgProfile className="size-7" />
+                {data?.data?.profilePicture ? (
+                  <Image
+                    src={data?.data?.profilePicture}
+                    alt="Profile"
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <CgProfile className="size-7" />
+                )}
                 Profile
               </Link>
             </div>
@@ -236,7 +249,17 @@ const SellerNav = () => {
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white flex gap-x-2 items-center"
               >
-                <CgProfile className="size-7" />
+                {data?.data?.profilePicture ? (
+                  <Image
+                    src={data?.data?.profilePicture}
+                    alt="Profile"
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <CgProfile className="size-7" />
+                )}
                 Profile
               </Link>
             </div>
