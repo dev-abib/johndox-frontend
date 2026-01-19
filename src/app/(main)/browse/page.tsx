@@ -9,20 +9,22 @@ import {
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
   SideBarSvg,
 } from "@/Components/Svg/SvgContainer2";
 import { useGetProperties } from "@/Hooks/api/cms_api";
-import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
+import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 
 const page = () => {
+  const [open, setOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const { data, isLoading } = useGetProperties();
+  const [selected, setSelected] = useState("Newest First");
 
   const displayedProperties = showAll
     ? data?.data?.items
@@ -54,8 +56,6 @@ const page = () => {
     "Price: High to Low",
     "Most Popular",
   ];
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("Newest First");
 
   const [openn, setOpenn] = useState({
     propertyType: true,
