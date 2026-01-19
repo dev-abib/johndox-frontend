@@ -16,8 +16,9 @@ import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 const MyListing = () => {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  const { data: alllisting, isLoading, refetch } = useAlllisting(token);
+  const { data: alllisting, isLoading } = useAlllisting(token);
   const { mutate: deleteListing, isLoading: isDeleting } = useDelete();
+  const items = alllisting?.data?.items || [];
 
   const handleDelete = (listingId: string) => {
     const currentToken = localStorage.getItem("token");
@@ -35,7 +36,6 @@ const MyListing = () => {
     return <MyListingSkeleton />;
   }
 
-  const items = alllisting?.data?.items || [];
 
   return (
     <>
