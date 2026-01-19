@@ -3,6 +3,7 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Add Listing
 export const useAddListing = () => {
@@ -79,6 +80,26 @@ export const useAlllisting = (token: any) => {
     isPrivate: true,
     queryOptions: {
       refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
+
+// Delete Listing
+export const useDelete = () => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  return useClientApi({
+    method: "delete",
+    key: ["delete-property"],
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message || "Listing deleted successfully!");
+        queryClient.invalidateQueries({ queryKey: ["listings"] });
+        router.push("/seller/profile");
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to delete listing");
     },
   });
 };

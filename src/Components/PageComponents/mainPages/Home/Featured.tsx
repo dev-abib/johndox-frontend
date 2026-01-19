@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import Container from "@/Components/Common/Container";
-import { Featuredata } from "@/Components/Data/data";
 import {
   Acceleration,
   Bathtub,
@@ -13,22 +12,33 @@ import {
   Location,
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
+import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 
-const Featured = () => {
+interface PropertyProps {
+  data: any[];
+}
+
+const Featured = ({ data = [] }: PropertyProps) => {
   const [showAll, setShowAll] = useState(false);
-  const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 6);
 
-  // ✅ NEW: favorite state for each card
-  const [favoriteStates, setFavoriteStates] = useState(
-    Featuredata.map(() => false)
+  const displayedProperties = showAll ? data : data.slice(0, 6);
+
+  const [favoriteStates, setFavoriteStates] = useState<{
+    [key: string]: boolean;
+  }>(
+    Object.fromEntries(data.map(item => [item._id, item.isFavorite || false])),
   );
 
-  // ✅ NEW: toggle function
-  const toggleFavorite = (index: number) => {
-    setFavoriteStates(prev =>
-      prev.map((fav, i) => (i === index ? !fav : fav))
-    );
+  const toggleFavorite = (id: string) => {
+    setFavoriteStates(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
+
+  if (!displayedProperties || displayedProperties.length === 0) {
+    return <FeaturedSkeleton />;
+  }
 
   return (
     <section className="py-16 md:py-24 xl:py-[150px]">
@@ -44,69 +54,71 @@ const Featured = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
-          {displayedProperties.map((item, index) => (
+          {displayedProperties.map(item => (
             <div
-              key={index}
+              key={item._id}
               className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
             >
               <div className="relative overflow-hidden">
                 <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
                   <Image
-                    src={item.Image}
-                    alt={item.title}
+                    src={item.media?.[0]?.url}
+                    alt={item.propertyName}
                     width={500}
                     height={300}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
                   />
                 </figure>
 
-                {/* ✅ UPDATED: Toggle Icon */}
                 <div
-                  onClick={() => toggleFavorite(index)}
+                  onClick={() => toggleFavorite(item._id)}
                   className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
                 >
-                  {favoriteStates[index] ? <Favourites /> : <Favourite />}
+                  {favoriteStates[item._id] ? <Favourites /> : <Favourite />}
                 </div>
               </div>
 
               <div className="mt-5">
-                <h3 className=" text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
-                  {item.price.replace(" USD", "")}
+                <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
+                  {new Intl.NumberFormat().format(item.price)}
                   <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                     USD
                   </span>
                 </h3>
 
                 <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
-                  {item.title}
+                  {item.propertyName}
                 </h4>
 
                 <div className="flex items-center gap-2.5 mt-4">
-                  <Location
-                    className={
-                      "w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "
-                    }
-                  />
+                  <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
                   <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
-                    {item.location}
+                    {item.city}, {item.state}
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-5 mt-5">
-                  {item.details.split(" • ").map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2.5">
-                      {i === 0 && <Bed className="shrink-0" />}
-                      {i === 1 && <Bathtub className="shrink-0" />}
-                      {i === 2 && <Acceleration className="shrink-0" />}
-
-                      <span className="text-sm lg:text-[14px] whitespace-nowrap inline-block font-normal text-[#919191]">
-                        {feature.trim()}
-                      </span>
-                    </div>
-                  ))}
+                  <div className="flex items-center gap-2.5">
+                    <Bed className="shrink-0" />
+                    <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                      {item.bedrooms} Bed
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <Bathtub className="shrink-0" />
+                    <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                      {item.bathrooms} Bath
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <Acceleration className="shrink-0" />
+                    <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                      {item.areaInSqMeter} sqft
+                    </span>
+                  </div>
                 </div>
 
-                <Link href={`/buyerlayout/browse/${item?.id}`}>
+                <Link href={`/browse/${item._id}`}>
                   <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                     Contact
                   </button>
@@ -116,7 +128,7 @@ const Featured = () => {
           ))}
         </div>
 
-        {!showAll && Featuredata.length > 6 && (
+        {!showAll && data.length > 6 && (
           <div className="text-center mt-12 lg:mt-16">
             <button
               onClick={() => setShowAll(true)}
