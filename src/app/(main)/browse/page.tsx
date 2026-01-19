@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Acceleration,
   Bathtub,
@@ -18,6 +17,7 @@ import {
   SideBarSvg,
 } from "@/Components/Svg/SvgContainer2";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
+
 
 const page = () => {
   const [showAll, setShowAll] = useState(false);
