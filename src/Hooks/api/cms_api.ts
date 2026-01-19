@@ -8,6 +8,15 @@ import { useServerApi } from "@/Hooks/useServerApi";
 
 // =======================================================
 //  SSR (Server Side Rendering)
+
+export async function getFeaturedListings() {
+  return useServerApi({
+    mode: "ISR",
+    revalidate: 3600,
+    endpoint:
+      "/all-listings?propertyType=house&sort=price_asc&minBedrooms=3&location=Dhaka&page=1&limit=10",
+  });
+}
 // =======================================================
 
 // Site Settings
