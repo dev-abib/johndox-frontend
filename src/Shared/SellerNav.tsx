@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import { GoListUnordered } from "react-icons/go";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Container from "@/Components/Common/Container";
+import { useGetUserData } from "@/Hooks/api/auth_api";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
-import { useGetUserData } from "@/Hooks/api/auth_api";
 
 const SellerNav = () => {
+  const languages = ["English", "Deutsch"];
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const token = localStorage.getItem("token");
@@ -28,7 +29,6 @@ const SellerNav = () => {
   const [langOpen, setLangOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("English");
 
-  const languages = ["English", "Deutsch"];
 
   return (
     <nav

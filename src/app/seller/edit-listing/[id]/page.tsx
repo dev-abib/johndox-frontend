@@ -46,10 +46,7 @@ export default function EditListingPage() {
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
   const listingId = params?.id?.toString() || "";
-
-  // Fix: Safe localStorage check for Next.js Build
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const { data } = useAlllisting(token);
   const { mutate: EditListing, isPending } = useEditListing(listingId);
