@@ -9,7 +9,7 @@ const page = () => {
   return (
     <>
       <Hero />
-      <Featured />
+      {/* <Featured /> */}
       <Browser />
       <WhyChoose />
       <ListPropertyCTA />

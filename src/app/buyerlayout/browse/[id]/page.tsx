@@ -9,8 +9,8 @@ import CurrencyConverter from "@/Components/PageComponents/buyerPages/CurrencyCo
 const page = () => {
   return (
     <>
-      <BrowseDetails />
-      <BrowseDescription />
+      {/* <BrowseDetails /> */}
+      {/* <BrowseDescription /> */}
       <Maps />
       <LoanCalculatorForm />
       <CurrencyConverter />
