@@ -113,7 +113,6 @@ const page = () => {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-          {/* First Column: Property Cards (and filter on small devices) */}
           <div className="w-full lg:flex-grow lg:w-[60%] order-1 lg:order-2">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 xl:gap-11">
               {displayedProperties.map((item, index) => (
