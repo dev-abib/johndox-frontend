@@ -9,13 +9,7 @@ interface BrowswProps {
 
 const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const [showMoreImages, setShowMoreImages] = useState<boolean>(false);
-
-  // Fallback images if the API media array is short
-  const apiImages = data?.media?.map((m: any) => m.url) || [];
-  const fallbackImages = [
-    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=800&q=80",
-  ];
+  const apiImages = data?.media?.filter((m: any) => m.fileType === "image").map((m: any) => m.url) || [];
 
   const allImages = [...apiImages];
   const visibleImages = allImages.slice(0, 4);

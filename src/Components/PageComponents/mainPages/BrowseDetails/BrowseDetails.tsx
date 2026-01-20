@@ -199,7 +199,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                       alt="User"
                       width={70}
                       height={70}
-                      className="rounded-full"
+                      className="rounded-full h-20 w-20 object-center"
                     />
                   </figure>
                   <ul className="flex flex-col gap-1">
