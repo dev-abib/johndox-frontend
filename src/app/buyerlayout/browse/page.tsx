@@ -23,14 +23,47 @@ import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 
 const page = () => {
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const { data } = useGetProperties();
+  const [locationInput, setLocationInput] = useState("");
+  const [propertyType, setPropertyType] = useState("All");
+  const [bedrooms, setBedrooms] = useState<number | null>(null);
+  const [bathrooms, setBathrooms] = useState<number | null>(null);
+  const [selectedSort, setSelectedSort] = useState("Newest First");
+
+  const [activeFilters, setActiveFilters] = useState({
+    propertyType: "All",
+    bedrooms: null as number | null,
+    bathrooms: null as number | null,
+    minPrice: "",
+    maxPrice: "",
+    location: "",
+    sort: "Newest First",
+  });
+
+  const { data, isLoading } = useGetProperties(activeFilters);
+
+  // 4. Handle the Search Click
+  const handleSearch = () => {
+    setActiveFilters({
+      propertyType,
+      bedrooms,
+      bathrooms,
+      minPrice,
+      maxPrice,
+      location: locationInput,
+      sort: selectedSort,
+    });
+    setShowSidebar(false);
+  };
+
   const ApiDAta = data?.data?.items;
   const token = localStorage.getItem("token");
   const { data: userdata } = useGetUserData(token);
   const isBuyer = userdata?.data?.role === "buyer";
-
   const displayedProperties = showAll ? ApiDAta : ApiDAta?.slice(0, 6);
+
   const options = [
     "Newest First",
     "Price: Low to High",
@@ -52,14 +85,9 @@ const page = () => {
     setOpenn(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const [propertyType, setPropertyType] = useState("All");
-  const [bedrooms, setBedrooms] = useState<number | null>(null);
-  const [bathrooms, setBathrooms] = useState<number | null>(null);
-
-const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
-  {},
-);
-
+  const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const toggleFavorite = (id: string) => {
     setFavoriteStates(prev => ({
@@ -68,9 +96,34 @@ const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
     }));
   };
 
-  if (!displayedProperties || displayedProperties.length === 0) {
+  if (isLoading) {
     return <FeaturedSkeleton />;
   }
+
+ 
+  if (!ApiDAta || ApiDAta.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="mb-4 opacity-20">
+          <Location className="w-20 h-20" />
+        </div>
+        <h3 className="text-2xl font-bold text-[#212B36]">
+          No listing available currently
+        </h3>
+        <p className="text-gray-500 mt-2">
+          Try adjusting your filters or search criteria.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-6 text-primary-blue hover:underline cursor-pointer"
+        >
+          Reset Filters
+        </button>
+      </div>
+    );
+  }
+
+
   return (
     <>
       <div className="px-4 sm:px-6 mb-[100px] sm:mb-[150px]">
@@ -121,7 +174,8 @@ const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
                     <button
                       key={option}
                       onClick={() => {
-                        setSelected(option);
+                        setSelectedSort(option);
+                        setActiveFilters(prev => ({ ...prev, sort: option })); 
                         setOpen(false);
                       }}
                       className="flex w-full items-center justify-between px-1 py-2 hover:bg-gray-100 transition"
@@ -300,11 +354,15 @@ const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
                     <div className="flex items-center gap-3">
                       <input
                         placeholder="$10k"
+                        value={minPrice}
+                        onChange={e => setMinPrice(e.target.value)}
                         className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                       />
                       <span className="text-sm text-gray-500">To</span>
                       <input
                         placeholder="$500k"
+                        value={maxPrice}
+                        onChange={e => setMaxPrice(e.target.value)}
                         className="w-full rounded-lg border  border-[#C4CDD5] px-3 py-2 text-sm"
                       />
                     </div>
@@ -332,6 +390,8 @@ const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
                   >
                     <input
                       placeholder="City or State"
+                      value={locationInput}
+                      onChange={e => setLocationInput(e.target.value)}
                       className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                     />
                   </div>
@@ -391,7 +451,7 @@ const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
                 </div>
 
                 {/* SEARCH */}
-                <button className="w-full rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition">
+                <button className="w-full cursor-pointer rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition">
                   Search
                 </button>
               </div>
@@ -578,7 +638,10 @@ const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
               </div>
 
               {/* SEARCH */}
-              <button className="w-full rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition">
+              <button
+                onClick={handleSearch}
+                className="w-full cursor-pointer rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition"
+              >
                 Search
               </button>
             </div>
