@@ -1,15 +1,17 @@
+import Hero from "@/Components/PageComponents/mainPages/Home/Hero";
 import Browser from "@/Components/PageComponents/mainPages/Home/Browser";
 import Featured from "@/Components/PageComponents/mainPages/Home/Featured";
-import Hero from "@/Components/PageComponents/mainPages/Home/Hero";
-import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 import WhyChoose from "@/Components/PageComponents/mainPages/Home/WhyChoose";
+import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
+import { getFeaturedListings } from "@/Hooks/api/cms_api";
 
-
-const page = () => {
+const page = async () => {
+  const response = await getFeaturedListings();
+  const AllProperty = response?.data?.items;
   return (
     <>
       <Hero />
-      <Featured />
+      <Featured data={AllProperty} />
       <Browser />
       <WhyChoose />
       <ListPropertyCTA />
