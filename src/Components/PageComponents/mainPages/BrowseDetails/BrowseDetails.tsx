@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import User from "../../../../Assets/dummy.jpg";
 import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
@@ -16,19 +16,31 @@ import {
   Star,
   Video,
 } from "@/Components/Svg/SvgContainer";
-import TourRequestModal from "../../buyerPages/TourRequestModal";
+import { useGetUserData } from "@/Hooks/api/auth_api";
 import MessageModal from "../../buyerPages/MessageModal";
+import TourRequestModal from "../../buyerPages/TourRequestModal";
+import { useRouter } from "next/navigation";
+import { getItem } from "@/lib/localStorage";
 
 interface BrowswProps {
   data: any;
 }
 
 const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
-  console.log(data);
+  const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
 
+  useEffect(() => {
+    const savedToken = getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
+  const { data: userdata } = useGetUserData(token);
+  const isBuyer = userdata?.data?.role === "buyer";
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [openConverter, setOpenConverter] = useState(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const handlePlay = (): void => {
     if (videoRef.current) {
@@ -46,12 +58,17 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleTourRequestClick = () => {
-    setIsModalOpen(true);
+    if (isBuyer) {
+      setIsModalOpen(true);
+    } else {
+      router.push("/auth/login");
+    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
   const openMessageModal = () => {
@@ -61,6 +78,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const closeMessageModal = () => {
     setIsMessageModalOpen(false);
   };
+
+  const videoUrl =
+    data?.media?.find((item: any) => item.fileType === "video")?.url ||
+    "/property.mp4";
 
   return (
     <>
@@ -75,7 +96,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 onClick={handlePause}
                 playsInline
               >
-                <source src="/property.mp4" type="video/mp4" />
+                <source
+                  src={videoUrl ? videoUrl : "/property.mp4"}
+                  type="video/mp4"
+                />
                 Your browser does not support the video tag.
               </video>
 
@@ -175,7 +199,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                       alt="User"
                       width={70}
                       height={70}
-                      className="rounded-full"
+                      className="rounded-full h-20 w-20 object-center"
                     />
                   </figure>
                   <ul className="flex flex-col gap-1">
@@ -280,7 +304,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
       </section>
 
       {/* Modal */}
-      <TourRequestModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <TourRequestModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        propertyId={data?._id}
+      />
 
       {/* Modal */}
       <MessageModal isOpen={isMessageModalOpen} onClose={closeMessageModal} />
