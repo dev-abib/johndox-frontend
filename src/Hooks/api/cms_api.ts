@@ -1,9 +1,9 @@
-import { useServerApi } from "@/Hooks/useServerApi";
 import useClientApi from "../useClientApi";
+import { useServerApi } from "@/Hooks/useServerApi";
 
 // =======================================================
 //  CSR (Client Side Rendering)
-export const useGetProperties = (filters: any) => {
+export const useGetProperties = (filters: any = {}) => {
   const sortMap: Record<string, string> = {
     "Newest First": "createdAt_desc",
     "Price: Low to High": "price_asc",
@@ -12,16 +12,15 @@ export const useGetProperties = (filters: any) => {
   };
 
   const queryParams = new URLSearchParams();
-
   if (filters?.propertyType && filters?.propertyType !== "All")
     queryParams.append("propertyType", filters.propertyType.toLowerCase());
 
-  if (filters?.minPrice) queryParams.append("minPrice", filters?.minPrice);
-  if (filters?.maxPrice) queryParams.append("maxPrice", filters?.maxPrice);
-  if (filters?.bedrooms) queryParams.append("minBedrooms", filters?.bedrooms);
-  if (filters?.bathrooms)
-    queryParams.append("minBathrooms", filters?.bathrooms);
-  if (filters?.location) queryParams.append("location", filters?.location);
+  if (filters?.minPrice) queryParams.append("minPrice", filters.minPrice);
+  if (filters?.maxPrice) queryParams.append("maxPrice", filters.maxPrice);
+  if (filters?.bedrooms) queryParams.append("minBedrooms", filters.bedrooms);
+  if (filters?.bathrooms) queryParams.append("minBathrooms", filters.bathrooms);
+  if (filters?.location) queryParams.append("location", filters.location);
+  
   if (filters?.sort)
     queryParams.append("sort", sortMap[filters.sort] || "createdAt_desc");
 

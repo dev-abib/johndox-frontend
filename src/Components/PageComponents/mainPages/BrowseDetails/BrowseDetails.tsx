@@ -25,8 +25,9 @@ interface BrowswProps {
 
 const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [openConverter, setOpenConverter] = useState(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  console.log(data?._id);
 
   const handlePlay = (): void => {
     if (videoRef.current) {
@@ -278,7 +279,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
       </section>
 
       {/* Modal */}
-      <TourRequestModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <TourRequestModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        propertyId={data?._id}
+      />
 
       {/* Modal */}
       <MessageModal isOpen={isMessageModalOpen} onClose={closeMessageModal} />
