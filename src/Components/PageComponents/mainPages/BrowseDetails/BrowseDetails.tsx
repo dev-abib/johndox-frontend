@@ -16,16 +16,14 @@ import {
   Star,
   Video,
 } from "@/Components/Svg/SvgContainer";
-import TourRequestModal from "../../buyerPages/TourRequestModal";
 import MessageModal from "../../buyerPages/MessageModal";
+import TourRequestModal from "../../buyerPages/TourRequestModal";
 
 interface BrowswProps {
   data: any;
 }
 
 const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
-  console.log(data);
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [openConverter, setOpenConverter] = useState(false);

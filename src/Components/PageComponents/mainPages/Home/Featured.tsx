@@ -12,8 +12,8 @@ import {
   Location,
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
-import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 import { useGetUserData } from "@/Hooks/api/auth_api";
+import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 
 interface PropertyProps {
   data: any[];

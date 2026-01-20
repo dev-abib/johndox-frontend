@@ -5,8 +5,10 @@ import {
   Bathtub,
   Bed,
   Favourite,
+  Favourites,
   Location,
 } from "@/Components/Svg/SvgContainer";
+import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
@@ -15,13 +17,20 @@ import {
   SideBarCloseSvg,
   SideBarSvg,
 } from "@/Components/Svg/SvgContainer2";
+import { useGetUserData } from "@/Hooks/api/auth_api";
+import { useGetProperties } from "@/Hooks/api/cms_api";
+import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
-import { Featuredata } from "@/Components/Data/data";
-import Link from "next/link";
 
 const page = () => {
   const [showAll, setShowAll] = useState(false);
-  const displayedProperties = showAll ? Featuredata : Featuredata.slice(0, 4);
+  const { data } = useGetProperties();
+  const ApiDAta = data?.data?.items;
+  const token = localStorage.getItem("token");
+  const { data: userdata } = useGetUserData(token);
+  const isBuyer = userdata?.data?.role === "buyer";
+
+  const displayedProperties = showAll ? ApiDAta : ApiDAta?.slice(0, 6);
   const options = [
     "Newest First",
     "Price: Low to High",
@@ -40,12 +49,28 @@ const page = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggle = (key: keyof typeof openn) => {
-    setOpenn((prev) => ({ ...prev, [key]: !prev[key] }));
+    setOpenn(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const [propertyType, setPropertyType] = useState("All");
   const [bedrooms, setBedrooms] = useState<number | null>(null);
   const [bathrooms, setBathrooms] = useState<number | null>(null);
+
+const [favoriteStates, setFavoriteStates] = useState<Record<string, boolean>>(
+  {},
+);
+
+
+  const toggleFavorite = (id: string) => {
+    setFavoriteStates(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  if (!displayedProperties || displayedProperties.length === 0) {
+    return <FeaturedSkeleton />;
+  }
   return (
     <>
       <div className="px-4 sm:px-6 mb-[100px] sm:mb-[150px]">
@@ -92,7 +117,7 @@ const page = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {options.map((option) => (
+                  {options.map(option => (
                     <button
                       key={option}
                       onClick={() => {
@@ -113,67 +138,83 @@ const page = () => {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-          {/* First Column: Property Cards (and filter on small devices) */}
           <div className="w-full lg:flex-grow lg:w-[60%] order-1 lg:order-2">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 xl:gap-11">
-              {displayedProperties.map((item, index) => (
+              {displayedProperties?.map((item: any) => (
                 <div
-                  key={index}
+                  key={item._id}
                   className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
                 >
                   <div className="relative overflow-hidden">
                     <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
                       <Image
-                        src={item.Image}
-                        alt={item.title}
+                        src={item.media?.[0]?.url}
+                        alt={item.propertyName}
                         width={500}
                         height={300}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
                       />
                     </figure>
 
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors">
-                      <Favourite />
+                    <div
+                      onClick={() => toggleFavorite(item._id)}
+                      className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
+                    >
+                      {favoriteStates[item._id] ? (
+                        <Favourites />
+                      ) : (
+                        <Favourite />
+                      )}
                     </div>
                   </div>
 
                   <div className="mt-5">
-                    <h3 className=" text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
-                      {item.price.replace(" USD", "")}
+                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
+                      {new Intl.NumberFormat().format(item.price)}
                       <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>
                     </h3>
 
                     <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
-                      {item.title}
+                      {item.propertyName}
                     </h4>
 
                     <div className="flex items-center gap-2.5 mt-4">
-                      <Location
-                        className={
-                          "w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]  "
-                        }
-                      />
+                      <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
                       <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
-                        {item.location}
+                        {item.city}, {item.state}
                       </p>
                     </div>
 
                     <div className="flex flex-wrap gap-5 mt-5">
-                      {item.details.split(" • ").map((feature, i) => (
-                        <div key={i} className="flex items-center gap-2.5">
-                          {i === 0 && <Bed />}
-                          {i === 1 && <Bathtub />}
-                          {i === 2 && <Acceleration />}
-                          <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap inline-block">
-                            {feature.trim()}
-                          </span>
-                        </div>
-                      ))}
+                      <div className="flex items-center gap-2.5">
+                        <Bed className="shrink-0" />
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          {item.bedrooms} Bed
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <Bathtub className="shrink-0" />
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          {item.bathrooms} Bath
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <Acceleration className="shrink-0" />
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                          {item.areaInSqMeter} sqft
+                        </span>
+                      </div>
                     </div>
 
-                    <Link href={"browse/2"}>
+                    <Link
+                      href={
+                        isBuyer
+                          ? `/buyerlayout/browse/${item._id}`
+                          : `/browse/${item._id}`
+                      }
+                    >
                       <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                         Contact
                       </button>
@@ -182,6 +223,16 @@ const page = () => {
                 </div>
               ))}
             </div>
+            {!showAll && ApiDAta?.length > 4 && (
+              <div className="text-center mt-12 lg:mt-16 flex justify-end">
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-lg px-10 xl:py-4 py-3 rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
+                >
+                  View All Properties
+                </button>
+              </div>
+            )}
 
             <div className="block lg:hidden mt-6">
               <div className="rounded-2xl border border-[#E7E7E7] shadow-[0_0_8px_0_rgba(145,158,171,0.24)] bg-white p-6">
@@ -209,7 +260,7 @@ const page = () => {
                         : "max-h-0 opacity-0"
                     }`}
                   >
-                    {["All", "House", "Land", "Commercial"].map((type) => (
+                    {["All", "House", "Land", "Commercial"].map(type => (
                       <label
                         key={type}
                         className="flex items-center gap-3 mb-3 cursor-pointer"
@@ -305,7 +356,7 @@ const page = () => {
                   >
                     <p className="text-sm text-gray-600 mb-2">Bedrooms</p>
                     <div className="flex gap-2 mb-4">
-                      {[1, 2, 3, 4, 5].map((num) => (
+                      {[1, 2, 3, 4, 5].map(num => (
                         <button
                           key={num}
                           onClick={() => setBedrooms(num)}
@@ -322,7 +373,7 @@ const page = () => {
 
                     <p className="text-sm text-gray-600 mb-2">Bathrooms</p>
                     <div className="flex gap-2">
-                      {[1, 2, 3, 4, 5].map((num) => (
+                      {[1, 2, 3, 4, 5].map(num => (
                         <button
                           key={num}
                           onClick={() => setBathrooms(num)}
@@ -398,7 +449,7 @@ const page = () => {
                       : "max-h-0 opacity-0"
                   }`}
                 >
-                  {["All", "House", "Land", "Commercial"].map((type) => (
+                  {["All", "House", "Land", "Commercial"].map(type => (
                     <label
                       key={type}
                       className="flex items-center gap-3 mb-3 cursor-pointer"
@@ -492,7 +543,7 @@ const page = () => {
                 >
                   <p className="text-sm text-gray-600 mb-2">Bedrooms</p>
                   <div className="flex gap-2 mb-4">
-                    {[1, 2, 3, 4, 5].map((num) => (
+                    {[1, 2, 3, 4, 5].map(num => (
                       <button
                         key={num}
                         onClick={() => setBedrooms(num)}
@@ -509,7 +560,7 @@ const page = () => {
 
                   <p className="text-sm text-gray-600 mb-2">Bathrooms</p>
                   <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((num) => (
+                    {[1, 2, 3, 4, 5].map(num => (
                       <button
                         key={num}
                         onClick={() => setBathrooms(num)}
