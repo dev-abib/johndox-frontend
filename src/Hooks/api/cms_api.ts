@@ -4,7 +4,6 @@ import useClientApi from "../useClientApi";
 // =======================================================
 //  CSR (Client Side Rendering)
 export const useGetProperties = (filters: any) => {
-  // Map the UI "selected" sort to API strings
   const sortMap: Record<string, string> = {
     "Newest First": "createdAt_desc",
     "Price: Low to High": "price_asc",
@@ -14,24 +13,24 @@ export const useGetProperties = (filters: any) => {
 
   const queryParams = new URLSearchParams();
 
-  if (filters.propertyType && filters.propertyType !== "All")
+  if (filters?.propertyType && filters?.propertyType !== "All")
     queryParams.append("propertyType", filters.propertyType.toLowerCase());
 
-  if (filters.minPrice) queryParams.append("minPrice", filters.minPrice);
-  if (filters.maxPrice) queryParams.append("maxPrice", filters.maxPrice);
-  if (filters.bedrooms) queryParams.append("minBedrooms", filters.bedrooms);
-  if (filters.bathrooms) queryParams.append("minBathrooms", filters.bathrooms);
-  if (filters.location) queryParams.append("location", filters.location);
-  if (filters.sort)
+  if (filters?.minPrice) queryParams.append("minPrice", filters?.minPrice);
+  if (filters?.maxPrice) queryParams.append("maxPrice", filters?.maxPrice);
+  if (filters?.bedrooms) queryParams.append("minBedrooms", filters?.bedrooms);
+  if (filters?.bathrooms)
+    queryParams.append("minBathrooms", filters?.bathrooms);
+  if (filters?.location) queryParams.append("location", filters?.location);
+  if (filters?.sort)
     queryParams.append("sort", sortMap[filters.sort] || "createdAt_desc");
 
-  // Always include pagination defaults
   queryParams.append("page", "1");
   queryParams.append("limit", "20");
 
   return useClientApi({
     method: "get",
-    key: ["get-properties", filters], // Key must change to trigger refetch
+    key: ["get-properties", filters],
     endpoint: `/all-listings?${queryParams.toString()}`,
     queryOptions: {
       refetchInterval: 1000 * 60 * 60,

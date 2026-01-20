@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Acceleration,
   Bathtub,
@@ -102,7 +101,7 @@ const page = () => {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <div className="mb-4 opacity-20">
-          <Location className="w-20 h-20" />
+          <Location className="w-20 h-20" /> b
         </div>
         <h3 className="text-2xl font-bold text-[#212B36]">
           No listing available currently
