@@ -23,15 +23,6 @@ import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
 
 const page = () => {
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [showAll, setShowAll] = useState(false);
-  const [locationInput, setLocationInput] = useState("");
-  const [propertyType, setPropertyType] = useState("All");
-  const [bedrooms, setBedrooms] = useState<number | null>(null);
-  const [bathrooms, setBathrooms] = useState<number | null>(null);
-  const [selectedSort, setSelectedSort] = useState("Newest First");
-
   const [activeFilters, setActiveFilters] = useState({
     propertyType: "All",
     bedrooms: null as number | null,
@@ -41,8 +32,24 @@ const page = () => {
     location: "",
     sort: "Newest First",
   });
-
+  const [open, setOpen] = useState(false);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [locationInput, setLocationInput] = useState("");
+  const [propertyType, setPropertyType] = useState("All");
+  const [selected, setSelected] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
+  const [bedrooms, setBedrooms] = useState<number | null>(null);
+  const [bathrooms, setBathrooms] = useState<number | null>(null);
+  const [selectedSort, setSelectedSort] = useState("Newest First");
+
+  const ApiDAta = data?.data?.items;
+  const token = localStorage.getItem("token");
+  const { data: userdata } = useGetUserData(token);
+  const isBuyer = userdata?.data?.role === "buyer";
+  const displayedProperties = showAll ? ApiDAta : ApiDAta?.slice(0, 6);
 
   // 4. Handle the Search Click
   const handleSearch = () => {
@@ -58,20 +65,12 @@ const page = () => {
     setShowSidebar(false);
   };
 
-  const ApiDAta = data?.data?.items;
-  const token = localStorage.getItem("token");
-  const { data: userdata } = useGetUserData(token);
-  const isBuyer = userdata?.data?.role === "buyer";
-  const displayedProperties = showAll ? ApiDAta : ApiDAta?.slice(0, 6);
-
   const options = [
     "Newest First",
     "Price: Low to High",
     "Price: High to Low",
     "Most Popular",
   ];
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("Newest First");
 
   const [openn, setOpenn] = useState({
     propertyType: true,
@@ -79,7 +78,6 @@ const page = () => {
     location: true,
     feature: true,
   });
-  const [showSidebar, setShowSidebar] = useState(false);
 
   const toggle = (key: keyof typeof openn) => {
     setOpenn(prev => ({ ...prev, [key]: !prev[key] }));
@@ -100,7 +98,6 @@ const page = () => {
     return <FeaturedSkeleton />;
   }
 
- 
   if (!ApiDAta || ApiDAta.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -122,7 +119,6 @@ const page = () => {
       </div>
     );
   }
-
 
   return (
     <>
@@ -175,7 +171,7 @@ const page = () => {
                       key={option}
                       onClick={() => {
                         setSelectedSort(option);
-                        setActiveFilters(prev => ({ ...prev, sort: option })); 
+                        setActiveFilters(prev => ({ ...prev, sort: option }));
                         setOpen(false);
                       }}
                       className="flex w-full items-center justify-between px-1 py-2 hover:bg-gray-100 transition"
