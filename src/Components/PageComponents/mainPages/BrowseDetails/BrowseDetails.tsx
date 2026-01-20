@@ -30,7 +30,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
 
-  // 2. Fetch token ONLY after mounting (Browser-only)
   useEffect(() => {
     const savedToken = getItem("token");
     if (savedToken) {
@@ -39,8 +38,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   }, []);
   const { data: userdata } = useGetUserData(token);
   const isBuyer = userdata?.data?.role === "buyer";
-  console.log(isBuyer);
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [openConverter, setOpenConverter] = useState(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -82,6 +79,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     setIsMessageModalOpen(false);
   };
 
+  const videoUrl =
+    data?.media?.find((item: any) => item.fileType === "video")?.url ||
+    "/property.mp4";
+
   return (
     <>
       <section className="pt-10">
@@ -95,7 +96,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 onClick={handlePause}
                 playsInline
               >
-                <source src="/property.mp4" type="video/mp4" />
+                <source
+                  src={videoUrl ? videoUrl : "/property.mp4"}
+                  type="video/mp4"
+                />
                 Your browser does not support the video tag.
               </video>
 
