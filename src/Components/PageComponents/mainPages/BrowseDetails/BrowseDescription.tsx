@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Container from "@/Components/Common/Container";
 
@@ -19,7 +18,6 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
     <section className="xxl:pt-0 lg:pt-10 pt-5">
       <Container>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {/* IMAGE GALLERY */}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               {visibleImages.map((url, index) => (
@@ -66,7 +64,6 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
             )}
           </div>
 
-          {/* DESCRIPTION & DETAILS */}
           <div className="space-y-8 lg:mt-0 mt-4">
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] mb-4 uppercase">
@@ -78,7 +75,6 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
               </p>
             </div>
 
-            {/* ADDRESS SECTION */}
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] uppercase mb-4">
                 Address
@@ -111,7 +107,6 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
               </div>
             </div>
 
-            {/* DETAILS SECTION */}
             <div>
               <h2 className="text-[24px] font-medium text-[#000000] uppercase mb-4">
                 DETAILS

@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { FaCheck } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
@@ -19,6 +19,13 @@ import {
 import { useGetProperties } from "@/Hooks/api/cms_api";
 import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
 import ListPropertyCTA from "@/Components/PageComponents/mainPages/Home/ListPropertyCTA";
+import {
+  APIProvider,
+  Map,
+  Marker,
+  InfoWindow,
+  useMap,
+} from "@vis.gl/react-google-maps";
 
 const page = () => {
   const [open, setOpen] = useState(false);
@@ -72,9 +79,75 @@ const page = () => {
   const [propertyType, setPropertyType] = useState("All");
   const [bedrooms, setBedrooms] = useState<number | null>(null);
   const [bathrooms, setBathrooms] = useState<number | null>(null);
+
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
   }
+
+  const MapContent = ({ properties }: { properties: any[] }) => {
+    const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(
+      null,
+    );
+    const map = useMap();
+
+    useEffect(() => {
+      if (!map || !properties || properties.length === 0) return;
+
+      const bounds = new google.maps.LatLngBounds();
+      properties.forEach(item => {
+        if (item.location?.lat && item.location?.lng) {
+          bounds.extend({ lat: item.location.lat, lng: item.location.lng });
+        }
+      });
+
+      map.fitBounds(bounds);
+    }, [map, properties]);
+
+    const handleMarkerClick = (lat: number, lng: number) => {
+      if (!map) return;
+      map.panTo({ lat, lng });
+      map.setZoom(15);
+    };
+
+    return (
+      <Map
+        style={{ width: "100%", height: "100%", borderRadius: "12px" }}
+        defaultZoom={3}
+        gestureHandling={"greedy"}
+        disableDefaultUI={true}
+      >
+        {properties?.map(item => (
+          <React.Fragment key={item._id}>
+            <Marker
+              position={{ lat: item.location.lat, lng: item.location.lng }}
+              onMouseOver={() => setHoveredPropertyId(item._id)}
+              onMouseOut={() => setHoveredPropertyId(null)}
+              onClick={() =>
+                handleMarkerClick(item.location.lat, item.location.lng)
+              }
+            />
+
+            {hoveredPropertyId === item._id && (
+              <InfoWindow
+                position={{ lat: item.location.lat, lng: item.location.lng }}
+                pixelOffset={[0, -35]}
+              >
+                <div className="p-1">
+                  <p className="text-[#0085FF] font-bold text-sm">
+                    ${new Intl.NumberFormat().format(item.price)}
+                  </p>
+                  <p className="text-[10px] text-gray-500">
+                    {item.propertyName}
+                  </p>
+                </div>
+              </InfoWindow>
+            )}
+          </React.Fragment>
+        ))}
+      </Map>
+    );
+  };
+
   return (
     <>
       <div className="px-4 sm:px-6 mb-[100px] sm:mb-[150px]">
@@ -396,17 +469,12 @@ const page = () => {
             </div>
           </div>
 
-          <div className="w-full lg:flex-grow lg:w-[40%] h-[300px] sm:h-[400px] lg:h-auto order-2 lg:order-1">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58420.16573309009!2d90.36343509144125!3d23.77374133110238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c769ad5e7f6f%3A0x1d928a50d9cbcc90!2sSKS%20Shopping%20Mall!5e0!3m2!1sen!2sbd!4v1766118436976!5m2!1sen!2sbd"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="rounded-xl"
-            />
+          <div className="w-full lg:flex-grow lg:w-[40%] h-[300px] sm:h-[400px] lg:h-auto  order-2 lg:order-1">
+            <APIProvider
+              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
+            >
+              <MapContent properties={data?.data?.items || []} />
+            </APIProvider>
           </div>
 
           <div
