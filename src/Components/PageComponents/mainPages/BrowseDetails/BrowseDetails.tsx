@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import User from "../../../../Assets/dummy.jpg";
 import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
@@ -16,18 +16,34 @@ import {
   Star,
   Video,
 } from "@/Components/Svg/SvgContainer";
+import { useGetUserData } from "@/Hooks/api/auth_api";
 import MessageModal from "../../buyerPages/MessageModal";
 import TourRequestModal from "../../buyerPages/TourRequestModal";
+import { useRouter } from "next/navigation";
+import { getItem } from "@/lib/localStorage";
 
 interface BrowswProps {
   data: any;
 }
 
 const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
+  const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
+
+  // 2. Fetch token ONLY after mounting (Browser-only)
+  useEffect(() => {
+    const savedToken = getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
+  const { data: userdata } = useGetUserData(token);
+  const isBuyer = userdata?.data?.role === "buyer";
+  console.log(isBuyer);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [openConverter, setOpenConverter] = useState(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  console.log(data?._id);
 
   const handlePlay = (): void => {
     if (videoRef.current) {
@@ -45,12 +61,17 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleTourRequestClick = () => {
-    setIsModalOpen(true);
+    if (isBuyer) {
+      setIsModalOpen(true);
+    } else {
+      router.push("/auth/login");
+    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
   const openMessageModal = () => {

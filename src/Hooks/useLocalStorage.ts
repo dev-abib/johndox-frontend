@@ -1,9 +1,10 @@
+"use client"
 import { useState } from "react";
 import { getItem, setItem, removeItem } from "@/lib/localStorage";
 
 export default function useLocalStorage(
   key: string,
-  initialValue: string | null
+  initialValue: string | null,
 ) {
   const [value, setValue] = useState<string | null>(() => {
     const storedValue = getItem(key);
@@ -11,7 +12,7 @@ export default function useLocalStorage(
   });
 
   const handleDispatch = (
-    newValue: string | null | ((prev: string | null) => string | null)
+    newValue: string | null | ((prev: string | null) => string | null),
   ) => {
     setValue(prev => {
       const finalValue =

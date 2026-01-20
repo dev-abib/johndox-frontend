@@ -1,3 +1,4 @@
+"use client";
 import axios from "axios";
 import { getItem, removeItem } from "@/lib/localStorage";
 
@@ -15,7 +16,7 @@ axiosSecure.interceptors.request.use(
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosSecure.interceptors.response.use(
@@ -29,7 +30,7 @@ axiosSecure.interceptors.response.use(
       window.location.reload();
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 const useAxiosSecure = () => {

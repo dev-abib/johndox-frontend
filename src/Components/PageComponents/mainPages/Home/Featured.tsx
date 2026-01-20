@@ -1,7 +1,6 @@
 "use client";
-
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "@/Components/Common/Container";
 import {
   Acceleration,
@@ -21,7 +20,13 @@ interface PropertyProps {
 
 const Featured = ({ data = [] }: PropertyProps) => {
   const [showAll, setShowAll] = useState(false);
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []);
+
   const { data: userdata } = useGetUserData(token);
   const isBuyer = userdata?.data?.role === "buyer";
 

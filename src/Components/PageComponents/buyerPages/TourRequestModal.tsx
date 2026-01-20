@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import { RequestTour } from "@/Hooks/api/post_api";
 import { PiSpinnerBold } from "react-icons/pi";
+import { getItem } from "@/lib/localStorage";
 
 const RequestTourModal = ({
   isOpen,
@@ -14,6 +16,8 @@ const RequestTourModal = ({
   onClose: () => void;
   propertyId: string;
 }) => {
+  const [token, setToken] = useState<string | undefined>(undefined);
+
   const {
     control,
     handleSubmit,
@@ -21,12 +25,20 @@ const RequestTourModal = ({
     formState: { errors },
   } = useForm();
 
-  const { mutate, isPending } = RequestTour();
+  useEffect(() => {
+    if (isOpen) {
+      setToken(getItem("token"));
+    }
+  }, [isOpen]);
+
+  const { mutate, isPending } = RequestTour(token);
 
   const onSubmit = (formData: any) => {
     const payload = {
-      ...formData,
+      phoneNumber: formData.phoneNumber,
+      message: formData.message,
       propertyId: propertyId,
+      date: formData.date,
     };
 
     mutate(payload, {
@@ -60,30 +72,6 @@ const RequestTourModal = ({
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Name Field */}
-          <div className="mb-4">
-            <label className="block text-sm text-[#5F5F5F] mb-2">Name</label>
-            <Controller
-              name="name"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Name is required" }}
-              render={({ field }) => (
-                <input
-                  type="text"
-                  {...field}
-                  placeholder="Enter your Full Name"
-                  className="w-full px-4 py-2 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              )}
-            />
-            {errors.name && (
-              <p className="text-xs text-red-500 mt-1">
-                {errors.name.message as string}
-              </p>
-            )}
-          </div>
-
           {/* Phone Number Field */}
           <div className="mb-4">
             <label className="block text-sm text-[#5F5F5F] mb-2">
@@ -98,7 +86,7 @@ const RequestTourModal = ({
                 <input
                   type="text"
                   {...field}
-                  placeholder="(XXX) XXX-XXXX"
+                  placeholder="e.g. 01707104399"
                   className="w-full px-4 py-2 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               )}
@@ -110,51 +98,27 @@ const RequestTourModal = ({
             )}
           </div>
 
-          {/* Email Field */}
-          <div className="mb-4">
-            <label className="block text-sm text-[#5F5F5F] mb-2">
-              Signed In Email
-            </label>
-            <Controller
-              name="email"
-              control={control}
-              defaultValue=""
-              rules={{
-                required: "Email is required",
-                pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email" },
-              }}
-              render={({ field }) => (
-                <input
-                  type="email"
-                  {...field}
-                  placeholder="Enter your Email"
-                  className="w-full px-4 py-2 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              )}
-            />
-            {errors.email && (
-              <p className="text-xs text-red-500 mt-1">
-                {errors.email.message as string}
-              </p>
-            )}
-          </div>
-
           {/* Message Field */}
           <div className="mb-4">
             <label className="block text-sm text-[#5F5F5F] mb-2">Message</label>
             <Controller
               name="message"
               control={control}
-              defaultValue="I would like to schedule a tour."
+              defaultValue="Hello, I am very interested in this property. I would like to schedule a tour and discuss pricing and availability."
               rules={{ required: "Message is required" }}
               render={({ field }) => (
                 <textarea
                   {...field}
-                  rows={3}
+                  rows={4}
                   className="w-full px-4 py-2 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 ></textarea>
               )}
             />
+            {errors.message && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.message.message as string}
+              </p>
+            )}
           </div>
 
           {/* Date Picker */}
@@ -166,6 +130,7 @@ const RequestTourModal = ({
               name="date"
               control={control}
               defaultValue=""
+              rules={{ required: "Please select a date" }}
               render={({ field }) => (
                 <input
                   type="date"
@@ -174,15 +139,20 @@ const RequestTourModal = ({
                 />
               )}
             />
+            {errors.date && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.date.message as string}
+              </p>
+            )}
           </div>
 
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-[#0085FF] text-white font-medium py-3 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 disabled:bg-gray-400 disabled:border-gray-400 cursor-pointer"
+            className="w-full bg-[#0085FF] text-white font-medium py-3 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 disabled:bg-gray-400 disabled:border-gray-400 cursor-pointer flex items-center justify-center"
           >
             {isPending ? (
-              <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+              <PiSpinnerBold className="animate-spin size-[20px] fill-white" />
             ) : (
               "Send tour request"
             )}
