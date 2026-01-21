@@ -51,6 +51,15 @@ export async function getFeaturedListings() {
     endpoint: "/get-featured-properties",
   });
 }
+
+// Get Category
+export async function Category() {
+  return useServerApi({
+    mode: "ISR",
+    revalidate: 3600,
+    endpoint: "/get-category-section",
+  });
+}
 // =======================================================
 
 // Site Settings
