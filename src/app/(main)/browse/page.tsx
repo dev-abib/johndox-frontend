@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { FaCheck } from "react-icons/fa";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
@@ -89,6 +89,7 @@ const page = () => {
       null,
     );
     const map = useMap();
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
       if (!map || !properties || properties.length === 0) return;
@@ -109,19 +110,33 @@ const page = () => {
       map.setZoom(15);
     };
 
+    const handleMouseEnter = (id: string) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      setHoveredPropertyId(id);
+    };
+
+    const handleMouseLeave = () => {
+      timeoutRef.current = setTimeout(() => {
+        setHoveredPropertyId(null);
+      }, 200);
+    };
+
     return (
       <Map
         style={{ width: "100%", height: "100%", borderRadius: "12px" }}
         defaultZoom={3}
-        gestureHandling={"greedy"}
-        disableDefaultUI={true}
+        gestureHandling="greedy"
+        disableDefaultUI
       >
         {properties?.map(item => (
           <React.Fragment key={item._id}>
             <Marker
-              position={{ lat: item.location.lat, lng: item.location.lng }}
-              onMouseOver={() => setHoveredPropertyId(item._id)}
-              onMouseOut={() => setHoveredPropertyId(null)}
+              position={{
+                lat: item.location.lat,
+                lng: item.location.lng,
+              }}
+              onMouseOver={() => handleMouseEnter(item._id)}
+              onMouseOut={handleMouseLeave}
               onClick={() =>
                 handleMarkerClick(item.location.lat, item.location.lng)
               }
@@ -129,17 +144,39 @@ const page = () => {
 
             {hoveredPropertyId === item._id && (
               <InfoWindow
-                position={{ lat: item.location.lat, lng: item.location.lng }}
-                pixelOffset={[0, -35]}
+                position={{
+                  lat: item.location.lat,
+                  lng: item.location.lng,
+                }}
+                pixelOffset={[0, -30]}
+                onCloseClick={() => setHoveredPropertyId(null)}
+                headerDisabled={true}
               >
-                <div className="p-1">
-                  <p className="text-[#0085FF] font-bold text-sm">
-                    ${new Intl.NumberFormat().format(item.price)}
-                  </p>
-                  <p className="text-[10px] text-gray-500">
-                    {item.propertyName}
-                  </p>
-                </div>
+                <Link href={`/browse/${item._id}`}>
+                  <div
+                    className="p-1 cursor-pointer outline-none"
+                    onMouseEnter={() => handleMouseEnter(item._id)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="relative w-[120px] h-[80px] mb-1">
+                      <Image
+                        src={item.media?.[0]?.url || "/placeholder.png"}
+                        alt={item.propertyName}
+                        fill
+                        className="object-cover rounded-md"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <p className="text-[#0085FF] font-bold text-sm leading-tight">
+                        ${new Intl.NumberFormat().format(item.price)}
+                      </p>
+                      <p className="text-[10px] text-gray-500 truncate w-full">
+                        {item.propertyName}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               </InfoWindow>
             )}
           </React.Fragment>
