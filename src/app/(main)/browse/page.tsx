@@ -93,22 +93,14 @@ const page = () => {
 
     useEffect(() => {
       if (!map || !properties || properties.length === 0) return;
-
       const bounds = new google.maps.LatLngBounds();
       properties.forEach(item => {
         if (item.location?.lat && item.location?.lng) {
           bounds.extend({ lat: item.location.lat, lng: item.location.lng });
         }
       });
-
       map.fitBounds(bounds);
     }, [map, properties]);
-
-    const handleMarkerClick = (lat: number, lng: number) => {
-      if (!map) return;
-      map.panTo({ lat, lng });
-      map.setZoom(15);
-    };
 
     const handleMouseEnter = (id: string) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -131,47 +123,36 @@ const page = () => {
         {properties?.map(item => (
           <React.Fragment key={item._id}>
             <Marker
-              position={{
-                lat: item.location.lat,
-                lng: item.location.lng,
-              }}
+              position={{ lat: item.location.lat, lng: item.location.lng }}
               onMouseOver={() => handleMouseEnter(item._id)}
               onMouseOut={handleMouseLeave}
-              onClick={() =>
-                handleMarkerClick(item.location.lat, item.location.lng)
-              }
             />
 
             {hoveredPropertyId === item._id && (
               <InfoWindow
-                position={{
-                  lat: item.location.lat,
-                  lng: item.location.lng,
-                }}
-                pixelOffset={[0, -30]}
-                onCloseClick={() => setHoveredPropertyId(null)}
+                position={{ lat: item.location.lat, lng: item.location.lng }}
+                pixelOffset={[0, -35]}
                 headerDisabled={true}
               >
                 <Link href={`/browse/${item._id}`}>
                   <div
-                    className="p-1 cursor-pointer outline-none"
+                    className="p-1 cursor-pointer outline-none bg-white rounded-lg"
                     onMouseEnter={() => handleMouseEnter(item._id)}
                     onMouseLeave={handleMouseLeave}
                   >
-                    <div className="relative w-[120px] h-[80px] mb-1">
+                    <div className="relative w-[130px] h-[90px] mb-1">
                       <Image
-                        src={item.media?.[0]?.url || "/placeholder.png"}
+                        src={item.media?.[0]?.url}
                         alt={item.propertyName}
                         fill
                         className="object-cover rounded-md"
                       />
                     </div>
-
                     <div className="flex flex-col">
-                      <p className="text-[#0085FF] font-bold text-sm leading-tight">
+                      <p className="text-[#0085FF] font-bold text-sm">
                         ${new Intl.NumberFormat().format(item.price)}
                       </p>
-                      <p className="text-[10px] text-gray-500 truncate w-full">
+                      <p className="text-[10px] text-gray-500 truncate w-[120px]">
                         {item.propertyName}
                       </p>
                     </div>
@@ -506,7 +487,7 @@ const page = () => {
             </div>
           </div>
 
-          <div className="w-full lg:flex-grow lg:w-[40%] h-[300px] sm:h-[400px] lg:h-auto  order-2 lg:order-1">
+          <div className="w-full lg:w-[40%] h-[400px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative">
             <APIProvider
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
             >
