@@ -1,4 +1,8 @@
-import { Category, getFeaturedListings } from "@/Hooks/api/cms_api";
+import {
+  Category,
+  getFeaturedListings,
+  Whychooseus,
+} from "@/Hooks/api/cms_api";
 import Hero from "@/Components/PageComponents/mainPages/Home/Hero";
 import Browser from "@/Components/PageComponents/mainPages/Home/Browser";
 import Featured from "@/Components/PageComponents/mainPages/Home/Featured";
@@ -10,13 +14,16 @@ const Page = async () => {
   const AllCategory = category?.data;
   const response = await getFeaturedListings();
   const AllProperty = response?.data?.items;
+  const whychooseus = await Whychooseus();
+  const WhyChooseUs = whychooseus?.data;
+  console.log(WhyChooseUs);
 
   return (
     <>
       <Hero />
       <Featured data={AllProperty} />
       <Browser AllCategory={AllCategory} />
-      <WhyChoose />
+      <WhyChoose WhyChooseUs={WhyChooseUs} />
       <ListPropertyCTA />
     </>
   );

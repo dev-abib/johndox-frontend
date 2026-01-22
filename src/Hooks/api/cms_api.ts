@@ -60,6 +60,17 @@ export async function Category() {
     endpoint: "/get-category-section",
   });
 }
+
+
+// Why Choose Us
+export async function Whychooseus() {
+  return useServerApi({
+    mode: "ISR",
+    revalidate: 3600,
+    endpoint: "/get-why-sell-with-us-section",
+  });
+}
+
 // =======================================================
 
 // Site Settings
