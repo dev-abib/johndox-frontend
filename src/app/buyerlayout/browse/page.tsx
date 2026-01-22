@@ -25,13 +25,19 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
+import { AddFavourite } from "@/Hooks/api/post_api";
+import toast from "react-hot-toast";
 
 const page = () => {
-  const { data:cta } = ListPropertyBrowse();
+  const { mutate } = AddFavourite();
   const [open, setOpen] = useState(false);
+  const { data: cta } = ListPropertyBrowse();
   const [showAll, setShowAll] = useState(false);
   const { data, isLoading } = useGetProperties();
   const [selected, setSelected] = useState("Newest First");
+  const [loadingFavorites, setLoadingFavorites] = useState<
+    Record<string, boolean>
+  >({});
 
   const displayedProperties = showAll
     ? data?.data?.items
@@ -52,11 +58,40 @@ const page = () => {
   }, [data]);
 
   const toggleFavorite = (id: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("Please login to add favourites");
+      return;
+    }
+
+    // start loader for this item
+    setLoadingFavorites(prev => ({ ...prev, [id]: true }));
+
+    // optimistic UI
     setFavoriteStates(prev => ({
       ...prev,
       [id]: !prev[id],
     }));
+
+    mutate(
+      {
+        endpoint: `/toggle-favourite-listing/${id}`,
+      },
+      {
+        onSettled: () => {
+          setLoadingFavorites(prev => ({ ...prev, [id]: false }));
+        },
+        onError: () => {
+          setFavoriteStates(prev => ({
+            ...prev,
+            [id]: !prev[id],
+          }));
+        },
+      },
+    );
   };
+
   const options = [
     "Newest First",
     "Price: Low to High",
@@ -118,6 +153,7 @@ const page = () => {
         style={{ width: "100%", height: "100%", borderRadius: "12px" }}
         defaultZoom={3}
         gestureHandling="greedy"
+        defaultCenter={{ lat: 0, lng: 0 }}
         disableDefaultUI
       >
         {properties?.map(item => (
@@ -134,7 +170,7 @@ const page = () => {
                 pixelOffset={[0, -35]}
                 headerDisabled={true}
               >
-                <Link href={`/browse/${item._id}`}>
+                <Link href={`/buyerlayout/browse/${item._id}`}>
                   <div
                     className="p-1 cursor-pointer outline-none bg-white rounded-lg"
                     onMouseEnter={() => handleMouseEnter(item._id)}
@@ -412,10 +448,14 @@ const page = () => {
                     </figure>
 
                     <div
-                      onClick={() => toggleFavorite(item._id)}
+                      onClick={() =>
+                        !loadingFavorites[item._id] && toggleFavorite(item._id)
+                      }
                       className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
                     >
-                      {favoriteStates[item._id] ? (
+                      {loadingFavorites[item._id] ? (
+                        <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                      ) : favoriteStates[item._id] ? (
                         <Favourites />
                       ) : (
                         <Favourite />
@@ -463,7 +503,7 @@ const page = () => {
                       </div>
                     </div>
 
-                    <Link href={`/browse/${item._id}`}>
+                    <Link href={`/buyerlayout/browse/${item._id}`}>
                       <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                         Contact
                       </button>
