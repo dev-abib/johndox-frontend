@@ -4,25 +4,24 @@ import { BsArrowRight } from "react-icons/bs";
 import Container from "@/Components/Common/Container";
 
 interface CategoryyProps {
-  data: any;
+  AllCategory?: any;
 }
 
-const Browser = ({ data }: CategoryyProps) => {
-
+const Browser = ({ AllCategory }: CategoryyProps) => {
   return (
     <section className="">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
-            {data?.sectionData?.title}
+            {AllCategory?.sectionData?.title}
           </h2>
           <p className="font-normal text-black text-base sm:text-lg lg:text-[18px] mt-4 max-w-3xl mx-auto">
-            {data?.sectionData?.subTitle}
+            {AllCategory?.sectionData?.subTitle}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
-          {data?.categories?.map((item: any) => (
+          {AllCategory?.categories?.map((item: any) => (
             <div
               key={item?._id}
               className="bg-white shadow-xl rounded-[18px] overflow-hidden group hover:shadow-2xl transition-all duration-500 cursor-pointer px-4.5 pt-4.5 pb-7"

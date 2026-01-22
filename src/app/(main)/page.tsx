@@ -15,7 +15,7 @@ const Page = async () => {
     <>
       <Hero />
       <Featured data={AllProperty} />
-      <Browser data={AllCategory} />
+      <Browser AllCategory={AllCategory} />
       <WhyChoose />
       <ListPropertyCTA />
     </>
