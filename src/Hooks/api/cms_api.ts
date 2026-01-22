@@ -49,12 +49,26 @@ export const useWhyChoose = () => {
     },
   });
 };
+
 // Why it Works
 export const whyitWorks = () => {
   return useClientApi({
     method: "get",
     key: ["whyitwork"],
     endpoint: "/get-how-it-works-section",
+    isPrivate: false,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
+
+// Why it Works
+export const forSellerBanner = () => {
+  return useClientApi({
+    method: "get",
+    key: ["forsellerbanner"],
+    endpoint: "/get-sellers-hero",
     isPrivate: false,
     queryOptions: {
       refetchInterval: 1000 * 60 * 60,
