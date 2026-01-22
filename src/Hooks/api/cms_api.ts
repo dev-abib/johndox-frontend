@@ -75,6 +75,18 @@ export const forSellerBanner = () => {
     },
   });
 };
+// Why it Works
+export const ListPropertyBrowse = () => {
+  return useClientApi({
+    method: "get",
+    key: ["forsellerbanner"],
+    endpoint: "/list-property-sections",
+    isPrivate: false,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
 
 
 // =======================================================
