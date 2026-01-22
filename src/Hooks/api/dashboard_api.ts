@@ -83,6 +83,19 @@ export const useAlllisting = (token: any) => {
     },
   });
 };
+// Get All Listing
+export const GetAllFavourite = (token: any) => {
+  return useClientApi({
+    method: "get",
+    key: ["listing", token],
+    enabled: !!token,
+    endpoint: "/get-my-favourite-listing",
+    isPrivate: true,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
 
 // Delete Listing
 export const useDelete = () => {
