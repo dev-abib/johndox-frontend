@@ -70,6 +70,14 @@ export async function Whychooseus() {
     endpoint: "/get-why-sell-with-us-section",
   });
 }
+// Landing Banner
+export async function Banner() {
+  return useServerApi({
+    mode: "ISR",
+    revalidate: 3600,
+    endpoint: "/get-property-hero",
+  });
+}
 
 // =======================================================
 

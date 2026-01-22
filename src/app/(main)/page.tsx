@@ -1,4 +1,5 @@
 import {
+  Banner,
   Category,
   getFeaturedListings,
   Whychooseus,
@@ -16,11 +17,12 @@ const Page = async () => {
   const AllProperty = response?.data?.items;
   const whychooseus = await Whychooseus();
   const WhyChooseUs = whychooseus?.data;
-  console.log(WhyChooseUs);
+  const landingBanner = await Banner();
+  const hero = landingBanner?.data;
 
   return (
     <>
-      <Hero />
+      <Hero hero={hero} />
       <Featured data={AllProperty} />
       <Browser AllCategory={AllCategory} />
       <WhyChoose WhyChooseUs={WhyChooseUs} />

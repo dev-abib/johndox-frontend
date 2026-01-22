@@ -1,6 +1,5 @@
-import Container from "@/Components/Common/Container";
-import { WhyChooseUsFeatures } from "@/Components/Data/data";
 import Image from "next/image";
+import Container from "@/Components/Common/Container";
 
 interface whychooseusProps {
   WhyChooseUs?: any;
