@@ -49,6 +49,18 @@ export const useWhyChoose = () => {
     },
   });
 };
+// Why it Works
+export const whyitWorks = () => {
+  return useClientApi({
+    method: "get",
+    key: ["whyitwork"],
+    endpoint: "/get-how-it-works-section",
+    isPrivate: false,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
 
 
 // =======================================================
