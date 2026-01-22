@@ -79,6 +79,15 @@ export async function Banner() {
   });
 }
 
+// Landing Banner
+export async function ListProperty() {
+  return useServerApi({
+    mode: "ISR",
+    revalidate: 3600,
+    endpoint: "/list-property-sections",
+  });
+}
+
 // =======================================================
 
 // Site Settings
