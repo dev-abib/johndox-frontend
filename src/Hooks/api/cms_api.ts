@@ -20,7 +20,7 @@ export const useGetProperties = (filters: any = {}) => {
   if (filters?.bedrooms) queryParams.append("minBedrooms", filters.bedrooms);
   if (filters?.bathrooms) queryParams.append("minBathrooms", filters.bathrooms);
   if (filters?.location) queryParams.append("location", filters.location);
-  
+
   if (filters?.sort)
     queryParams.append("sort", sortMap[filters.sort] || "createdAt_desc");
 
@@ -36,6 +36,20 @@ export const useGetProperties = (filters: any = {}) => {
     },
   });
 };
+
+// Why Choose Us
+export const useWhyChoose = () => {
+  return useClientApi({
+    method: "get",
+    key: ["why-choose-us"],
+    endpoint: "/get-why-sell-with-us-section",
+    isPrivate: false,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
+
 
 // =======================================================
 
@@ -61,7 +75,6 @@ export async function Category() {
   });
 }
 
-
 // Why Choose Us
 export async function Whychooseus() {
   return useServerApi({
@@ -70,6 +83,7 @@ export async function Whychooseus() {
     endpoint: "/get-why-sell-with-us-section",
   });
 }
+
 // Landing Banner
 export async function Banner() {
   return useServerApi({

@@ -20,7 +20,6 @@ const WhyChoose = ({ WhyChooseUs }: whychooseusProps) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-9">
           {WhyChooseUs?.items?.map((feature: any) => {
-            const Icon = feature.icon;
             return (
               <div
                 key={feature?._id}
