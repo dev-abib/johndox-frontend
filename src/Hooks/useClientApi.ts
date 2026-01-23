@@ -31,32 +31,48 @@ export default function useClientApi({
   axiosOptions,
   enabled = true,
 }: apiProps): any {
-  const axiosInstance = (isPrivate ? axiosSecure : axiosPublic) as any;
+  const axiosInstance = isPrivate ? axiosSecure : axiosPublic;
 
+  // =======================================================
+  // GET (QUERY) — NO CACHE
   if (method === "get") {
     return useQuery({
       queryKey: key,
       queryFn: async () => {
-        const res = await axiosInstance.get(endpoint, { params, headers });
+        const res = await axiosInstance.get(endpoint!, {
+          params,
+          headers,
+        });
         return res.data;
       },
       enabled,
+
+      // 🔥 HARD NO-CACHE DEFAULTS
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+
+      // Allow override if needed
       ...queryOptions,
     });
   }
 
+  // =======================================================
+  // MUTATION — NO CACHE BY NATURE
   return useMutation({
     mutationKey: key,
     mutationFn: async (variables?: { endpoint?: string; data?: any } | any) => {
       const dynamicEndpoint = variables?.endpoint || endpoint;
-      const payload = variables?.data || variables;
+      const payload = variables?.data ?? variables;
 
-      const res = await axiosInstance[method](dynamicEndpoint, payload, {
+      const res = await axiosInstance[method](dynamicEndpoint!, payload, {
         headers,
         ...axiosOptions,
       });
 
-      return res?.data;
+      return res.data;
     },
     onSuccess,
     onError,

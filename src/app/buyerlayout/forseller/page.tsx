@@ -1,22 +1,25 @@
 "use client";
-import React from "react";
-import { forSellerBanner } from "@/Hooks/api/cms_api";
+import Forsellerskeleton from "@/Components/Skeleton/Forsellerskeleton";
 import WhySell from "@/Components/PageComponents/mainPages/forseller/WhySell";
+import { forSellerBanner, useWhyChoose, whyitWorks } from "@/Hooks/api/cms_api";
 import HowItWorks from "@/Components/PageComponents/mainPages/forseller/HowItWorks";
 import ReadytoSell from "@/Components/PageComponents/mainPages/forseller/ReadytoSell";
 import SellerPageHero from "@/Components/PageComponents/mainPages/forseller/SellerPageHero";
 
-const page = () => {
+export default function Page() {
   const { data: hero } = forSellerBanner();
+  const { data: whyitworks } = whyitWorks();
+  const { data, isLoading } = useWhyChoose();
 
+  if (isLoading) {
+    return <Forsellerskeleton />;
+  }
   return (
-    <>
+    <div>
       <SellerPageHero hero={hero} />
-      <WhySell />
-      <HowItWorks />
+      <WhySell data={data} />
+      <HowItWorks whyitworks={whyitworks} />
       <ReadytoSell />
-    </>
+    </div>
   );
-};
-
-export default page;
+}

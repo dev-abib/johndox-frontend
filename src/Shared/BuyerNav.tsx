@@ -25,7 +25,7 @@ const BuyerNav = () => {
   const [langOpen, setLangOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("English");
 
-  const languages = ["English", "Deutsch"];
+  const languages = ["English", "Spanish"];
 
   return (
     <nav
