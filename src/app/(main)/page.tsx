@@ -14,17 +14,12 @@ import {
 const Page = async () => {
   const category = await Category();
   const AllCategory = category?.data;
-
   const whychooseus = await Whychooseus();
   const WhyChooseUs = whychooseus?.data;
-
   const landingBanner = await Banner();
   const hero = landingBanner?.data;
-
   const response = await getFeaturedListings();
   const AllProperty = response?.data?.items;
-  
-
   const Listproperty = await ListProperty();
 
   return (
