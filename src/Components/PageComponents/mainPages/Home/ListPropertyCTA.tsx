@@ -4,8 +4,6 @@ interface ListPropertyprops {
 }
 
 const ListPropertyCTA = ({ Listproperty }: ListPropertyprops) => {
-  console.log(Listproperty);
-  
 
   return (
     <section
