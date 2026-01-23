@@ -41,12 +41,7 @@ body {
   @apply text-base;
 }
 
-.mainhero {
-  background-image: url("../Assets/mainhero.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+
 .bannerhero {
   background-image: url("../Assets/aboutbanner.png");
   background-size: cover;

@@ -1,77 +1,52 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import {  Location, Bed, Bathtub, Acceleration, Favourites } from "@/Components/Svg/SvgContainer";
-
-const favoritesData = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?q=80&w=1000",
-    price: "$240,000",
-    title: "Residential Land in Yocón",
-    location: "LA MIEL, Honduras",
-    beds: "3 Beds",
-    baths: "2 Baths",
-    size: "3,200 M",
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1000",
-    price: "$320,000",
-    title: "Downtown Office Space",
-    location: "LA MIEL, Honduras",
-    beds: "3 Beds",
-    baths: "2 Baths",
-    size: "3,200 M",
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?q=80&w=1000",
-    price: "$620,000",
-    title: "Modern House in LA MIEL",
-    location: "LA MIEL, Honduras",
-    beds: "3 Beds",
-    baths: "2 Baths",
-    size: "3,200 M",
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000",
-    price: "$720,000",
-    title: "Investment Land in Caldas",
-    location: "LA MIEL, Honduras",
-    beds: "3 Beds",
-    baths: "2 Baths",
-    size: "3,200 M",
-  },
-  {
-    id: 5,
-    image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1000",
-    price: "$620,000",
-    title: "Commercial Space in Caldas",
-    location: "LA MIEL, Honduras",
-    beds: "3 Beds",
-    baths: "2 Baths",
-    size: "3,200 M",
-  },
-  {
-    id: 6,
-    image: "https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=1000",
-    price: "$120,000",
-    title: "Modern House in LA MIEL",
-    location: "LA MIEL, Honduras",
-    beds: "3 Beds",
-    baths: "2 Baths",
-    size: "3,200 M",
-  },
-];
+import { useState, useEffect } from "react";
+import {
+  Location,
+  Bed,
+  Bathtub,
+  Acceleration,
+  Favourites,
+} from "@/Components/Svg/SvgContainer";
+import { GetAllFavourite } from "@/Hooks/api/dashboard_api";
+import { AddFavourite } from "@/Hooks/api/post_api"; // Assuming this handles removal too
 
 const MyFavorites = () => {
-  const [favorites, setFavorites] = useState(favoritesData);
-  const removeFavorite = (id: any) => {
-    setFavorites(prev => prev.filter(item => item.id !== id));
+  // 1. Get and Clean Token safely
+  const rawToken =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token =
+    rawToken && rawToken.startsWith('"') ? JSON.parse(rawToken) : rawToken;
+
+  // 2. Fetch Data from API
+  const { data: apiResponse, isLoading } = GetAllFavourite(token);
+  const { mutate: toggleFav } = AddFavourite();
+
+  // 3. Sync local state with API data for immediate UI removal
+  const [favorites, setFavorites] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (apiResponse?.data) {
+      setFavorites(apiResponse.data);
+    }
+  }, [apiResponse]);
+
+  const removeFavorite = (id: string) => {
+    // Optimistic UI update
+    setFavorites(prev => prev.filter(item => item._id !== id));
+
+    // API Call to remove
+    toggleFav({
+      endpoint: `/toggle-favourite-listing/${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   };
+
+  if (isLoading)
+    return <div className="p-10 text-center">Loading Favorites...</div>;
 
   return (
     <div className="px-4 sm:px-6 lg:px-10 py-10 bg-[#F9FAFB] rounded-3xl">
@@ -82,12 +57,12 @@ const MyFavorites = () => {
             My Favorites
           </h2>
           <p className="text-sm text-[#919191] mt-1">
-            {favorites.length} saved properties
+            {favorites?.length || 0} saved properties
           </p>
         </div>
 
         <Link
-          href="/browse"
+          href="/buyerlayout/browse"
           className="bg-primary-blue text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition text-center cursor-pointer"
         >
           Find More Properties
@@ -96,29 +71,29 @@ const MyFavorites = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {favorites.map(item => (
+        {favorites?.map((item: any) => (
           <div
-            key={item.id}
+            key={item._id}
             className="bg-white shadow-lg rounded-[22px] overflow-hidden border border-[#F1F1F1] hover:shadow-xl transition-all duration-300"
           >
             {/* Image */}
             <div className="relative p-3">
               <figure className="h-[300px] overflow-hidden rounded-[16px]">
                 <Image
-                  src={item.image}
-                  alt={item.title}
+                  src={item.media?.[0]?.url || "/placeholder.jpg"}
+                  alt={item.propertyName}
                   width={600}
                   height={400}
                   className="w-full h-full object-cover"
                 />
               </figure>
 
-              {/* Heart */}
+              {/* Heart Button (Remove) */}
               <button
-                onClick={() => removeFavorite(item.id)}
+                onClick={() => removeFavorite(item._id)}
                 className="absolute top-6 right-6 bg-white/90 text-red-600 backdrop-blur-sm p-2 rounded-full hover:bg-white transition cursor-pointer"
               >
-                <Favourites  />
+                <Favourites />
               </button>
             </div>
 
@@ -126,47 +101,57 @@ const MyFavorites = () => {
             <div className="px-5 pb-5">
               {/* Price */}
               <h3 className="text-lg font-bold text-primary-blue">
-                {item.price}{" "}
+                {new Intl.NumberFormat().format(item.price)}{" "}
                 <span className="text-xs font-medium text-[#919191]">USD</span>
               </h3>
 
               {/* Title */}
-              <p className="text-[15px] font-medium text-[#5F5F5F] mt-2">
-                {item.title}
+              <p className="text-[15px] font-medium text-[#5F5F5F] mt-2 line-clamp-1">
+                {item.propertyName}
               </p>
 
               {/* Location */}
               <div className="flex items-center gap-2 mt-3">
                 <Location className="w-[14px] h-[14px]" />
-                <p className="text-xs text-[#919191]">{item.location}</p>
+                <p className="text-xs text-[#919191]">
+                  {item.city}, {item.state}
+                </p>
               </div>
 
               {/* Features */}
               <div className="flex items-center gap-4 mt-4 text-xs text-[#919191]">
                 <div className="flex items-center gap-1">
                   <Bed />
-                  <span>{item.beds}</span>
+                  <span>{item.bedrooms} Bed</span>
                 </div>
 
                 <div className="flex items-center gap-1">
                   <Bathtub />
-                  <span>{item.baths}</span>
+                  <span>{item.bathrooms} Bath</span>
                 </div>
 
                 <div className="flex items-center gap-1">
                   <Acceleration />
-                  <span>{item.size}</span>
+                  <span>{item.areaInSqMeter} sqft</span>
                 </div>
               </div>
 
               {/* Button */}
-              <button className="mt-5 w-full bg-primary-blue text-white py-3 rounded-lg text-sm font-medium hover:bg-transparent hover:text-primary-blue border border-primary-blue transition-all duration-300 cursor-pointer">
-                Contact
-              </button>
+              <Link href={`/buyerlayout/browse/${item._id}`}>
+                <button className="mt-5 w-full bg-primary-blue text-white py-3 rounded-lg text-sm font-medium hover:bg-transparent hover:text-primary-blue border border-primary-blue transition-all duration-300 cursor-pointer">
+                  View Details
+                </button>
+              </Link>
             </div>
           </div>
         ))}
       </div>
+
+      {favorites.length === 0 && (
+        <div className="text-center py-20 text-gray-500">
+          You haven't saved any properties yet.
+        </div>
+      )}
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const ReadytoSell = () => {
   return (
     <section
@@ -18,12 +20,13 @@ const ReadytoSell = () => {
           List your property today and start connecting with buyers.
         </p>
 
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-          <button className="px-8 xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
-            Create Free Account
-          </button>
-        </div>
+        <Link href={"auth/login"}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+            <button className="px-8 xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition cursor-pointer">
+              Create Free Account
+            </button>
+          </div>
+        </Link>
       </div>
     </section>
   );

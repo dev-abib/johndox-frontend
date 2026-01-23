@@ -2,7 +2,7 @@ import useClientApi from "../useClientApi";
 import { useServerApi } from "@/Hooks/useServerApi";
 
 // =======================================================
-//  CSR (Client Side Rendering)
+//  CSR (Client Side Rendering) — NO CACHE
 export const useGetProperties = (filters: any = {}) => {
   const sortMap: Record<string, string> = {
     "Newest First": "createdAt_desc",
@@ -12,6 +12,7 @@ export const useGetProperties = (filters: any = {}) => {
   };
 
   const queryParams = new URLSearchParams();
+
   if (filters?.propertyType && filters?.propertyType !== "All")
     queryParams.append("propertyType", filters.propertyType.toLowerCase());
 
@@ -20,7 +21,7 @@ export const useGetProperties = (filters: any = {}) => {
   if (filters?.bedrooms) queryParams.append("minBedrooms", filters.bedrooms);
   if (filters?.bathrooms) queryParams.append("minBathrooms", filters.bathrooms);
   if (filters?.location) queryParams.append("location", filters.location);
-  
+
   if (filters?.sort)
     queryParams.append("sort", sortMap[filters.sort] || "createdAt_desc");
 
@@ -32,32 +33,123 @@ export const useGetProperties = (filters: any = {}) => {
     key: ["get-properties", filters],
     endpoint: `/all-listings?${queryParams.toString()}`,
     queryOptions: {
-      refetchInterval: 1000 * 60 * 60,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+    },
+  });
+};
+
+// Why Choose Us
+export const useWhyChoose = () => {
+  return useClientApi({
+    method: "get",
+    key: ["why-choose-us"],
+    endpoint: "/get-why-sell-with-us-section",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+
+// Why it Works
+export const whyitWorks = () => {
+  return useClientApi({
+    method: "get",
+    key: ["whyitwork"],
+    endpoint: "/get-how-it-works-section",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+
+// Seller Banner
+export const forSellerBanner = () => {
+  return useClientApi({
+    method: "get",
+    key: ["forsellerbanner"],
+    endpoint: "/get-sellers-hero",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+
+// List Property Browse
+export const ListPropertyBrowse = () => {
+  return useClientApi({
+    method: "get",
+    key: ["list-property-browse"],
+    endpoint: "/list-property-sections",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
     },
   });
 };
 
 // =======================================================
-
-// All CSR here.....
-
-// =======================================================
-//  SSR (Server Side Rendering)
+//  SSR (Server Side Rendering) — NO CACHE (REAL TIME)
 
 export async function getFeaturedListings() {
   return useServerApi({
-    mode: "ISR",
-    revalidate: 3600,
+    mode: "SSR",
     endpoint: "/get-featured-properties",
   });
 }
-// =======================================================
 
-// Site Settings
+// Get Category
+export async function Category() {
+  return useServerApi({
+    mode: "SSR",
+    endpoint: "/get-category-section",
+  });
+}
+
+// Why Choose Us
+export async function Whychooseus() {
+  return useServerApi({
+    mode: "SSR",
+    endpoint: "/get-why-sell-with-us-section",
+  });
+}
+
+// Landing Banner
+export async function Banner() {
+  return useServerApi({
+    mode: "SSR",
+    endpoint: "/get-property-hero",
+  });
+}
+
+// List Property
+export async function ListProperty() {
+  return useServerApi({
+    mode: "SSR",
+    endpoint: "/list-property-sections",
+  });
+}
+
+// =======================================================
+// Site Settings — NO CACHE
+
 export async function getSiteSettings() {
   return useServerApi({
-    mode: "ISR",
-    revalidate: 86400,
+    mode: "SSR",
     endpoint: "/api/site-settings",
   });
 }
