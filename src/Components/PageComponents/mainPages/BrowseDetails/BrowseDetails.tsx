@@ -58,7 +58,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleTourRequestClick = () => {
+    if (isBuyer) {
       setIsModalOpen(true);
+    } else {
+      router.push("/auth/login");
+    }
   };
 
   const handleCloseModal = () => {
@@ -180,51 +184,56 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   </div>
                 </div>
               </div>
-              <div className="">
-                <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium ">
+              <div>
+                <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium">
                   AGENT INFORMATION
                 </h5>
+
                 <div className="flex flex-col sm:flex-row gap-x-5 mt-2.5 2xl:mt-5">
                   <figure>
                     <Image
-                      src={
-                        data?.author?.profilePicture
-                          ? data?.author?.profilePicture
-                          : User
-                      }
+                      src={data?.author?.profilePicture || User}
                       alt="User"
                       width={70}
                       height={70}
                       className="rounded-full h-20 w-20 object-center"
                     />
                   </figure>
-                  <ul className="flex flex-col gap-1">
-                    <li className="text-[18px] 2xl:text-[24px] font-medium text-[#0085FF]">
-                      {data?.author?.firstName}
-                    </li>
-                    <li className="text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F]">
-                      Senior Real Estate Agent
-                    </li>
-                    <li className="flex gap-x-2 text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] mt-2">
-                      <Star />
-                      {data?.author?.rating?.ratingCount} (
-                      {data?.author?.rating?.ratingCount} review)
-                    </li>
-                  </ul>
-                  <ul className="flex flex-col gap-1 justify-end">
-                    <li className="flex gap-x-2  text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] lg:mt-0 mt-2">
-                      <Mobile />
-                      {data?.author?.phoneNumber
-                        ? data?.author?.phoneNumber
-                        : "+52 384 123 4568"}
-                    </li>
-                    <li className="flex gap-x-2  text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] mt-2">
-                      <Email />
-                      {data?.author?.email}
-                    </li>
-                  </ul>
+                  <div
+                    className={`${
+                      !isBuyer ? "blur-xs pointer-events-none select-none" : ""
+                    }`}
+                  >
+                    <div className="flex gap-x-5">
+                      <ul className="flex flex-col gap-1">
+                        <li className="text-[18px] 2xl:text-[24px] font-medium text-[#0085FF]">
+                          {data?.author?.firstName}
+                        </li>
+                        <li className="text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F]">
+                          Senior Real Estate Agent
+                        </li>
+                        <li className="flex gap-x-2 text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] mt-2">
+                          <Star />
+                          {data?.author?.rating?.ratingCount} (
+                          {data?.author?.rating?.ratingCount} review)
+                        </li>
+                      </ul>
+
+                      <ul className="flex flex-col gap-1 justify-end">
+                        <li className="flex gap-x-2 text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] lg:mt-0 mt-2">
+                          <Mobile />
+                          {data?.author?.phoneNumber || "+52 384 123 4568"}
+                        </li>
+                        <li className="flex gap-x-2 text-[13px] 2xl:text-[18px] font-medium text-[#5F5F5F] mt-2">
+                          <Email />
+                          {data?.author?.email}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
+
               <div className="flex gap-x-7 mt-8">
                 <button
                   onClick={handleTourRequestClick}
