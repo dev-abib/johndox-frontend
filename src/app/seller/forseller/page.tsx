@@ -1,13 +1,16 @@
+"use client";
+import React from "react";
+import { forSellerBanner } from "@/Hooks/api/cms_api";
 import WhySell from "@/Components/PageComponents/mainPages/forseller/WhySell";
 import HowItWorks from "@/Components/PageComponents/mainPages/forseller/HowItWorks";
 import ReadytoSell from "@/Components/PageComponents/mainPages/forseller/ReadytoSell";
 import SellerPageHero from "@/Components/PageComponents/mainPages/forseller/SellerPageHero";
-import React from "react";
 
 const page = () => {
+  const { data: hero } = forSellerBanner();
   return (
     <>
-      <SellerPageHero />
+      <SellerPageHero hero={hero} />
       <WhySell />
       <HowItWorks />
       <ReadytoSell />

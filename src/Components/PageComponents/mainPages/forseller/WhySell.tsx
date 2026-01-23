@@ -1,7 +1,6 @@
 "use client";
-import Container from "@/Components/Common/Container";
-import { WhyChooseUsFeatures2 } from "@/Components/Data/data";
 import Image from "next/image";
+import Container from "@/Components/Common/Container";
 
 interface whysellprops {
   data?: any;
