@@ -11,10 +11,10 @@ import {
   Favourites,
   Location,
 } from "@/Components/Svg/SvgContainer";
-import { useGetUserData } from "@/Hooks/api/auth_api";
 import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 import { AddFavourite } from "@/Hooks/api/post_api";
 import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
 
 interface PropertyProps {
   data: any[];
@@ -32,6 +32,11 @@ const Featured = ({ data = [] }: PropertyProps) => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
   }, []);
+
+
+    const pathname = usePathname();
+
+    const isBuyerLayout = pathname.startsWith("/buyerlayout");
 
 
   const displayedProperties = showAll ? data : data.slice(0, 6);
@@ -76,6 +81,8 @@ const Featured = ({ data = [] }: PropertyProps) => {
       },
     );
   };
+
+  
 
   if (!displayedProperties || displayedProperties.length === 0) {
     return <FeaturedSkeleton />;
@@ -167,7 +174,9 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   </div>
                 </div>
 
-                <Link href={`/buyerlayout/browse/${item._id}`}>
+                <Link
+                  href={`${isBuyerLayout ? `/buyerlayout/browse/${item._id}` : `/browse/${item._id}`}`}
+                >
                   <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                     Contact
                   </button>

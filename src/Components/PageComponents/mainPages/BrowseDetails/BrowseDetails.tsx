@@ -58,11 +58,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleTourRequestClick = () => {
-    if (isBuyer) {
       setIsModalOpen(true);
-    } else {
-      router.push("/auth/login");
-    }
   };
 
   const handleCloseModal = () => {
