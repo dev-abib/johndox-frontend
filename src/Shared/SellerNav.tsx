@@ -29,7 +29,6 @@ const SellerNav = () => {
   const [langOpen, setLangOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("English");
 
-
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
@@ -137,9 +136,9 @@ const SellerNav = () => {
                   <Image
                     src={data?.data?.profilePicture}
                     alt="Profile"
-                    width={32}
-                    height={32}
-                    className="rounded-full object-cover"
+                    width={300}
+                    height={300}
+                    className="rounded-full object-cover h-8 w-8"
                   />
                 ) : (
                   <CgProfile className="size-7" />

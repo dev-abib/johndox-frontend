@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useParams } from "next/navigation";
-import { useGetProperties } from "@/Hooks/api/cms_api";
+import { ListPropertyBrowse, useGetProperties } from "@/Hooks/api/cms_api";
 import Maps from "@/Components/PageComponents/mainPages/BrowseDetails/Maps";
 import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
 import CurrencyConverter from "@/Components/PageComponents/buyerPages/CurrencyConverter";
@@ -14,6 +14,7 @@ const page = () => {
   const params = useParams();
   const SingproductId = params.id;
   const { data, isLoading } = useGetProperties();
+  const { data: Listproperty } = ListPropertyBrowse();
 
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
@@ -23,15 +24,14 @@ const page = () => {
     (item: any) => item?._id === SingproductId,
   );
 
-  
   return (
     <>
       <BrowseDetails data={singleProductDetails} />
       <BrowseDescription data={singleProductDetails} />
-      <Maps />
+      {/* <Maps /> */}
       <LoanCalculatorForm />
       <CurrencyConverter />
-      <ListPropertyCTA />
+      <ListPropertyCTA Listproperty={Listproperty} />
     </>
   );
 };
