@@ -10,8 +10,11 @@ interface SearchFormData {
   lookingFor: string;
   location: string;
 }
+interface heroProps {
+  hero?: any;
+}
 
-const Hero: React.FC = () => {
+const Hero: React.FC<heroProps> = ({ hero }) => {
   const [activeTab, setActiveTab] = useState<TabType>("buy");
   const [formData, setFormData] = useState<SearchFormData>({
     lookingFor: "",
@@ -25,30 +28,26 @@ const Hero: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-
-    const payload = {
-      type: activeTab,
-      lookingFor: formData.lookingFor,
-      location: formData.location,
-    };
-
-    console.log("SEARCH DATA:", payload);
   };
 
   return (
-    <section className="mainhero pt-8 pb-20 md:pt-16 md:pb-32 lg:pt-21 lg:pb-[280px] bg-cover bg-center">
+    <section
+      style={{
+        backgroundImage: hero?.bgImg
+          ? `url(${hero.bgImg})`
+          : "url('/Assets/mainhero.png')",
+      }}
+      className="mainhero pt-8 pb-20 md:pt-16 md:pb-32 lg:pt-21 lg:pb-[280px] bg-cover bg-center"
+    >
       <Container>
-        {/* Flex container: column on small screens, row on lg+ */}
         <div className="flex flex-col lg:flex-row lg:justify-between gap-12 lg:gap-20">
           {/* Left Content */}
           <div className="max-w-full lg:max-w-[880px] text-center lg:text-left">
             <h1 className="text-white text-2xl md:text-3xl lg:text-4xl xl:text-[55px] font-bold leading-tight xl:leading-[84px]">
-              Own a Piece of Honduras — From City Apartments to Seaside Land
+              {hero?.title}
             </h1>
             <p className="text-[#F9FAFB] font-medium  sm:text-base lg:text-[20px] pt-5 lg:pt-6 mx-auto lg:mx-0">
-              Discover a modern way to explore, compare, and invest in verified
-              properties across Honduras — from urban apartments to beachfront
-              land, all in one trusted platform.
+              {hero?.description}
             </p>
           </div>
 
@@ -102,10 +101,11 @@ const Hero: React.FC = () => {
                     onChange={handleChange}
                     className="border border-[#DAE6E9] rounded-2xl lg:rounded-[18px] pl-12 pr-4 py-3.5 w-full appearance-none bg-white focus:outline-none focus:border-[#0085FF]"
                   >
-                    <option value="">Select Property Type</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="house">House</option>
-                    <option value="land">Land</option>
+                    {hero?.propertyType?.map((item: any) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
                   </select>
                   <div className="absolute top-11 lg:top-12 left-4 pointer-events-none">
                     <Lookingfor />

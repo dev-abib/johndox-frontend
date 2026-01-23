@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Container from "@/Components/Common/Container";
@@ -10,25 +11,28 @@ import {
   Favourites,
   Location,
 } from "@/Components/Svg/SvgContainer";
-import Link from "next/link";
 import { useGetUserData } from "@/Hooks/api/auth_api";
 import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
+import { AddFavourite } from "@/Hooks/api/post_api";
+import toast from "react-hot-toast";
 
 interface PropertyProps {
   data: any[];
 }
 
 const Featured = ({ data = [] }: PropertyProps) => {
+  const { mutate } = AddFavourite();
   const [showAll, setShowAll] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+    const [loadingFavorites, setLoadingFavorites] = useState<
+      Record<string, boolean>
+    >({});
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
   }, []);
 
-  const { data: userdata } = useGetUserData(token);
-  const isBuyer = userdata?.data?.role === "buyer";
 
   const displayedProperties = showAll ? data : data.slice(0, 6);
 
@@ -39,10 +43,38 @@ const Featured = ({ data = [] }: PropertyProps) => {
   );
 
   const toggleFavorite = (id: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.error("Please login to add favourites");
+      return;
+    }
+
+    // start loader for this item
+    setLoadingFavorites(prev => ({ ...prev, [id]: true }));
+
+    // optimistic UI
     setFavoriteStates(prev => ({
       ...prev,
       [id]: !prev[id],
     }));
+
+    mutate(
+      {
+        endpoint: `/toggle-favourite-listing/${id}`,
+      },
+      {
+        onSettled: () => {
+          setLoadingFavorites(prev => ({ ...prev, [id]: false }));
+        },
+        onError: () => {
+          setFavoriteStates(prev => ({
+            ...prev,
+            [id]: !prev[id],
+          }));
+        },
+      },
+    );
   };
 
   if (!displayedProperties || displayedProperties.length === 0) {
@@ -63,7 +95,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
-          {displayedProperties.map(item => (
+          {displayedProperties?.map((item: any) => (
             <div
               key={item._id}
               className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
@@ -80,10 +112,18 @@ const Featured = ({ data = [] }: PropertyProps) => {
                 </figure>
 
                 <div
-                  onClick={() => toggleFavorite(item._id)}
+                  onClick={() =>
+                    !loadingFavorites[item._id] && toggleFavorite(item._id)
+                  }
                   className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
                 >
-                  {favoriteStates[item._id] ? <Favourites /> : <Favourite />}
+                  {loadingFavorites[item._id] ? (
+                    <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                  ) : favoriteStates[item._id] ? (
+                    <Favourites />
+                  ) : (
+                    <Favourite />
+                  )}
                 </div>
               </div>
 
@@ -127,13 +167,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   </div>
                 </div>
 
-                <Link
-                  href={
-                    isBuyer
-                      ? `/buyerlayout/browse/${item._id}`
-                      : `/browse/${item._id}`
-                  }
-                >
+                <Link href={`/buyerlayout/browse/${item._id}`}>
                   <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                     Contact
                   </button>

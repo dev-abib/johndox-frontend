@@ -11,7 +11,7 @@ import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 
 const SellerNav = () => {
-  const languages = ["English", "Deutsch"];
+  const languages = ["English", "Spanish"];
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const token = localStorage.getItem("token");

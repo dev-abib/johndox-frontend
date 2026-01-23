@@ -1,6 +1,9 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 
+
+
+// Request Tour
 export const RequestTour = (token?: string) => {
   return useClientApi({
     method: "post",
@@ -19,3 +22,25 @@ export const RequestTour = (token?: string) => {
     },
   });
 };
+
+export const AddFavourite = () => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  return useClientApi({
+    method: "post",
+    key: ["add-favourite"],
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+      }
+    },
+
+    onError: (error: any) => {
+      toast.error(error?.message || "Failed to toggle favourite");
+    },
+  });
+};
+
