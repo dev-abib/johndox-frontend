@@ -27,6 +27,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import toast from "react-hot-toast";
 import { AddFavourite } from "@/Hooks/api/post_api";
+import { usePathname } from "next/navigation";
 
 const page = () => {
   const { mutate } = AddFavourite();
@@ -38,6 +39,8 @@ const page = () => {
   const [loadingFavorites, setLoadingFavorites] = useState<
     Record<string, boolean>
   >({});
+  const pathname = usePathname();
+  const isBuyerLayout = pathname.startsWith("/buyerlayout");
 
   const displayedProperties = showAll
     ? data?.data?.items
@@ -170,7 +173,9 @@ const page = () => {
                 pixelOffset={[0, -35]}
                 headerDisabled={true}
               >
-                <Link href={`/buyerlayout/browse/${item._id}`}>
+                <Link
+                  href={`${isBuyerLayout ? `/buyerlayout/browse/${item._id}` : `/browse/${item._id}`}`}
+                >
                   <div
                     className="p-1 cursor-pointer outline-none bg-white rounded-lg"
                     onMouseEnter={() => handleMouseEnter(item._id)}

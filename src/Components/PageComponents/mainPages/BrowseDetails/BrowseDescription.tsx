@@ -15,7 +15,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const hiddenImages = allImages.slice(4);
 
   return (
-    <section className="xxl:pt-0 lg:pt-10 pt-5">
+    <section className="xxl:pt-0 lg:pt-10 pt-5 pb-10">
       <Container>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           <div className="space-y-4">
