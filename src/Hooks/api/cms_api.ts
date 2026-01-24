@@ -101,6 +101,20 @@ export const ListPropertyBrowse = () => {
     },
   });
 };
+// Pricing Page
+export const PricingPage = () => {
+  return useClientApi({
+    method: "get",
+    key: ["list-property-browse"],
+    endpoint: "/get-pricing-page-cms",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
 
 // =======================================================
 //  SSR (Server Side Rendering) — NO CACHE (REAL TIME)

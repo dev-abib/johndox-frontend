@@ -4,18 +4,23 @@ import { useState } from "react";
 import Container from "@/Components/Common/Container";
 import { CheckSvg } from "@/Components/Svg/SvgContainer2";
 
-const PricingTable = () => {
+interface pricingprops {
+  data?: any;
+}
+
+const PricingTable = ({ data }: pricingprops) => {
   const [isYearly, setIsYearly] = useState(false);
+  console.log(data);
 
   return (
     <section className="lg:px-6 px-3 lg:pt-10">
       <Container>
         <div className="text-center mb-12">
           <h2 className="text-xl md:text-3xl lg:text-[56px] font-bold text-[#0085FF]">
-            Simple, Transparent Pricing
+            {data?.data?.mainTitle}
           </h2>
           <p className="mt-3 text-sm md:text-base lg:text-[20px] font-medium text-[#404040]">
-            Choose the perfect plan for your real estate business
+            {data?.data?.subTitle}
           </p>
 
           <div className="mt-6 flex items-center justify-center gap-3 text-sm">
@@ -50,7 +55,9 @@ const PricingTable = () => {
               }
             >
               <span>Yearly </span>
-              <span className="text-[#0085FF]">Save 17%</span>
+              <span className="text-[#0085FF]">
+                Save {data?.data?.discountAmount} %
+              </span>
             </span>
           </div>
         </div>
