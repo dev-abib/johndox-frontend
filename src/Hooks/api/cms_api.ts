@@ -1,37 +1,14 @@
 import useClientApi from "../useClientApi";
 import { useServerApi } from "@/Hooks/useServerApi";
 
-// =======================================================
-//  CSR (Client Side Rendering) — NO CACHE
+
+//  CSR (Client Side Rendering) 
 export const useGetProperties = (filters: any = {}) => {
-  const sortMap: Record<string, string> = {
-    "Newest First": "createdAt_desc",
-    "Price: Low to High": "price_asc",
-    "Price: High to Low": "price_desc",
-    "Most Popular": "popularity_desc",
-  };
-
-  const queryParams = new URLSearchParams();
-
-  if (filters?.propertyType && filters?.propertyType !== "All")
-    queryParams.append("propertyType", filters.propertyType.toLowerCase());
-
-  if (filters?.minPrice) queryParams.append("minPrice", filters.minPrice);
-  if (filters?.maxPrice) queryParams.append("maxPrice", filters.maxPrice);
-  if (filters?.bedrooms) queryParams.append("minBedrooms", filters.bedrooms);
-  if (filters?.bathrooms) queryParams.append("minBathrooms", filters.bathrooms);
-  if (filters?.location) queryParams.append("location", filters.location);
-
-  if (filters?.sort)
-    queryParams.append("sort", sortMap[filters.sort] || "createdAt_desc");
-
-  queryParams.append("page", "1");
-  queryParams.append("limit", "20");
-
   return useClientApi({
     method: "get",
     key: ["get-properties", filters],
-    endpoint: `/all-listings?${queryParams.toString()}`,
+    endpoint: `/all-listings`,
+    params: filters,
     queryOptions: {
       staleTime: 0,
       cacheTime: 0,
@@ -102,8 +79,50 @@ export const ListPropertyBrowse = () => {
   });
 };
 
-// =======================================================
-//  SSR (Server Side Rendering) — NO CACHE (REAL TIME)
+// Pricing Page
+export const PricingPage = () => {
+  return useClientApi({
+    method: "get",
+    key: ["get-pricing-page"],
+    endpoint: "/get-pricing-page-cms",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+// Pricing Plan
+export const PricingPlan = () => {
+  return useClientApi({
+    method: "get",
+    key: ["get-all-plan"],
+    endpoint: "/get-all-plan",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+// All Faq
+export const AllFaw = () => {
+  return useClientApi({
+    method: "get",
+    key: ["faq"],
+    endpoint: "/get-faq",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+
+//  SSR (Server Side Rendering)
 
 export async function getFeaturedListings() {
   return useServerApi({

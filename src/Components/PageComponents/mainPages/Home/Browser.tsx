@@ -37,7 +37,14 @@ const Browser = ({ AllCategory }: CategoryyProps) => {
 
               <div className="mt-7.5">
                 <div className="flex mb-4">
-                  {/* <item.icon_name className="w-10 h-10 lg:w-12 lg:h-12 text-[#0085FF]" /> */}
+                  <figure className="relative h-20 w-20 overflow-hidden">
+                    <Image
+                      src={item?.iconImg}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
+                    />
+                  </figure>
                 </div>
 
                 <h3 className="text-xl lg:text-2xl font-medium text-[#212B36]">

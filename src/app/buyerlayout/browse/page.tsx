@@ -25,20 +25,48 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
-import { AddFavourite } from "@/Hooks/api/post_api";
 import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
+import { AddFavourite } from "@/Hooks/api/post_api";
 
 const page = () => {
   const { mutate } = AddFavourite();
   const [open, setOpen] = useState(false);
   const { data: cta } = ListPropertyBrowse();
   const [showAll, setShowAll] = useState(false);
-  const { data, isLoading } = useGetProperties();
   const [selected, setSelected] = useState("Newest First");
   const [loadingFavorites, setLoadingFavorites] = useState<
     Record<string, boolean>
   >({});
+
+  const [activeFilters, setActiveFilters] = useState<any>({});
+  const [propertyType, setPropertyType] = useState("All");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [location, setLocation] = useState("");
+  const [bedrooms, setBedrooms] = useState<number | null>(null);
+  const [bathrooms, setBathrooms] = useState<number | null>(null);
+  const [selectedSort, setSelectedSort] = useState("Newest First");
+  const { data, isLoading } = useGetProperties(activeFilters);
+
+  const handleSearch = () => {
+    const filters = {
+      propertyType:
+        propertyType === "All" ? undefined : propertyType.toLowerCase(),
+      minPrice: minPrice || undefined,
+      maxPrice: maxPrice || undefined,
+      location: location || undefined,
+      minBedrooms: bedrooms || undefined,
+      minBathrooms: bathrooms || undefined,
+      sort:
+        selectedSort === "Price: Low to High"
+          ? "price_asc"
+          : selectedSort === "Price: High to Low"
+            ? "price_desc"
+            : "newest",
+    };
+    setActiveFilters(filters);
+  };
 
   const pathname = usePathname();
   const isBuyerLayout = pathname.startsWith("/buyerlayout");
@@ -114,10 +142,6 @@ const page = () => {
   const toggle = (key: keyof typeof openn) => {
     setOpenn(prev => ({ ...prev, [key]: !prev[key] }));
   };
-
-  const [propertyType, setPropertyType] = useState("All");
-  const [bedrooms, setBedrooms] = useState<number | null>(null);
-  const [bathrooms, setBathrooms] = useState<number | null>(null);
 
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
@@ -340,13 +364,19 @@ const page = () => {
                 >
                   <div className="flex items-center gap-3">
                     <input
+                      type="number"
                       placeholder="$10k"
+                      value={minPrice}
+                      onChange={e => setMinPrice(e.target.value)}
                       className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                     />
                     <span className="text-sm text-gray-500">To</span>
                     <input
+                      type="number"
                       placeholder="$500k"
-                      className="w-full rounded-lg border  border-[#C4CDD5] px-3 py-2 text-sm"
+                      value={maxPrice}
+                      onChange={e => setMaxPrice(e.target.value)}
+                      className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                     />
                   </div>
                 </div>
@@ -371,6 +401,8 @@ const page = () => {
                 >
                   <input
                     placeholder="City or State"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
                     className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                   />
                 </div>
@@ -430,7 +462,10 @@ const page = () => {
               </div>
 
               {/* SEARCH */}
-              <button className="w-full rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition">
+              <button
+                onClick={handleSearch}
+                className="w-full cursor-pointer rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition"
+              >
                 Search
               </button>
             </div>
@@ -613,13 +648,19 @@ const page = () => {
                 >
                   <div className="flex items-center gap-3">
                     <input
+                      type="number"
                       placeholder="$10k"
+                      value={minPrice}
+                      onChange={e => setMinPrice(e.target.value)}
                       className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                     />
                     <span className="text-sm text-gray-500">To</span>
                     <input
+                      type="number"
                       placeholder="$500k"
-                      className="w-full rounded-lg border  border-[#C4CDD5] px-3 py-2 text-sm"
+                      value={maxPrice}
+                      onChange={e => setMaxPrice(e.target.value)}
+                      className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                     />
                   </div>
                 </div>
@@ -644,6 +685,8 @@ const page = () => {
                 >
                   <input
                     placeholder="City or State"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
                     className="w-full rounded-lg border border-[#C4CDD5] px-3 py-2 text-sm"
                   />
                 </div>
@@ -703,7 +746,10 @@ const page = () => {
               </div>
 
               {/* SEARCH */}
-              <button className="w-full rounded-xl bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition">
+              <button
+                onClick={handleSearch}
+                className="w-full rounded-xl cursor-pointer bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition"
+              >
                 Search
               </button>
             </div>
@@ -737,7 +783,7 @@ const page = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <Link href={"/browse"}>
+            <Link href={"/buyerlayout/browse"}>
               <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
                 {cta?.data?.btnTxt?.[0] ?? "Start Selling Today"}
               </button>

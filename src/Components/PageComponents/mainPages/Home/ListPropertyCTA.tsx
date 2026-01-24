@@ -1,10 +1,13 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 interface ListPropertyprops {
   Listproperty?: any;
 }
 
 const ListPropertyCTA = ({ Listproperty }: ListPropertyprops) => {
-
+  const pathname = usePathname();
+  const isBuyerLayout = pathname.startsWith("/buyerlayout");
   return (
     <section
       className="relative w-full  py-16 xl:py-24 px-6 flex items-center justify-center text-center"
@@ -29,7 +32,7 @@ const ListPropertyCTA = ({ Listproperty }: ListPropertyprops) => {
               {Listproperty?.data?.btnTxt?.[0] ?? "Start Selling Today"}
             </button>
           </Link>
-          <Link href={"/pricing"}>
+          <Link href={`${isBuyerLayout ? "/buyerlayout/pricing" : "/pricing"}`}>
             <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl border-2 border-primary-blue text-primary-blue font-medium hover:bg-blue-50 transition">
               {Listproperty?.data?.btnTxt?.[1] ?? "View Pricing Plans"}
             </button>
