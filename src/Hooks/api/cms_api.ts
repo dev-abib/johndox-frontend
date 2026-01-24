@@ -130,6 +130,20 @@ export const PricingPlan = () => {
     },
   });
 };
+// All Faq
+export const AllFaw = () => {
+  return useClientApi({
+    method: "get",
+    key: ["faq"],
+    endpoint: "/get-faq",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
 
 // =======================================================
 //  SSR (Server Side Rendering) — NO CACHE (REAL TIME)

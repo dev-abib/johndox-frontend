@@ -25,9 +25,10 @@ const faqs = [
 
 interface faqprops {
   data?: any;
+  faq?: any;
 }
 
-const FAQSection = ({ data }: faqprops) => {
+const FAQSection = ({ data, faq }: faqprops) => {
   return (
     <section className="px-6 lg:pt-[150px] pt-15">
       {/* Heading */}
@@ -37,9 +38,9 @@ const FAQSection = ({ data }: faqprops) => {
 
       {/* FAQ Cards */}
       <div className="max-w-3xl mx-auto space-y-4">
-        {faqs.map((faq, index) => (
+        {faq?.data?.map((faq: any) => (
           <div
-            key={index}
+            key={faq?._id}
             className="rounded-[18px] border border-[#B0D9FF] bg-[rgba(230,243,255,0.20)] shadow-[0_0_4px_0_rgba(145,158,171,0.40)]
              lg:py-7.5 lg:px-12.5 p-5"
           >
