@@ -134,7 +134,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                       Land Area
                     </p>
                     <p className="font-normal text-[14px] text-[#404040]">
-                      {data?.areaInMeter} M²
+                      {data?.areaInMeter} m²
                     </p>
                   </div>
                   <div>
