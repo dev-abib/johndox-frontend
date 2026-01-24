@@ -101,12 +101,27 @@ export const ListPropertyBrowse = () => {
     },
   });
 };
+
 // Pricing Page
 export const PricingPage = () => {
   return useClientApi({
     method: "get",
-    key: ["list-property-browse"],
+    key: ["get-pricing-page"],
     endpoint: "/get-pricing-page-cms",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+// Pricing Plan
+export const PricingPlan = () => {
+  return useClientApi({
+    method: "get",
+    key: ["get-all-plan"],
+    endpoint: "/get-all-plan",
     isPrivate: false,
     queryOptions: {
       staleTime: 0,
