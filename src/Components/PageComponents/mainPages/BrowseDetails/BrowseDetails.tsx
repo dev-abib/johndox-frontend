@@ -129,7 +129,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 <div className="">
                   <div className="flex  gap-x-6 2xl:gap-x-20 w-full">
                     <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0">
-                      $ {data?.price}
+                      ${data?.price?.toLocaleString()}
                     </h4>
                     <div className="flex flex-row md:flex-col gap-3 md:gap-6">
                       <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer" />
@@ -179,7 +179,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                       }
                     />
                     <span className="text-sm lg:text-[16px] font-normal text-[#404040]">
-                      {data?.areaInSqMeter} M
+                      {data?.areaInSqMeter} m
                     </span>
                   </div>
                 </div>
