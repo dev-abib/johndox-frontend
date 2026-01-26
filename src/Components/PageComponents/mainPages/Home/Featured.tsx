@@ -33,11 +33,8 @@ const Featured = ({ data = [] }: PropertyProps) => {
 
 
     const pathname = usePathname();
-
     const isBuyerLayout = pathname.startsWith("/buyerlayout");
-
-
-  const displayedProperties = showAll ? data : data.slice(0, 6);
+    const displayedProperties = showAll ? data : data.slice(0, 6);
 
   const [favoriteStates, setFavoriteStates] = useState<{
     [key: string]: boolean;
