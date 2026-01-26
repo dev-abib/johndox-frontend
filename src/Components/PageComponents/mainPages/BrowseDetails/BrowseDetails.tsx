@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getItem } from "@/lib/localStorage";
 import User from "../../../../Assets/dummy.jpg";
 import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
@@ -18,9 +19,8 @@ import {
 } from "@/Components/Svg/SvgContainer";
 import { useGetUserData } from "@/Hooks/api/auth_api";
 import MessageModal from "../../buyerPages/MessageModal";
+import React, { useEffect, useRef, useState } from "react";
 import TourRequestModal from "../../buyerPages/TourRequestModal";
-import { useRouter } from "next/navigation";
-import { getItem } from "@/lib/localStorage";
 
 interface BrowswProps {
   data: any;
