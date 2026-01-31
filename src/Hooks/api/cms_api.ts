@@ -121,6 +121,20 @@ export const AllFaw = () => {
     },
   });
 };
+// About Banner
+export const AboutBanner = () => {
+  return useClientApi({
+    method: "get",
+    key: ["AboutBanner"],
+    endpoint: "/get-about-hero",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
 
 //  SSR (Server Side Rendering)
 

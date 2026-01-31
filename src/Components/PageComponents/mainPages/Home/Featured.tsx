@@ -1,7 +1,10 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { AddFavourite } from "@/Hooks/api/post_api";
 import Container from "@/Components/Common/Container";
 import {
   Acceleration,
@@ -12,9 +15,6 @@ import {
   Location,
 } from "@/Components/Svg/SvgContainer";
 import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
-import { AddFavourite } from "@/Hooks/api/post_api";
-import toast from "react-hot-toast";
-import { usePathname } from "next/navigation";
 
 interface PropertyProps {
   data: any[];
@@ -24,9 +24,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
   const { mutate } = AddFavourite();
   const [showAll, setShowAll] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-    const [loadingFavorites, setLoadingFavorites] = useState<
-      Record<string, boolean>
-    >({});
+  const [loadingFavorites, setLoadingFavorites] = useState< Record<string, boolean>>({});
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -35,11 +33,8 @@ const Featured = ({ data = [] }: PropertyProps) => {
 
 
     const pathname = usePathname();
-
     const isBuyerLayout = pathname.startsWith("/buyerlayout");
-
-
-  const displayedProperties = showAll ? data : data.slice(0, 6);
+    const displayedProperties = showAll ? data : data.slice(0, 6);
 
   const [favoriteStates, setFavoriteStates] = useState<{
     [key: string]: boolean;
