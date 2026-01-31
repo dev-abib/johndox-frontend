@@ -163,6 +163,21 @@ export const CommunityData = () => {
   });
 };
 
+// Core Values
+export const Corevalues = () => {
+  return useClientApi({
+    method: "get",
+    key: ["corevalues"],
+    endpoint: "/get-core-value-section",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+
 //  SSR (Server Side Rendering)
 
 export async function getFeaturedListings() {
