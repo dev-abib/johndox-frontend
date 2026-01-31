@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiSpinnerBold } from "react-icons/pi";
-import { useLogin } from "@/Hooks/api/auth_api";
 import Container from "@/Components/Common/Container";
+import { useGoogleLogin, useLogin } from "@/Hooks/api/auth_api";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { useGoogleLogin as useGoogleAuth } from "@react-oauth/google";
 
 type LoginFormData = {
   email: string;
@@ -14,8 +15,16 @@ type LoginFormData = {
 };
 
 const Login = () => {
-  const { mutate, isPending } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<"buyer" | "seller" | null>(
+    null,
+  );
+  console.log(selectedRole);
+
+  const { mutate, isPending } = useLogin();
+  const { mutate: googleLoginMutate, isPending: isGooglePending } =
+    useGoogleLogin();
 
   const {
     register,
@@ -23,15 +32,64 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginFormData>();
 
+  // Initialize Google Auth
+  const loginWithGoogle = useGoogleAuth({
+    onSuccess: (tokenResponse: any) => {
+      if (selectedRole) {
+        googleLoginMutate({
+          access_token: tokenResponse.access_token,
+          role: selectedRole,
+        });
+      }
+    },
+    onError: (error: any) => console.error("Google Login Failed:", error),
+  });
+
   const onSubmit = (data: LoginFormData) => {
-    mutate({
-      ...data,
-    });
+    mutate({ ...data });
+  };
+
+  const handleGoogleClick = () => {
+    setShowRoleModal(true);
+  };
+
+  const handleRoleSelect = (role: "buyer" | "seller") => {
+    setSelectedRole(role);
+    setShowRoleModal(false);
+    loginWithGoogle();
   };
 
   return (
     <Container>
-      <div className="flex h-screen items-center justify-center gap-10 py-10">
+      <div className="relative flex h-screen items-center justify-center gap-10 py-10">
+        {showRoleModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+              <h2 className="text-2xl font-bold mb-4">Join as a...</h2>
+              <div className="flex gap-4 justify-center mt-6">
+                <button
+                  onClick={() => handleRoleSelect("buyer")}
+                  className="px-6 py-3 bg-primary-blue text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                >
+                  Buyer
+                </button>
+                <button
+                  onClick={() => handleRoleSelect("seller")}
+                  className="px-6 py-3 border border-primary-blue text-primary-blue rounded-lg hover:bg-blue-50 transition cursor-pointer"
+                >
+                  Seller
+                </button>
+              </div>
+              <button
+                onClick={() => setShowRoleModal(false)}
+                className="mt-6 text-sm text-gray-400 hover:underline cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="hidden lg:flex xl:w-[65%] lg:w-[50%] items-center justify-center h-full">
           <img
             src="https://i.ibb.co.com/7dPT0LX2/30ad3fc61803922fec84f5a2798ab18904d9635f.jpg"
@@ -41,7 +99,7 @@ const Login = () => {
         </div>
 
         <div className="w-full xl:w-[35%] lg:w-[50%] flex items-center justify-center px-6">
-          <div className="w-full ">
+          <div className="w-full">
             <h1 className="Auth_section_title mb-2 xl:text-[36px] md:text-[28px] text-[20px] lg:text-start text-center">
               Welcome Back to Terralink!
             </h1>
@@ -140,22 +198,31 @@ const Login = () => {
                 <div className="flex-1 h-px bg-gray-300" />
               </div>
 
+              {/* GOOGLE LOGIN BUTTON */}
               <button
                 type="button"
-                className="w-full flex items-center justify-center gap-3 py-3 rounded-lg bg-[#E6F3FF] hover:bg-blue-100 transition cursor-pointer"
+                onClick={handleGoogleClick}
+                disabled={isGooglePending}
+                className="w-full flex items-center justify-center gap-3 py-3 rounded-lg bg-[#E6F3FF] hover:bg-blue-100 transition cursor-pointer disabled:opacity-70"
               >
-                <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="Google"
-                  className="w-5 h-5"
-                />
-                <span className="text-[#5F5F5F] lg:text-xl text-lg font-medium  ">
-                  Sign in with Google
-                </span>
+                {isGooglePending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-primary-blue mx-auto" />
+                ) : (
+                  <>
+                    <img
+                      src="https://www.svgrepo.com/show/475656/google-color.svg"
+                      alt="Google"
+                      className="w-5 h-5"
+                    />
+                    <span className="text-[#5F5F5F] lg:text-xl text-lg font-medium">
+                      Sign in with Google
+                    </span>
+                  </>
+                )}
               </button>
 
               <p className="text-center text-gray-500">
-                Don’t have any account?
+                Don’t have any account?{" "}
                 <a
                   href="/auth/register"
                   className="text-primary-blue font-medium hover:underline"

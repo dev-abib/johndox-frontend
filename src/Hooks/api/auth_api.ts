@@ -160,7 +160,8 @@ export const useForgotPassWord = () => {
 // Reset Password
 export const UseResetPassword = () => {
   const router = useRouter();
-  const token = typeof window !== "undefined" ? localStorage.getItem("reset_token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("reset_token") : null;
   return useClientApi({
     method: "post",
     key: ["reset-password"],
@@ -258,6 +259,35 @@ export const useLogout = () => {
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Logout failed");
+    },
+  });
+};
+
+// Google Login
+export const useGoogleLogin = () => {
+  const router = useRouter();
+  const { setToken } = useAuth();
+
+  return useClientApi({
+    method: "post",
+    key: ["google-login"],
+    endpoint: "/auth/google-login",
+    onSuccess: (data: any) => {
+      if (data?.status || data?.success) {
+        const token = data?.data?.token;
+        const role = data?.data?.role;
+
+        if (token) setToken(token);
+        toast.success("Google Login Successful!");
+
+        // Redirect based on role
+        if (role === "buyer") router.push("/buyerlayout");
+        else if (role === "seller") router.push("/seller");
+        else router.push("/");
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Google Login failed"); 
     },
   });
 };
