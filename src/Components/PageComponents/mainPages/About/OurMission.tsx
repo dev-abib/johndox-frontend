@@ -46,7 +46,7 @@ const OurMission = ({ mission }: MissionProps) => {
               src={mission?.data?.bgImg}
               alt="mission"
               className="w-full h-auto rounded-xl"
-              priority
+
               height={500}
               width={500}
             />

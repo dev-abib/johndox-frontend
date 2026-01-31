@@ -1,8 +1,7 @@
 import useClientApi from "../useClientApi";
 import { useServerApi } from "@/Hooks/useServerApi";
 
-
-//  CSR (Client Side Rendering) 
+//  CSR (Client Side Rendering)
 export const useGetProperties = (filters: any = {}) => {
   return useClientApi({
     method: "get",
@@ -141,6 +140,20 @@ export const Ourmission = () => {
     method: "get",
     key: ["ourmission"],
     endpoint: "/get-our-mission-section",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+// Buyer &Seller Community
+export const CommunityData = () => {
+  return useClientApi({
+    method: "get",
+    key: ["community"],
+    endpoint: "/community",
     isPrivate: false,
     queryOptions: {
       staleTime: 0,
