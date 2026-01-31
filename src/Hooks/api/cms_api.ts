@@ -135,6 +135,20 @@ export const AboutBanner = () => {
     },
   });
 };
+// Our Mission
+export const Ourmission = () => {
+  return useClientApi({
+    method: "get",
+    key: ["ourmission"],
+    endpoint: "/get-our-mission-section",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
 
 //  SSR (Server Side Rendering)
 

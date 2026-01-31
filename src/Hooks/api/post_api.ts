@@ -1,8 +1,6 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 
-
-
 // Request Tour
 export const RequestTour = (token?: string) => {
   return useClientApi({
