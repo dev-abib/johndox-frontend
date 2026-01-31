@@ -9,8 +9,9 @@ import {
   Acceleration,
   Favourites,
 } from "@/Components/Svg/SvgContainer";
+import { AddFavourite } from "@/Hooks/api/post_api";
 import { GetAllFavourite } from "@/Hooks/api/dashboard_api";
-import { AddFavourite } from "@/Hooks/api/post_api"; // Assuming this handles removal too
+import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 
 const MyFavorites = () => {
   // 1. Get and Clean Token safely
@@ -45,8 +46,7 @@ const MyFavorites = () => {
     });
   };
 
-  if (isLoading)
-    return <div className="p-10 text-center">Loading Favorites...</div>;
+  if (isLoading) return <FeaturedSkeleton />;
 
   return (
     <div className="px-4 sm:px-6 lg:px-10 py-10 bg-[#F9FAFB] rounded-3xl">
