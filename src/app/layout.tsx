@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Montserrat } from "next/font/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import AosProvider from "@/Provider/AosProvider/AosProvider";
 import AuthProvider from "@/Provider/AuthProvider/AuthProvider";
 import QueryProvider from "@/Provider/QueryProvider/QueryProvider";
@@ -31,15 +32,17 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
-        <QueryProvider>
-          <AuthProvider>
-            <AosProvider>
+        <GoogleOAuthProvider clientId="841975640697-u4amnqfefa6ndr8rvijlbfpu3qovsgur.apps.googleusercontent.com">
+          <QueryProvider>
+            <AuthProvider>
+              <AosProvider>
+                <Toaster />
+                {children}
+              </AosProvider>
               <Toaster />
-              {children}
-            </AosProvider>
-            <Toaster />
-          </AuthProvider>
-        </QueryProvider>
+            </AuthProvider>
+          </QueryProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
