@@ -177,6 +177,20 @@ export const Corevalues = () => {
     },
   });
 };
+// Contact Us
+export const ConatctUs = () => {
+  return useClientApi({
+    method: "get",
+    key: ["contact-us"],
+    endpoint: "/get-contact-us-hero",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
 
 //  SSR (Server Side Rendering)
 

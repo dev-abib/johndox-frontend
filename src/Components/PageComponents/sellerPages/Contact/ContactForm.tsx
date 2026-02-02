@@ -6,12 +6,14 @@ import { RiTwitterXFill } from "react-icons/ri";
 import { LiaFacebookSquare } from "react-icons/lia";
 import Container from "@/Components/Common/Container";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { useContact } from "@/Hooks/api/post_api";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type ContactFormData = {
-  sub: string;
+  subject: string;
   email: string;
-  phone: string;
-  name: boolean;
+  phoneNumber: string;
+  fullName: boolean;
   message: string;
 };
 
@@ -21,9 +23,10 @@ const ContactForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ContactFormData>();
+  const { mutate, isPending } = useContact();
 
   const onSubmit = (data: ContactFormData) => {
-    console.log(data);
+    mutate({ ...data });
   };
 
   return (
@@ -52,13 +55,13 @@ const ContactForm = () => {
                   placeholder="Enter your First Name"
                   className="w-full px-6 py-3 
                   rounded-lg bg-[#F3F3F5] border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue text-base"
-                  {...register("name", {
+                  {...register("fullName", {
                     required: "Name is required",
                   })}
                 />
-                {errors.name && (
+                {errors.fullName && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.name.message}
+                    {errors.fullName.message}
                   </p>
                 )}
               </div>
@@ -88,13 +91,13 @@ const ContactForm = () => {
                   type="phone"
                   placeholder="Enter your Phone Number"
                   className="w-full px-6 py-3 rounded-lg text-base bg-[#F3F3F5] border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                  {...register("phone", {
+                  {...register("phoneNumber", {
                     required: "Phone is required",
                   })}
                 />
-                {errors.phone && (
+                {errors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.phone.message}
+                    {errors.phoneNumber.message}
                   </p>
                 )}
               </div>
@@ -106,13 +109,13 @@ const ContactForm = () => {
                   type="text"
                   placeholder="write a short subject line"
                   className="w-full px-6 py-3 text-base rounded-lg bg-[#F3F3F5] border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                  {...register("sub", {
+                  {...register("subject", {
                     required: "sub is required",
                   })}
                 />
-                {errors.email && (
+                {errors.subject && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
+                    {errors.subject.message}
                   </p>
                 )}
               </div>
@@ -125,12 +128,21 @@ const ContactForm = () => {
                   className="w-full px-6 py-3 text-base h-[150px] rounded-lg bg-[#F3F3F5] border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue"
                   {...register("message")}
                 />
+                {errors.message && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.message.message}
+                  </p>
+                )}
               </div>
               <button
                 type="submit"
                 className="w-full bg-primary-blue text-white md:py-4.5 py-3 rounded-lg hover:bg-blue-600 transition cursor-pointer"
               >
-                Send Message
+                {isPending ? (
+                  <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+                ) : (
+                  "Send Message"
+                )}
               </button>
             </form>
           </div>

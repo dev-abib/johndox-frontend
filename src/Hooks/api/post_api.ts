@@ -42,3 +42,22 @@ export const AddFavourite = () => {
   });
 };
 
+
+// Contact Us
+export const useContact = () => {
+
+  return useClientApi({
+    method: "post",
+    key: ["contact"],
+    endpoint: "/send-user-query",
+    onSuccess: (data: any) => {
+      console.log(data);
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
