@@ -69,6 +69,45 @@ export const useCategory = (token: any) => {
     },
   });
 };
+// Get Seller Analytics
+export const GetAnalytics = (token: any) => {
+  return useClientApi({
+    method: "get",
+    key: ["analytics", token],
+    enabled: !!token,
+    endpoint: "/get-seller-statics",
+    isPrivate: true,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
+// Get Seller Statistics
+export const GetStatistics = (token: any) => {
+  return useClientApi({
+    method: "get",
+    key: ["statistics", token],
+    enabled: !!token,
+    endpoint: "/get-my-property-analytics",
+    isPrivate: true,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
+// Get All Amenities
+export const GetAllamenities = (token: any) => {
+  return useClientApi({
+    method: "get",
+    key: ["amenities", token],
+    enabled: !!token,
+    endpoint: "/get-all-amenities",
+    isPrivate: true,
+    queryOptions: {
+      refetchInterval: 1000 * 60 * 60,
+    },
+  });
+};
 
 // Get All Listing
 export const useAlllisting = (token: any) => {

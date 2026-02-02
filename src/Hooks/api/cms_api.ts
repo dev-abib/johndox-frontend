@@ -206,6 +206,20 @@ export const SiteSettings = () => {
     },
   });
 };
+// Terms & Conditions
+export const TermsCondition = () => {
+  return useClientApi({
+    method: "get",
+    key: ["terms"],
+    endpoint: "/get-terms-and-conditions",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
 
 //  SSR (Server Side Rendering)
 

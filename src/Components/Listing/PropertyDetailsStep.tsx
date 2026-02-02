@@ -1,11 +1,16 @@
+"use client";
 import { useFormContext } from "react-hook-form";
 import { ListingFormData } from "@/app/seller/new-listing/page";
+import { GetAllamenities } from "@/Hooks/api/dashboard_api";
 
 export default function DetailsStep() {
   const {
     register,
     formState: { errors },
   } = useFormContext<ListingFormData>();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const { data } = GetAllamenities(token);
 
   return (
     <div className="space-y-8 2xl:mx-20 mx-5">
@@ -80,137 +85,21 @@ export default function DetailsStep() {
         <label className="block text-sm font-medium mb-2">Amenities</label>
         <div className="">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.pool")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Pool
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.garden")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Garden
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.parking")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Parking
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.airConditioning")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Air Conditioning
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.gym")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Gym
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.security")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Security
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.oceanView")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Ocean View
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.mountainView")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Mountain View
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.beachAccess")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Beach Access
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.rooftopTerrace")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Rooftop Terrace
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.balcony")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Balcony
-              </span>
-            </label>
-
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                {...register("amenities.petFriendly")}
-              />
-              <span className="lg:text-lg md:text-base text-sm text-gray-700">
-                Pet Friendly
-              </span>
-            </label>
+            {data?.data?.map((item: any) => (
+              <label
+                key={item._id}
+                className="flex items-center space-x-3 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  {...register(`amenities.${item.name.toLowerCase()}` as const)}
+                />
+                <span className="lg:text-lg md:text-base text-sm text-gray-700">
+                  {item.name}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
       </div>
