@@ -82,6 +82,9 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const videoUrl =
     data?.media?.find((item: any) => item.fileType === "video")?.url ||
     "/property.mp4";
+  
+  console.log(data?.author?._id);
+  
 
   return (
     <>
@@ -316,7 +319,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
       />
 
       {/* Modal */}
-      <MessageModal isOpen={isMessageModalOpen} onClose={closeMessageModal} />
+      <MessageModal
+        userId={data?.author?._id}
+        isOpen={isMessageModalOpen}
+        onClose={closeMessageModal}
+      />
     </>
   );
 };

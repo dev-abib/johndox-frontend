@@ -1,17 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
+import { getItem } from "@/lib/localStorage";
+import { sendMessage } from "@/Hooks/api/message.api";
+import useAuth from "@/Hooks/useAuth";
 
-const MessageModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { control, handleSubmit, formState: { errors } } = useForm();
+const MessageModal = ({
+  isOpen,
+  onClose,
+  userId,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  userId: string;
+}) => {
+  const [token, setToken] = useState<string | undefined>(undefined);
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [submittedData, setSubmittedData] = useState<any>(null);
 
+  const { mutate, isPending } = sendMessage(token, userId);
+
+  useEffect(() => {
+    if (isOpen) {
+      setToken(getItem("token"));
+    }
+  }, [isOpen]);
+
   const onSubmit = (data: any) => {
-    console.log(data); // You can send data to your backend here
-    setSubmittedData(data); // Optionally store the submitted data
-    onClose(); // Close the modal after successful form submission
+    console.log(data);
+    mutate(data, {
+      onSuccess: () => {
+        reset();
+        onClose();
+      },
+    });
   };
 
   if (!isOpen) return null;
@@ -23,7 +52,7 @@ const MessageModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
     >
       <div
         className="bg-white rounded-lg p-6 w-[90%] sm:w-[500px] relative"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -35,31 +64,11 @@ const MessageModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         <h2 className="text-lg font-semibold text-[#212B36] mb-4">Message</h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Name Field */}
           <div className="mb-4">
-            <label htmlFor="name" className="block text-sm text-[#5F5F5F] mb-2">
-              Name
-            </label>
-            <Controller
-              name="name"
-              control={control}
-              defaultValue=""
-              rules={{ required: "Name is required" }}
-              render={({ field }) => (
-                <input
-                  type="text"
-                  {...field}
-                  placeholder="Enter your Full Name"
-                  className="w-full px-4 py-2 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              )}
-            />
-            {errors.name && <p className="text-sm text-red-500">{typeof errors.name.message === 'string' ? errors.name.message : 'Name is required'}</p>}
-          </div>
-
-          {/* Message Field */}
-          <div className="mb-4">
-            <label htmlFor="message" className="block text-sm text-[#5F5F5F] mb-2">
+            <label
+              htmlFor="message"
+              className="block text-sm text-[#5F5F5F] mb-2"
+            >
               Message
             </label>
             <Controller
@@ -75,7 +84,13 @@ const MessageModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                 ></textarea>
               )}
             />
-            {errors.message && <p className="text-sm text-red-500">{typeof errors.message.message === 'string' ? errors.message.message : 'Message is required'}</p>}
+            {errors.message && (
+              <p className="text-sm text-red-500">
+                {typeof errors.message.message === "string"
+                  ? errors.message.message
+                  : "Message is required"}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
