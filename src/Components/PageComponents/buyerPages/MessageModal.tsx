@@ -25,6 +25,10 @@ const MessageModal = ({
   } = useForm();
   const [submittedData, setSubmittedData] = useState<any>(null);
 
+  if (token === undefined || null) {
+    return
+  }
+
   const { mutate, isPending } = sendMessage(token, userId);
 
   useEffect(() => {

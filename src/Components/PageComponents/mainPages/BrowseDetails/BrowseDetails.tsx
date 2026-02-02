@@ -83,8 +83,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     data?.media?.find((item: any) => item.fileType === "video")?.url ||
     "/property.mp4";
   
-  console.log(data?.author?._id);
-  
 
   return (
     <>

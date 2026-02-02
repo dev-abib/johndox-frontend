@@ -13,10 +13,11 @@ import {
   useLogout,
   useUpdateUserBuyer,
 } from "@/Hooks/api/auth_api";
+import { useGetConversations } from "@/Hooks/api/message.api";
+import { getItem } from "@/lib/localStorage";
 
 const AccountSettingsPage = () => {
-  const token = localStorage.getItem("token");
-  const { data } = useGetUserData(token);
+  const [token, setToken] = useState<string | undefined>(undefined);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -27,6 +28,15 @@ const AccountSettingsPage = () => {
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  useEffect(() => {
+    setToken(getItem("token"));
+  }, []);
+
+
+  const { data } = useGetUserData(token);
+  const { data: msgData } = useGetConversations(token);
+
+  console.log(token);
 
   useEffect(() => {
     if (data?.data) {
@@ -38,7 +48,10 @@ const AccountSettingsPage = () => {
       setTempLastName(data.data.lastName || "");
       setTempPhoneNumber(data.data.phoneNumber || "");
     }
-  }, [data]);
+    if (msgData) {
+      console.log(msgData);
+    }
+  }, [data, msgData]);
 
   const handleApplyName = () => {
     mutate({
