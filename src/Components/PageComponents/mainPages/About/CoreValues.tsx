@@ -12,10 +12,10 @@ const CoreValues = ({ corevalues }: CoreProps) => {
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-2xl sm:text-4xl xl:text-[38px]">
-            {corevalues?.data?.sectionTitle}
+            {corevalues?.data?.section?.   sectionTitle}
           </h2>
           <p className="font-normal text-black text-base sm:text-lg lg:text-[18px] mt-4 max-w-3xl mx-auto">
-            {corevalues?.data?.sectionSubTitle}
+            {corevalues?.data?.section?.sectionSubTitle}
           </p>
         </div>
 

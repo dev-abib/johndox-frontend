@@ -14,10 +14,10 @@ import {
 } from "@/Hooks/api/cms_api";
 
 const page = () => {
-  const { data, isPending } = AboutBanner();
+  const { data } = AboutBanner();
   const { data: mission } = Ourmission();
-  const { data: community } = CommunityData();
   const { data: corevalues } = Corevalues();
+  const { data: community } = CommunityData();
   const { data: Listproperty } = ListPropertyBrowse();
 
   return (
