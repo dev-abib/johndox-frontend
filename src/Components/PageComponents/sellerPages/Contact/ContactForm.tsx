@@ -2,19 +2,19 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { CiLinkedin } from "react-icons/ci";
-import { RiTwitterXFill } from "react-icons/ri";
-import { LiaFacebookSquare } from "react-icons/lia";
-import { FaInstagram, FaWhatsapp, FaTelegram, FaYoutube } from "react-icons/fa";
-import Container from "@/Components/Common/Container";
-import { useContact } from "@/Hooks/api/post_api";
 import { PiSpinnerBold } from "react-icons/pi";
+import { RiTwitterXFill } from "react-icons/ri";
+import { useContact } from "@/Hooks/api/post_api";
 import { SiteSettings } from "@/Hooks/api/cms_api";
+import { LiaFacebookSquare } from "react-icons/lia";
+import Container from "@/Components/Common/Container";
+import { FaInstagram, FaWhatsapp, FaTelegram, FaYoutube } from "react-icons/fa";
 
 type ContactFormData = {
   subject: string;
   email: string;
   phoneNumber: string;
-  fullName: string; // ✅ should be string
+  fullName: string; 
   message: string;
 };
 
@@ -220,13 +220,13 @@ const ContactForm = () => {
               <div className="flex gap-x-8 mt-7">
                 {data?.data?.socialLinks &&
                   Object.entries(data.data.socialLinks).map(([key, url]) => {
-                    if (!url || typeof url !== "string") return null; // ✅ ensure url is string
+                    if (!url || typeof url !== "string") return null; 
                     const Icon = socialIcons[key];
                     if (!Icon) return null;
                     return (
                       <a
                         key={key}
-                        href={url} // now TypeScript knows this is string
+                        href={url} 
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[#339DFF] text-2xl hover:opacity-80 transition"
@@ -237,7 +237,7 @@ const ContactForm = () => {
                   })}
               </div>
             </div>
-            <div className="w-full h-[500px] mt-7 xl:flex hidden">
+            {/* <div className="w-full h-[500px] mt-7 xl:flex hidden">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58420.16573309009!2d90.36343509144125!3d23.77374133110238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c769ad5e7f6f%3A0x1d928a50d9cbcc90!2sSKS%20Shopping%20Mall!5e0!3m2!1sen!2sbd!4v1766118436976!5m2!1sen!2sbd"
                 width="100%"
@@ -248,10 +248,10 @@ const ContactForm = () => {
                 referrerPolicy="no-referrer-when-downgrade"
                 className="rounded-xl"
               />
-            </div>
+            </div> */}
           </div>
         </div>
-        <div className="w-full h-[500px] mt-7 lg:hidden flex">
+        {/* <div className="w-full h-[500px] mt-7 lg:hidden flex">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58420.16573309009!2d90.36343509144125!3d23.77374133110238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c769ad5e7f6f%3A0x1d928a50d9cbcc90!2sSKS%20Shopping%20Mall!5e0!3m2!1sen!2sbd!4v1766118436976!5m2!1sen!2sbd"
             width="100%"
@@ -262,7 +262,7 @@ const ContactForm = () => {
             referrerPolicy="no-referrer-when-downgrade"
             className="rounded-xl"
           />
-        </div>
+        </div> */}
       </Container>
     </section>
   );
