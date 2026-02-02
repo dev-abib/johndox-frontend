@@ -192,6 +192,21 @@ export const ConatctUs = () => {
   });
 };
 
+// Site Settings
+export const SiteSettings = () => {
+  return useClientApi({
+    method: "get",
+    key: ["sitesettings"],
+    endpoint: "/get/site-settings",
+    isPrivate: false,
+    queryOptions: {
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  });
+};
+
 //  SSR (Server Side Rendering)
 
 export async function getFeaturedListings() {
