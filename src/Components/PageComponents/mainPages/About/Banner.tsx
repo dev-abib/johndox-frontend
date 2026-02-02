@@ -6,7 +6,6 @@ interface BannerProps {
 }
 
 const Banner = ({ data }: BannerProps) => {
-
   return (
     <section
       style={{
