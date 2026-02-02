@@ -27,7 +27,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
-import { AddFavourite } from "@/Hooks/api/post_api";
+import { AddFavourite, UseSearchSave } from "@/Hooks/api/post_api";
 
 const page = () => {
   const { mutate } = AddFavourite();
@@ -48,6 +48,7 @@ const page = () => {
   const [bathrooms, setBathrooms] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
+  const { mutate: saveSearch } = UseSearchSave();
 
   const handleSearch = () => {
     const filters = {
@@ -66,6 +67,7 @@ const page = () => {
             : "newest",
     };
     setActiveFilters(filters);
+    saveSearch(filters);
   };
 
   const pathname = usePathname();

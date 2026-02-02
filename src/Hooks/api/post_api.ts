@@ -61,3 +61,26 @@ export const useContact = () => {
     },
   });
 };
+// SaveSearch Post
+export const UseSearchSave = () => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  return useClientApi({
+    method: "post",
+    key: ["savesearch"],
+    endpoint: "/saved-search",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    onSuccess: (data: any) => {
+      console.log(data);
+      if (data?.status || data?.success) {
+        toast.success(data?.message);
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Failed to save search");
+    },
+  });
+};
+
