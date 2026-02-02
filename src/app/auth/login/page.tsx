@@ -20,7 +20,6 @@ const Login = () => {
   const [selectedRole, setSelectedRole] = useState<"buyer" | "seller" | null>(
     null,
   );
-  console.log(selectedRole);
 
   const { mutate, isPending } = useLogin();
   const { mutate: googleLoginMutate, isPending: isGooglePending } =
