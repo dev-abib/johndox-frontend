@@ -2,7 +2,6 @@
 import React from "react";
 import Image from "next/image";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { listingsData } from "@/Components/Data/data";
 import { BsCalendar3, BsEye, BsFillChatDotsFill } from "react-icons/bs";
 import {
   AreaChart,
@@ -14,42 +13,47 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-
-// Sample data matching the chart in your screenshot (December 2025)
-const data = [
-  { date: "Dec 02", views: 38, leads: 12 },
-  { date: "Dec 03", views: 42, leads: 14 },
-  { date: "Dec 04", views: 40, leads: 15 },
-  { date: "Dec 05", views: 35, leads: 13 },
-  { date: "Dec 06", views: 32, leads: 12 },
-  { date: "Dec 07", views: 30, leads: 11 },
-  { date: "Dec 08", views: 28, leads: 10 },
-  { date: "Dec 09", views: 25, leads: 9 },
-  { date: "Dec 10", views: 22, leads: 8 },
-  { date: "Dec 11", views: 20, leads: 7 },
-  { date: "Dec 12", views: 18, leads: 6 },
-  { date: "Dec 13", views: 25, leads: 8 },
-  { date: "Dec 14", views: 35, leads: 10 },
-  { date: "Dec 15", views: 48, leads: 12 },
-  { date: "Dec 16", views: 50, leads: 13 },
-  { date: "Dec 17", views: 52, leads: 14 },
-  { date: "Dec 18", views: 48, leads: 13 },
-  { date: "Dec 19", views: 45, leads: 12 },
-  { date: "Dec 20", views: 42, leads: 11 },
-  { date: "Dec 21", views: 40, leads: 10 },
-  { date: "Dec 22", views: 38, leads: 9 },
-  { date: "Dec 23", views: 44, leads: 11 },
-  { date: "Dec 24", views: 50, leads: 12 },
-  { date: "Dec 25", views: 55, leads: 13 },
-  { date: "Dec 26", views: 58, leads: 14 },
-  { date: "Dec 27", views: 60, leads: 15 },
-  { date: "Dec 28", views: 62, leads: 15 },
-  { date: "Dec 29", views: 65, leads: 16 },
-  { date: "Dec 30", views: 68, leads: 16 },
-  { date: "Dec 31", views: 70, leads: 17 },
-];
+import {
+  GetStatistics,
+  useAlllisting,
+  useDelete,
+} from "@/Hooks/api/dashboard_api";
+import Link from "next/link";
+import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 
 const Analytics = () => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const { data: apiData, isLoading } = GetStatistics(token);
+  const { mutate: deleteListing, isLoading: isDeleting } = useDelete();
+  const { data: alllisting } = useAlllisting(token);
+  const items = alllisting?.data?.items || [];
+
+  const chartData =
+    apiData?.data?.analytics?.map((item: any) => ({
+      date: new Date(item.date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+      }),
+      views: item.views,
+      leads: item.leads,
+    })) || [];
+
+  const handleDelete = (listingId: string) => {
+    const currentToken = localStorage.getItem("token");
+    if (window.confirm("Are you sure you want to delete this listing?")) {
+      deleteListing({
+        endpoint: `/delete-property/${listingId}`,
+        headers: {
+          Authorization: `Bearer ${currentToken}`,
+        },
+      });
+    }
+  };
+
+  if (isLoading) {
+    return <MyListingSkeleton />;
+  }
+
   return (
     <div>
       <h2 className="text-[#404040] lg:text-[28px] text-[24px] font-medium">
@@ -72,7 +76,7 @@ const Analytics = () => {
         <div className="w-full h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={data}
+              data={chartData}
               margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
             >
               <defs>
@@ -97,7 +101,6 @@ const Analytics = () => {
                 tick={{ fill: "#5F5F5F", fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
-                ticks={[0, 15, 30, 45, 60]}
               />
               <Tooltip
                 contentStyle={{
@@ -115,7 +118,6 @@ const Analytics = () => {
                 )}
               />
 
-              {/* Leads Area (green) */}
               <Area
                 type="monotone"
                 dataKey="leads"
@@ -124,8 +126,6 @@ const Analytics = () => {
                 fillOpacity={1}
                 fill="url(#colorLeads)"
               />
-
-              {/* Views Area (blue) */}
               <Area
                 type="monotone"
                 dataKey="views"
@@ -138,72 +138,89 @@ const Analytics = () => {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Listings section remains the same */}
       <div className="mt-15">
         <div className="bg-[#F5F5F5] p-2 lg:p-10 rounded-[28px] flex flex-col gap-5">
-          {listingsData?.map(item => (
-            <div
-              key={item.id}
-              className="bg-white border border-[#E7E7E7] px-5 py-7 rounded-[28px] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8"
-            >
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-x-5 flex-1">
-                <figure className="shrink-0 w-full lg:w-auto mb-4 lg:mb-0">
-                  <Image
-                    src={item?.imageUrl || "/images/placeholder.png"}
-                    alt={item?.title || "Property"}
-                    width={400}
-                    height={300}
-                    className="w-full lg:w-[180px] lg:h-[150px] h-[300px]  rounded-[16px] object-cover"
-                  />
-                </figure>
+          {items.length > 0 ? (
+            items.map((item: any) => (
+              <div
+                key={item._id}
+                className="bg-white border border-[#E7E7E7] px-5 py-7 rounded-[28px] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8"
+              >
+                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-x-5 flex-1">
+                  <figure className="shrink-0 w-full lg:w-auto mb-4 lg:mb-0">
+                    <Image
+                      src={item?.media?.[0]?.url || "/placeholder.png"}
+                      alt={item?.propertyName}
+                      width={400}
+                      height={300}
+                      className="w-full lg:w-[180px] lg:h-[150px] h-[300px] rounded-[16px] object-cover"
+                    />
+                  </figure>
 
-                <div className="flex-1 w-full">
-                  <h3 className="lg:text-[24px] text-[20px] font-medium text-[#404040]">
-                    {item.title}
-                  </h3>
-                  <p className="lg:text-[20px] text-base font-medium text-[#919191] mt-1">
-                    {item.location}
+                  <div className="flex-1 w-full">
+                    <h3 className="lg:text-[24px] text-[20px] font-medium text-[#404040]">
+                      {item.propertyName}
+                    </h3>
+                    <p className="lg:text-[20px] text-base font-medium text-[#919191] mt-1">
+                      {item.fullAddress}, {item.city}, {item.state}
+                    </p>
+
+                    <div className="flex flex-wrap gap-4 lg:gap-6 mt-4 text-[18px] text-[#5F5F5F]">
+                      <span className="flex items-center gap-2">
+                        <BsEye /> {item.views || 0} views
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <BsFillChatDotsFill /> {item.leads || 0} leads
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <BsCalendar3 /> Posted:{" "}
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 mt-5">
+                      <button className="flex items-center cursor-pointer gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
+                        <BsEye className="text-lg" /> View Post
+                      </button>
+                      <Link href={`/seller/edit-listing/${item._id}`}>
+                        <button className="flex items-center cursor-pointer gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
+                          <MdEdit className="text-lg" /> Edit
+                        </button>
+                      </Link>
+
+                      <button
+                        onClick={() => handleDelete(item._id)}
+                        disabled={isDeleting}
+                        className="flex items-center cursor-pointer gap-1 border border-[#FCC9CB] text-[#E7000B] px-2.5 py-1 rounded-[12px] bg-[#FFE9EA] hover:bg-[#ffdadc] transition-colors disabled:opacity-50"
+                      >
+                        <MdDelete className="text-lg" />
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center lg:text-right shrink-0 mt-6 lg:mt-0">
+                  <p className="text-[28px] font-bold text-[#0085FF]">
+                    ${item.price}
+                    <span className="text-[#919191] text-[18px] font-normal ml-1">
+                      {" "}
+                      USD
+                    </span>
                   </p>
-
-                  <div className="flex flex-wrap gap-4 lg:gap-6 mt-4 text-[18px] text-[#5F5F5F]">
-                    <span className="flex items-center gap-2">
-                      <BsEye /> {item.views} views
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <BsFillChatDotsFill /> {item.leads} leads
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <BsCalendar3 /> Posted: {item.postedDate}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 mt-5">
-                    <button className="flex items-center cursor-pointer  gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
-                      <BsEye className="text-lg" /> View Post
-                    </button>
-                    <button className="flex items-center cursor-pointer  gap-1 border border-[#E7E7E7] px-2.5 py-1 rounded-[12px] text-[#5F5F5F]">
-                      <MdEdit className="text-lg" /> Edit
-                    </button>
-                    <button className="flex items-center cursor-pointer  gap-1 border border-[#FCC9CB] text-[#E7000B] px-2.5 py-1 rounded-[12px] bg-[#FFE9EA]">
-                      <MdDelete className="text-lg" /> Delete
-                    </button>
+                  <div className="inline-flex items-center gap-1 border border-[#E7E7E7] px-6 py-2.5 rounded-[12px] mt-4 text-[16px] font-medium text-[#5F5F5F]">
+                    {item.listingType}
                   </div>
                 </div>
               </div>
-
-              <div className="text-center lg:text-right shrink-0 mt-6 lg:mt-0">
-                <p className="text-[28px] font-bold text-[#0085FF]">
-                  ${item.price}
-                  <span className="text-[#919191] text-[18px] font-normal ml-1">
-                    {" "}
-                    {item.currency}
-                  </span>
-                </p>
-                <div className="inline-flex items-center gap-1 border border-[#E7E7E7] px-6 py-2.5 rounded-[12px] mt-4 text-[16px] font-medium text-[#5F5F5F]">
-                  {item.status}
-                </div>
-              </div>
+            ))
+          ) : (
+            <div className="text-center py-20 text-gray-500">
+              No listings found.
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

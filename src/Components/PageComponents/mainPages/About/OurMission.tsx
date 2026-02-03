@@ -42,14 +42,16 @@ const OurMission = ({ mission }: MissionProps) => {
           </div>
 
           <figure className="w-full xl:w-1/2">
-            <Image
-              src={mission?.data?.bgImg}
-              alt="mission"
-              className="w-full h-auto rounded-xl"
-
-              height={500}
-              width={500}
-            />
+            {mission?.data?.bgImg && (
+              <Image
+                src={mission.data.bgImg}
+                alt="mission"
+                width={500}
+                height={500}
+                className="w-full h-auto rounded-xl"
+                style={{ height: "auto" }}
+              />
+            )}
           </figure>
         </div>
       </Container>

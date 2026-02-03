@@ -13,51 +13,34 @@ import Analytic from "@/Components/PageComponents/sellerPages/Profile/Analytic";
 import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
 import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListing";
 import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
+import { GetAnalytics } from "@/Hooks/api/dashboard_api";
 
 interface Tab {
   label: string;
   icon: React.ComponentType<SVGProps<SVGSVGElement>>;
-  active: boolean;
-  badge: number | null;
-  hasUnread?: boolean;
+  badge?: number | null;
 }
 
 const tabs: Tab[] = [
-  {
-    label: "My Listings",
-    icon: Listing,
-    active: false,
-    badge: null,
-  },
-  {
-    label: "Messages",
-    icon: Message,
-    active: true,
-    badge: 2,
-    hasUnread: true,
-  },
-  {
-    label: "Analytics",
-    icon: Analytics,
-    active: false,
-    badge: null,
-  },
-  {
-    label: "Settings",
-    icon: Settings,
-    active: false,
-    badge: null,
-  },
-  {
-    label: "Subscription",
-    icon: Subscription,
-    active: false,
-    badge: null,
-  },
+  { label: "My Listings", icon: Listing },
+  { label: "Messages", icon: Message, badge: 2 },
+  { label: "Analytics", icon: Analytics },
+  { label: "Settings", icon: Settings },
+  { label: "Subscription", icon: Subscription },
 ];
 
 const page = () => {
   const [activetab, setActiveTab] = useState("My Listings");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const { data } = GetAnalytics(token);
+
+  const stats = [
+    { value: data?.data?.allListing || 0, label: "Active Listings" },
+    { value: data?.data?.allViews || 0, label: "Total Views" },
+    { value: data?.data?.totalLeads || 0, label: "Total Leads" },
+    { value: data?.data?.totalUnreadMsg || 0, label: "Unread Messages" },
+  ];
 
   return (
     <section className="lg:pt-10 pt-0">
@@ -68,14 +51,10 @@ const page = () => {
         <p className="lg:text-[20px] text-base font-normal text-[#404040] mt-3">
           Manage your listings and grow your business
         </p>
+
         {activetab !== "Settings" && (
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-9">
-            {[
-              { value: "3", label: "Active Listings" },
-              { value: "4,444", label: "Total Views" },
-              { value: "80", label: "Total Leads" },
-              { value: "2", label: "Unread Messages" },
-            ].map((item, index) => (
+            {stats.map((item, index) => (
               <div
                 key={index}
                 className="rounded-[16px] bg-[rgba(230,243,255,0.20)] shadow-[0_0_6px_0_rgba(145,158,171,0.40)] py-8 lg:py-10 px-5 lg:px-10"
@@ -90,6 +69,7 @@ const page = () => {
             ))}
           </div>
         )}
+
         <div className="lg:my-15 my-8 xl:flex lg:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
           {tabs.map(item => {
             const isActive = activetab === item.label;
@@ -105,12 +85,9 @@ const page = () => {
             isActive
               ? "bg-white text-[#101010] shadow-sm"
               : "text-[#101010]/70 hover:text-[#101010] hover:bg-white/30"
-          }
-        `}
+          }`}
               >
-                <div>
-                  <item.icon />
-                </div>
+                <item.icon />
                 {item.label}
                 {item.badge && (
                   <span className="ml-2 bg-red-500 text-white text-sm px-2 py-0.5 rounded-full">

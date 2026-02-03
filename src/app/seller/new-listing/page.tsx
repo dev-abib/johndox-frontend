@@ -25,20 +25,7 @@ export type ListingFormData = {
   area?: string;
   yearBuilt?: string;
   lotSize?: string;
-  amenities?: {
-    pool?: boolean;
-    garden?: boolean;
-    parking?: boolean;
-    airConditioning?: boolean;
-    gym?: boolean;
-    security?: boolean;
-    oceanView?: boolean;
-    mountainView?: boolean;
-    beachAccess?: boolean;
-    rooftopTerrace?: boolean;
-    balcony?: boolean;
-    petFriendly?: boolean;
-  };
+  amenities?: Record<string, boolean>;
   photos?: FileList | null;
   video?: FileList | null;
 };
@@ -141,7 +128,6 @@ export default function CreateListingPage() {
   };
 
   const onSubmit = (data: ListingFormData) => {
-
     const formData = new FormData();
 
     formData.append("propertyName", data.propertyName);
@@ -164,7 +150,7 @@ export default function CreateListingPage() {
         if (value) {
           formData.append(
             "amenities",
-            key.charAt(0).toUpperCase() + key.slice(1)
+            key.charAt(0).toUpperCase() + key.slice(1),
           );
         }
       });
