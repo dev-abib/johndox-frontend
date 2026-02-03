@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+
 import Banner from "@/Components/PageComponents/mainPages/About/Banner";
 import Community from "@/Components/PageComponents/mainPages/About/Community";
 import OurMission from "@/Components/PageComponents/mainPages/About/OurMission";
@@ -12,13 +13,25 @@ import {
   Corevalues,
   ListPropertyBrowse,
 } from "@/Hooks/api/cms_api";
+import AboutSkeleton from "@/Components/Skeleton/AboutSkeleton";
 
 const page = () => {
-  const { data } = AboutBanner();
-  const { data: mission } = Ourmission();
-  const { data: corevalues } = Corevalues();
-  const { data: community } = CommunityData();
-  const { data: Listproperty } = ListPropertyBrowse();
+  const { data, isLoading: bannerLoading } = AboutBanner();
+  const { data: mission, isLoading: missionLoading } = Ourmission();
+  const { data: corevalues, isLoading: coreLoading } = Corevalues();
+  const { data: community, isLoading: communityLoading } = CommunityData();
+  const { data: Listproperty, isLoading: ctaLoading } = ListPropertyBrowse();
+
+  const isLoading =
+    bannerLoading ||
+    missionLoading ||
+    coreLoading ||
+    communityLoading ||
+    ctaLoading;
+
+  if (isLoading) {
+    return <AboutSkeleton />;
+  }
 
   return (
     <>

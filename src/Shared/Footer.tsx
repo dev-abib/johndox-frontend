@@ -1,19 +1,31 @@
+"use client";
 import Container from "@/Components/Common/Container";
-import {
-  FbSvg,
-  InIconSvg,
-  InstaSvg,
-  XIconSvg,
-} from "@/Components/Svg/SvgContainer2";
+import { SiteSettings } from "@/Hooks/api/cms_api";
+import { CiLinkedin } from "react-icons/ci";
+import { FaInstagram, FaTelegram, FaWhatsapp, FaYoutube } from "react-icons/fa";
+import { LiaFacebookSquare } from "react-icons/lia";
+import { RiTwitterXFill } from "react-icons/ri";
+
+const socialIcons: Record<string, any> = {
+  facebook: LiaFacebookSquare,
+  instagram: FaInstagram,
+  linkedin: CiLinkedin,
+  x: RiTwitterXFill,
+  whatsapp: FaWhatsapp,
+  telegram: FaTelegram,
+  youtube: FaYoutube,
+};
 
 const Footer = () => {
+  const { data } = SiteSettings();
+  const socialLinks = data?.data?.socialLinks || {};
   return (
     <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15">
       <Container>
         <div>
           <div className="mt-16">
             <img
-              src="https://i.ibb.co.com/TDs1BV9P/Group-1321314777-1.png"
+              src={data?.data?.footerLogo}
               alt=""
               className="mx-auto xl:mx-0"
             />
@@ -107,22 +119,27 @@ const Footer = () => {
         <div className="relative z-10 border-t border-[#454F5B]">
           <div className="px-5 xl:px-0 pt-6 pb-10 flex flex-col-reverse md:flex-row items-center justify-between gap-6">
             <p className="text-sm xl:text-[16px] md:text-[18px] font-normal leading-[28px] text-[#FFF] text-center md:text-left">
-              © 2025 Terralink. All rights reserved.
+              {data?.data?.copyrightTxt ||
+                "© 2025 Terralink. All rights reserved."}
             </p>
 
             <div className="flex items-center gap-5">
-              <a href="#" className="footer_text hover:text-white">
-                <FbSvg />
-              </a>
-              <a href="#" className="footer_text hover:text-white">
-                <InstaSvg />
-              </a>
-              <a href="#" className="footer_text hover:text-white">
-                <InIconSvg />
-              </a>
-              <a href="#" className="footer_text hover:text-white">
-                <XIconSvg />
-              </a>
+              {Object.entries(socialLinks).map(([key, url]) => {
+                if (!url || typeof url !== "string") return null;
+                const Icon = socialIcons[key];
+                if (!Icon) return null;
+                return (
+                  <a
+                    key={key}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:opacity-80 transition text-white text-2xl"
+                  >
+                    <Icon />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import useAuth from "@/Hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { Riple } from "react-loading-indicators";
+
 
 type Role = "buyer" | "seller" | "any";
 
@@ -41,7 +43,7 @@ const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        Loading...
+        <Riple color={["#32cd32", "#327fcd", "#cd32cd", "#cd8032"]} />
       </div>
     );
   }

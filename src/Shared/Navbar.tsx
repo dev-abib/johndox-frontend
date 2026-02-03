@@ -56,6 +56,12 @@ const Navbar = () => {
         href: "/about",
         linkClassName: "hover:text-black transition",
       },
+      {
+        type: "li-link",
+        label: "Contact Us",
+        href: "/contact-us",
+        linkClassName: "hover:text-black transition",
+      },
     ],
     desktopButtons: [
       {
@@ -95,6 +101,12 @@ const Navbar = () => {
         type: "li-link",
         label: "About",
         href: "/about",
+        closeOnClick: true,
+      },
+      {
+        type: "li-link",
+        label: "Contact Us",
+        href: "/contact-us",
         closeOnClick: true,
       },
     ],
@@ -202,7 +214,7 @@ const Navbar = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {languages.map((lang) => (
+                  {languages.map(lang => (
                     <button
                       key={lang}
                       onClick={() => {
@@ -219,14 +231,17 @@ const Navbar = () => {
             </ul>
 
             <div className="hidden xl:flex items-center gap-4">
-              {config.desktopButtons.map((btn) => (
+              {config.desktopButtons.map(btn => (
                 <Link key={btn.label} href={btn.href} className={btn.className}>
                   {btn.label}
                 </Link>
               ))}
             </div>
 
-            <button onClick={() => setIsOpen(true)} className="xl:hidden text-2xl">
+            <button
+              onClick={() => setIsOpen(true)}
+              className="xl:hidden text-2xl"
+            >
               <FaBars />
             </button>
           </div>
@@ -276,7 +291,7 @@ const Navbar = () => {
                       : "opacity-0 translate-y-2 pointer-events-none"
                   }`}
                 >
-                  {languages.map((lang) => (
+                  {languages.map(lang => (
                     <button
                       key={lang}
                       onClick={() => {
@@ -293,7 +308,7 @@ const Navbar = () => {
             </ul>
 
             <div className="px-6 flex flex-col gap-4">
-              {config.mobileButtons.map((btn) => (
+              {config.mobileButtons.map(btn => (
                 <Link
                   key={btn.label}
                   href={btn.href}
