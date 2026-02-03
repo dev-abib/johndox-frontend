@@ -1,9 +1,12 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 
-/* ---------------- SEND MESSAGE ---------------- */
-
-export const sendMessage = (token: string, userId: string) => {
+export const sendMessage = (
+  token: string | undefined,
+  userId: string,
+  enabled: boolean,
+  propertyId?: string,
+) => {
   return useClientApi({
     method: "post",
     key: ["send-msg", userId],
@@ -11,10 +14,12 @@ export const sendMessage = (token: string, userId: string) => {
     headers: {
       Authorization: token ? `Bearer ${token}` : "",
     },
+    enabled,
+    axiosOptions: {
+      data: propertyId ? { propertyId } : {}, 
+    },
     onSuccess: (data: any) => {
-      if (data?.success) {
-        toast.success(data?.message || "Message sent");
-      }
+      if (data?.success) toast.success(data?.message || "Message sent");
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Failed to send message");
@@ -22,7 +27,7 @@ export const sendMessage = (token: string, userId: string) => {
   });
 };
 
-/* ---------------- CONVERSATIONS ---------------- */
+
 
 export const useGetConversations = (token?: string) => {
   return useClientApi({
@@ -34,7 +39,6 @@ export const useGetConversations = (token?: string) => {
   });
 };
 
-/* ---------------- SINGLE USER MESSAGES ---------------- */
 
 export const useGetSingleUserMessage = (token?: string, userId?: string) => {
   return useClientApi({

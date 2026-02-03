@@ -27,7 +27,6 @@ const Messages = () => {
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
   const emojiRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
-  console.log(user);
 
   const [token, setToken] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -54,30 +53,17 @@ const Messages = () => {
   const { data: msgData } = useGetConversations(token);
   const conversations = msgData?.data?.conversations || [];
   const { data } = useGetSingleUserMessage(token, activeUserId ?? undefined);
+  // const { mutate, isPending } = sendMessage(token, userId, !!token);
 
   useEffect(() => {
     setActiveConversation(data?.data || null);
   }, [data]);
 
-  // Handle sending a new message
   const handleSend = () => {
     if (!text && !image) return;
 
-    const newMsg = {
-      _id: Date.now().toString(),
-      senderId: token,
-      receiverId: activeUserId,
-      message: text,
-      fileUrl: image ? imagePreview : "",
-      createdAt: new Date().toISOString(),
-      status: "pending",
-    };
-
-    setActiveConversation((prev: any) => ({
-      ...prev,
-      messages: [...(prev?.messages || []), newMsg],
-      lastMessage: { ...newMsg, direction: "sent" },
-    }));
+    console.log(text, image);
+    mutate(data);
 
     setText("");
     setImage(null);
@@ -109,7 +95,7 @@ const Messages = () => {
           </h5>
 
           <div className="mt-6 flex flex-col gap-4">
-            {conversations.map(conv => {
+            {conversations?.map((conv: any) => {
               const lastMsg = conv?.lastMessage;
               const otherUser = conv?.otherUser;
               const previewText =
@@ -127,6 +113,9 @@ const Messages = () => {
                   className="rounded-xl border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] p-4 flex flex-col sm:flex-row sm:justify-between gap-3 cursor-pointer w-full relative hover:bg-[#E6F3FF] transition"
                 >
                   <div className="flex-1 w-full relative mb-3">
+                    <h3 className="text-[#404040]  mb-4 font-medium text-lg lg:text-xl">
+                      {conv?.property?.propertyName}
+                    </h3>
                     <div className="w-full flex flex-row items-center justify-between">
                       <div className="flex gap-x-3 flex-row items-center">
                         <div className="relative">
@@ -206,8 +195,6 @@ const Messages = () => {
           <div className="overflow-y-auto h-[600px] flex flex-col gap-4 pb-4">
             {activeConversation?.messages?.map((msg: any) => {
               const isSentByMe = msg?.senderId === user._id;
-              console.log(msg.createdAt);
-              
               return (
                 <div
                   key={msg._id}
@@ -261,7 +248,7 @@ const Messages = () => {
                         day: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
-                        hour12: true, 
+                        hour12: true,
                       })}
                     </span>
                   </div>
