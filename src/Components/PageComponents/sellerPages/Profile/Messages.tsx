@@ -1,103 +1,130 @@
 "use client";
 import Image from "next/image";
-import { CiUser } from "react-icons/ci";
 import EmojiPicker from "emoji-picker-react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { VscFileMedia } from "react-icons/vsc";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoSend, IoArrowBack } from "react-icons/io5";
-import { IoStar, IoStarOutline } from "react-icons/io5"; 
-import Profile from "../../../../Assets/profilepic.png";
-
-const conversationsData = [
-  {
-    id: 1,
-    title: "Oceanview Villa in Riviera Maya",
-    user: "Maria Rodriguez",
-    date: "10/26/2025",
-    preview:
-      "Thank you for your interest! I'd be happy to arrange a viewing...",
-    unread: true,
-    messages: [
-      {
-        id: 1,
-        sender: "Maria Rodriguez",
-        role: "user",
-        message:
-          "Hi! I just saw your listing for the 2-acre land in Playa del Carmen. Is it still available?",
-        time: "10:05 AM",
-      },
-      {
-        id: 2,
-        sender: "You",
-        role: "agent",
-        message: "Yes, it’s available. Would you like to schedule a viewing?",
-        time: "10:10 AM",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Beachfront Land Tulum",
-    user: "Carlos Mendez",
-    date: "10/24/2025",
-    preview: "Is financing available for this property?",
-    unread: false,
-    messages: [],
-  },
-];
+import { IoStar, IoStarOutline } from "react-icons/io5";
+import {
+  sendMessage,
+  useGetConversations,
+  useGetSingleUserMessage,
+} from "@/Hooks/api/message.api";
+import { getItem } from "@/lib/localStorage";
+import useAuth from "@/Hooks/useAuth";
 
 const Messages = () => {
   const [text, setText] = useState("");
-  const [rating, setRating] = useState(0);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [reviewText, setReviewText] = useState("");
-  const [showEmoji, setShowEmoji] = useState(false);
   const [image, setImage] = useState<File | null>(null);
-  const [activeMessage, setActiveMessage] = useState<any>(null);
-  const imagePreview = image ? URL.createObjectURL(image) : null;
+  const [activeConversation, setActiveConversation] = useState<any>(null);
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [activeUserId, setActiveUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | undefined>(undefined);
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
-  const [conversations, setConversations] = useState(conversationsData);
+  const [imagePreview, setImagePreview] = useState(null);
 
+  const { user } = useAuth();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const emojiRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setToken(getItem("token"));
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiRef.current &&
+        !emojiRef.current.contains(event.target as Node)
+      ) {
+        setShowEmoji(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const { data: msgData } = useGetConversations(token);
+  const conversations = msgData?.data?.conversations || [];
+
+  const { data } = useGetSingleUserMessage(token, activeUserId ?? undefined);
+  const { mutate, isPending } = sendMessage(
+    token,
+    activeUserId ?? undefined,
+    !!token,
+  );
+
+  useEffect(() => {
+    setActiveConversation(data?.data || null);
+  }, [data]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [activeConversation?.messages]);
 
   const handleSend = () => {
     if (!text && !image) return;
+    if (!activeUserId || !token) return;
 
-    const newMsg = {
-      id: Date.now(),
-      sender: "You",
-      role: "agent",
-      message: text,
-      image: imagePreview,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
+    const tempId = Date.now();
+    const formData = new FormData();
+    if (text) formData.append("message", text);
+    if (image) formData.append("file", image);
 
-    setConversations(prev =>
-      prev.map(chat =>
-        chat.id === activeMessage.id
-          ? { ...chat, messages: [...chat.messages, newMsg] }
-          : chat
-      )
-    );
-
-    setActiveMessage((prev: any) => ({
+    setActiveConversation(prev => ({
       ...prev,
-      messages: [...prev.messages, newMsg],
+      messages: [
+        ...(prev?.messages || []),
+        {
+          _id: tempId,
+          message: text || "",
+          fileUrl: image ? URL.createObjectURL(image) : "",
+          senderId: { _id: user._id },
+          createdAt: new Date().toISOString(),
+          status: "pending",
+        },
+      ],
     }));
 
-    setText("");
-    setImage(null);
-    setShowEmoji(false);
+    setImagePreview(null);
+
+    mutate(formData, {
+      onSuccess: serverMessage => {
+        setActiveConversation(prev => ({
+          ...prev,
+          messages: prev?.messages.map(msg =>
+            msg._id === tempId
+              ? {
+                  ...msg,
+                  ...serverMessage.data,
+                  senderId: msg.senderId,
+                  status: "sent",
+                }
+              : msg,
+          ),
+        }));
+        setText("");
+        setImage(null);
+        setShowEmoji(false);
+      },
+      onError: () => {
+        setActiveConversation(prev => ({
+          ...prev,
+          messages: prev?.messages.filter(msg => msg._id !== tempId),
+        }));
+      },
+    });
   };
 
   const handleApplyRating = () => {
     console.log("Rating submitted:", {
       rating,
       reviewText,
-      buyer: activeMessage.user,
+      buyer: activeConversation?.otherUser?.name,
     });
     setIsRatingModalOpen(false);
     setRating(0);
@@ -107,7 +134,8 @@ const Messages = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      {!activeMessage && (
+      {/* Conversations List */}
+      {!activeConversation && (
         <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl">
           <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
             Messages
@@ -117,116 +145,206 @@ const Messages = () => {
           </h5>
 
           <div className="mt-6 flex flex-col gap-4">
-            {conversations.map(chat => (
-              <div
-                key={chat.id}
-                onClick={() => setActiveMessage(chat)}
-                className="rounded-xl border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] p-4 flex flex-col sm:flex-row sm:justify-between gap-3 cursor-pointer hover:bg-[#E6F3FF] transition"
-              >
-                <div className="flex-1">
-                  <h3 className="text-[#404040] font-medium text-lg lg:text-xl">
-                    {chat.title}
-                  </h3>
-                  <div className="flex flex-col sm:flex-row gap-2 mt-1 text-[#404040] font-medium text-sm lg:text-base">
-                    <span className="flex items-center gap-1">
-                      <CiUser />
-                      {chat.user}
-                    </span>
-                    <span>{chat.date}</span>
+            {conversations?.map((conv: any) => {
+              const lastMsg = conv?.lastMessage;
+              const otherUser = conv?.otherUser;
+              const previewText =
+                lastMsg?.isSentByMe === false
+                  ? `You: ${lastMsg?.preview}`
+                  : `${otherUser.name}: ${lastMsg?.preview}`;
+
+              return (
+                <div
+                  key={conv?.otherUser?.id}
+                  onClick={() => {
+                    setActiveConversation(conv);
+                    setActiveUserId(conv?.otherUser?.id ?? null);
+                  }}
+                  className="rounded-xl border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] p-4 flex flex-col sm:flex-row sm:justify-between gap-3 cursor-pointer w-full relative hover:bg-[#E6F3FF] transition"
+                >
+                  <div className="flex-1 w-full relative mb-3">
+                    <h3 className="text-[#404040]  mb-4 font-medium text-lg lg:text-xl">
+                      {conv?.property?.propertyName}
+                    </h3>
+                    <div className="w-full flex flex-row items-center justify-between">
+                      <div className="flex gap-x-3 flex-row items-center">
+                        <div className="relative">
+                          <Image
+                            src={
+                              otherUser?.profilePicture || "/default_avatar.jpg"
+                            }
+                            width={50}
+                            height={50}
+                            className="h-[50px] rounded-full w-[50px] object-cover"
+                            alt={otherUser?.name}
+                          />
+                          <span className="flex absolute items-center top-0 right-0 mt-[4px] mr-[-1px] gap-1">
+                            {otherUser?.isOnline ? (
+                              <span className="ml-2 w-3 h-3 bg-green-400 rounded-full"></span>
+                            ) : (
+                              <span className="ml-2 w-3 h-3 bg-red-500 rounded-full"></span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <h3 className="text-[#404040] font-medium text-lg lg:text-xl">
+                            {conv.title || otherUser?.name || "Conversation"}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-2 mt-1 text-[#404040] font-medium text-sm lg:text-base">
+                        {lastMsg?.sentAt && (
+                          <span>
+                            {new Date(lastMsg.sentAt).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="text-[#404040] mt-2 text-sm lg:text-base">
+                      {previewText}
+                    </p>
                   </div>
-                  <p className="text-[#404040] mt-2 text-sm lg:text-base">
-                    {chat.preview}
-                  </p>
+
+                  {conv.unreadCount > 0 && (
+                    <button className="bg-[#0085FF] px-3 py-1.5 rounded-lg text-white text-sm sm:self-start">
+                      {conv.unreadCount}
+                    </button>
+                  )}
                 </div>
-                {chat.unread && (
-                  <button className="bg-[#0085FF] px-3 py-1.5 rounded-lg text-white text-sm sm:self-start">
-                    New
-                  </button>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
 
-      {activeMessage && (
-        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 md:px-4 px-2  lg:py-10 lg:px-8 rounded-2xl">
-          <div className="md:flex justify-between items-center mb-6">
-            <div className="flex items-center gap-4">
+      {/* Active Conversation */}
+      {activeConversation && (
+        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 md:px-4 px-2 lg:py-10 lg:px-8 rounded-2xl">
+          {/* Header */}
+          <div className="flex flex-col items-start gap-y-3 sm:flex-row justify-between mb-4">
+            <div className="flex gap-4">
               <button
-                onClick={() => setActiveMessage(null)}
+                onClick={() => setActiveConversation(null)}
                 className="lg:hidden text-[#0085FF] text-2xl"
               >
                 <IoArrowBack />
               </button>
-              <h2 className="text-[#404040] lg:text-2xl md:text-lg text-base font-medium">
-                {activeMessage.title}
-              </h2>
-            </div>
-
-            <div className="flex md:justify-start justify-end md:mt-0 mt-5">
-              <button
-                onClick={() => setIsRatingModalOpen(true)}
-                className="flex gap-2 items-center bg-[#0085FF] px-5 py-3 rounded-xl text-white font-medium hover:bg-[#006edc] transition"
-              >
-                Give Rating
-              </button>
-            </div>
-          </div>
-
-          <div className=" overflow-y-auto h-[600px] flex flex-col gap-6 pb-4">
-            {activeMessage.messages.map((msg: any) => (
-              <div
-                key={msg.id}
-                className={`flex gap-3 ${
-                  msg.role === "agent" ? "justify-end" : "justify-start"
-                }`}
-              >
-                {msg.role === "user" && (
-                  <div className="h-10 w-10 rounded-full flex justify-center items-center bg-[#E6F3FF] text-[#0085FF] text-sm font-bold">
-                    {msg.sender
-                      .split(" ")
-                      .map((n: string) => n[0])
-                      .join("")}
+              <div className="flex flex-col gap-y-5">
+                <div className="flex flex-row gap-x-3">
+                  <div className="relative">
+                    <Image
+                      src={
+                        activeConversation.chatUser?.profilePicture ||
+                        "/default_avatar.jpg"
+                      }
+                      width={50}
+                      height={50}
+                      className="h-[50px] rounded-full w-[50px] object-cover"
+                      alt={activeConversation.chatUser?.name}
+                    />
+                    <span className="flex absolute items-center top-0 right-0 mt-[4px] mr-[-1px] gap-1">
+                      {activeConversation.chatUser?.isOnline ? (
+                        <span className="ml-2 w-3 h-3 bg-green-400 rounded-full"></span>
+                      ) : (
+                        <span className="ml-2 w-3 h-3 bg-red-500 rounded-full"></span>
+                      )}
+                    </span>
                   </div>
-                )}
-
-                <div className="max-w-[75%]">
-                  <div className="bg-white rounded-3xl px-5 py-4 shadow-sm border border-gray-100">
-                    <h4 className="text-[#5F5F5F] text-sm font-medium mb-1">
-                      {msg.sender}
-                    </h4>
-                    {msg.message && (
-                      <p className="text-[#101010] text-base leading-relaxed">
-                        {msg.message}
-                      </p>
-                    )}
-                    {msg.image && (
-                      <Image
-                        src={msg.image}
-                        alt="sent"
-                        className="rounded-lg w-[40px] h-[40px] mt-3 max-w-full shrink-0"
-                      />
-                    )}
+                  <div className="flex flex-col gap-y-1">
+                    <h2 className="text-[#404040]  lg:text-2xl md:text-lg text-base font-medium">
+                      {activeConversation?.chatUser?.name}
+                    </h2>
+                    <span className="text-sm">
+                      {activeConversation.chatUser?.isOnline
+                        ? "Active now"
+                        : "Offline"}
+                    </span>
                   </div>
-                  <p className="text-[#94A3B8] text-xs mt-2 text-right">
-                    {msg.time}
-                  </p>
                 </div>
-
-                {msg.role === "agent" && (
-                  <Image
-                    src={Profile}
-                    alt="You"
-                    width={10}
-                    height={10}
-                    className="rounded-full w-[40px] h-[40px] object-cover border-2 border-white shadow shrink-0"
-                  />
-                )}
               </div>
-            ))}
+            </div>
+
+            <button
+              onClick={() => setIsRatingModalOpen(true)}
+              className="flex cursor-pointer gap-2 items-center bg-[#0085FF] px-3 md:px-5 py-2 md:py-3 rounded-xl text-white md:text-base text-sm font-medium hover:bg-[#006edc] transition"
+            >
+              Give Rating
+            </button>
           </div>
 
+          <hr className="w-full  border-[0.5px] rounded-2xl border-solid border-gray-400 mb-4 " />
+
+          {/* Messages */}
+          <div className="overflow-y-auto h-[600px] flex flex-col gap-4 pb-4">
+            {activeConversation?.messages?.map((msg: any) => {
+              const isSentByMe = msg?.senderId?._id === user._id;
+              return (
+                <div
+                  key={msg._id}
+                  className={`flex gap-3 ${isSentByMe ? "justify-end" : "justify-start"}`}
+                >
+                  {!isSentByMe && (
+                    <div className="h-10 w-10 rounded-full flex justify-center items-center bg-[#E6F3FF] text-[#0085FF] text-sm font-bold">
+                      {activeConversation.otherUser?.name
+                        ?.split(" ")
+                        .map((n: string) => n[0])
+                        .join("")}
+                    </div>
+                  )}
+
+                  <div className="max-w-[75%] flex flex-col gap-1">
+                    <div
+                      className={`px-4 py-3 rounded-2xl shadow-sm border ${isSentByMe ? "bg-[#0085FF] text-white border-transparent" : "bg-white border border-gray-100 text-gray-800"}`}
+                    >
+                      {msg.message && (
+                        <p className="text-base">{msg.message}</p>
+                      )}
+                      {msg.fileUrl && (
+                        <Image
+                          src={msg.fileUrl}
+                          alt="sent"
+                          className="rounded-lg mt-2 w-full max-h-64 object-cover"
+                          width={200}
+                          height={200}
+                        />
+                      )}
+                    </div>
+                    <div className="flex mt-1 flex-row justify-between  " >
+                      <span
+                        className={`text-xs ${isSentByMe ? "text-right text-gray-600" : "text-left text-gray-400"}`}
+                      >
+                        {new Date(msg.createdAt).toLocaleString([], {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </span>
+                      {msg.status === "pending" && isSentByMe && (
+                        <span className="text-xs text-gray-400 ml-1">sent</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {isSentByMe && (
+                    <Image
+                      src={user?.profilePicture || "/default_avatar.jpg"}
+                      alt="You"
+                      width={40}
+                      height={40}
+                      className="rounded-full w-[40px] h-[40px] object-cover border-2 border-white shadow shrink-0"
+                    />
+                  )}
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} /> {/* Auto-scroll target */}
+          </div>
+
+          {/* Image Preview */}
           {imagePreview && (
             <div className="mb-4 flex items-center gap-4">
               <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
@@ -246,12 +364,12 @@ const Messages = () => {
             </div>
           )}
 
+          {/* Input */}
           <div className="relative bg-white border border-[#E7E7E7] rounded-2xl lg:px-5 px-2 lg:py-4 py-3 flex items-center lg:gap-4 gap-2 mt-4">
             <BsEmojiSmile
               className="cursor-pointer text-[#0085FF] md:text-xl text-lg"
               onClick={() => setShowEmoji(p => !p)}
             />
-
             <input
               value={text}
               onChange={e => setText(e.target.value)}
@@ -275,7 +393,12 @@ const Messages = () => {
                 type="file"
                 hidden
                 accept="image/*"
-                onChange={e => setImage(e.target.files?.[0] || null)}
+                onChange={e => {
+                  setImage(e.target.files?.[0] || null);
+                  setImagePreview(
+                    URL.createObjectURL(e.target.files?.[0] || null),
+                  );
+                }}
               />
               <IoSend
                 onClick={handleSend}
@@ -284,31 +407,29 @@ const Messages = () => {
             </div>
 
             {showEmoji && (
-              <div className="absolute bottom-20 left-4 z-50">
-                <EmojiPicker onEmojiClick={e => setText(p => p + e.emoji)} />
+              <div ref={emojiRef} className="absolute bottom-20 left-4 z-50">
+                <EmojiPicker
+                  onEmojiClick={e => setText(prev => prev + e.emoji)}
+                />
               </div>
             )}
           </div>
         </div>
       )}
 
+      {/* Rating Modal */}
       {isRatingModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative">
-            {/* Close Button */}
             <button
               onClick={() => setIsRatingModalOpen(false)}
               className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 text-2xl"
             >
               ×
             </button>
-
-            {/* Title */}
             <h3 className="text-2xl font-medium text-[#101010] text-center mb-8">
               Rating
             </h3>
-
-            {/* Stars */}
             <div className="flex justify-center gap-4 mb-10">
               {[1, 2, 3, 4, 5].map(star => (
                 <button
@@ -324,17 +445,13 @@ const Messages = () => {
                 </button>
               ))}
             </div>
-
-            {/* Review Textarea */}
             <textarea
               value={reviewText}
               onChange={e => setReviewText(e.target.value)}
-              placeholder="Robert"
+              placeholder="Write your review..."
               className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-lg text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0085FF] resize-none"
               rows={4}
             />
-
-            {/* Buttons */}
             <div className="flex justify-end gap-4 mt-8">
               <button
                 onClick={() => setIsRatingModalOpen(false)}
