@@ -97,3 +97,16 @@ export const useCurrencyConverter = () => {
     }
   });
 };
+// Loan Converter
+export const LoanConverter = () => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  return useClientApi({
+    method: "post",
+    key: ["LoanConverter"],
+    endpoint: "/price-estimator",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+};
