@@ -42,10 +42,8 @@ export const AddFavourite = () => {
   });
 };
 
-
 // Contact Us
 export const useContact = () => {
-
   return useClientApi({
     method: "post",
     key: ["contact"],
@@ -63,7 +61,8 @@ export const useContact = () => {
 };
 // SaveSearch Post
 export const UseSearchSave = () => {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   return useClientApi({
     method: "post",
@@ -84,3 +83,17 @@ export const UseSearchSave = () => {
   });
 };
 
+// Currency Converter
+export const useCurrencyConverter = () => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  return useClientApi({
+    method: "post",
+    key: ["currencyConverter"],
+    endpoint: "/convert-hnl-to-usd",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    }
+  });
+};

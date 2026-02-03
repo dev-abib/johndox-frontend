@@ -9,13 +9,16 @@ import {
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
 import Image from "next/image";
-import { FaCheck } from "react-icons/fa";
-import React, { useEffect, useRef, useState } from "react";
+import { FaCheck } from "react-icons/fa";  
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
   SideBarSvg,
 } from "@/Components/Svg/SvgContainer2";
+import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { AddFavourite, UseSearchSave } from "@/Hooks/api/post_api";
 import { ListPropertyBrowse, useGetProperties } from "@/Hooks/api/cms_api";
 import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
 import {
@@ -25,9 +28,6 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
-import toast from "react-hot-toast";
-import { usePathname } from "next/navigation";
-import { AddFavourite, UseSearchSave } from "@/Hooks/api/post_api";
 
 const page = () => {
   const { mutate } = AddFavourite();
@@ -52,7 +52,7 @@ const page = () => {
 
   const handleSearch = () => {
     const filters = {
-      propertyType:
+      propertyType:                      
         propertyType === "All" ? undefined : propertyType.toLowerCase(),
       minPrice: minPrice || undefined,
       maxPrice: maxPrice || undefined,
