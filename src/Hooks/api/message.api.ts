@@ -2,7 +2,6 @@ import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 import { useQueryClient } from "@tanstack/react-query";
 
-
 export const sendMessage = (
   token: string | undefined,
   userId: string,
@@ -38,9 +37,6 @@ export const sendMessage = (
   });
 };
 
-
-
-
 export const useGetConversations = (token?: string) => {
   return useClientApi({
     method: "get",
@@ -51,12 +47,18 @@ export const useGetConversations = (token?: string) => {
   });
 };
 
-export const useGetSingleUserMessage = (token?: string, userId?: string) => {
+export const useGetSingleUserMessage = (
+  token?: string,
+  userId?: string,
+  cursor?: string | null,
+) => {
+  const queryParams = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
+
   return useClientApi({
     method: "get",
-    key: ["single-user-message", userId],
+    key: ["single-user-message", userId, cursor],
     enabled: !!token && !!userId,
-    endpoint: `/chat/messages/${userId}`,
+    endpoint: `/chat/messages/${userId}${queryParams}`,
     isPrivate: true,
   });
 };

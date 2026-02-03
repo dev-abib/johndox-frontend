@@ -96,9 +96,9 @@ const page = () => {
               >
                 <item.icon />
                 {item.label}
-                {item.badge && (
+                {item.badge && item?.badge !== null && item?.badge !== 0 && (
                   <span className="ml-2 bg-red-500 text-white text-sm px-2 py-0.5 rounded-full">
-                    {item.badge}
+                    {item?.badge}
                   </span>
                 )}
               </button>

@@ -4,8 +4,7 @@ import EmojiPicker from "emoji-picker-react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { VscFileMedia } from "react-icons/vsc";
 import React, { useEffect, useRef, useState } from "react";
-import { IoSend, IoArrowBack } from "react-icons/io5";
-import { IoStar, IoStarOutline } from "react-icons/io5";
+import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import {
   sendMessage,
   useGetConversations,
@@ -20,20 +19,45 @@ const Messages = () => {
   const [activeConversation, setActiveConversation] = useState<any>(null);
   const [showEmoji, setShowEmoji] = useState(false);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
-  const [token, setToken] = useState<string | undefined>(undefined);
+  const [token] = useState<string | undefined>(getItem("token"));
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Pagination state
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
 
   const { user } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
   const emojiRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const { data: convData } = useGetConversations(token);
+  const conversations = convData?.data?.conversations || [];
+
+  const {
+    data: msgData,
+    refetch,
+    isFetching,
+  } = useGetSingleUserMessage(token, activeUserId ?? undefined, nextCursor);
+
+  const { mutate, isPending } = sendMessage(
+    token,
+    activeUserId ?? undefined,
+    !!token,
+  );
+
   useEffect(() => {
-    setToken(getItem("token"));
-  }, []);
+    if (activeUserId) {
+      setNextCursor(null);
+      setHasMore(true);
+      setActiveConversation(null);
+      setLoadingMore(false);
+    }
+  }, [activeUserId]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,31 +72,58 @@ const Messages = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const { data: msgData } = useGetConversations(token);
-  const conversations = msgData?.data?.conversations || [];
+  useEffect(() => {
+    if (!msgData?.data) return;
 
-  const { data } = useGetSingleUserMessage(token, activeUserId ?? undefined);
-  const { mutate, isPending } = sendMessage(
-    token,
-    activeUserId ?? undefined,
-    !!token,
-  );
+    setActiveConversation((prev: any) => {
+      const incomingMessages = msgData.data.messages || [];
+      const incomingNextCursor = msgData.data.nextCursor;
+      const incomingHasMore = !!msgData.data.hasMore;
+
+      setNextCursor(incomingNextCursor);
+      setHasMore(incomingHasMore);
+
+      if (!prev) {
+        return msgData.data;
+      }
+      const existingIds = new Set(prev.messages.map((m: any) => m._id));
+      const uniqueNew = incomingMessages.filter(
+        (m: any) => !existingIds.has(m._id),
+      );
+
+      if (uniqueNew.length === 0) {
+        setHasMore(false);
+        return prev;
+      }
+
+      return {
+        ...prev,
+        chatUser: msgData.data.chatUser || prev.chatUser,
+        messages: [...uniqueNew, ...prev.messages],
+      };
+    });
+
+    setLoadingMore(false);
+  }, [msgData]);
 
   useEffect(() => {
-    setActiveConversation(data?.data || null);
-  }, [data]);
+    if (activeConversation?.messages?.length && !loadingMore && !isFetching) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [activeConversation?.messages?.length, loadingMore, isFetching]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [activeConversation?.messages]);
+  const loadMoreMessages = () => {
+    if (!hasMore || loadingMore || !nextCursor || isFetching) return;
+    setLoadingMore(true);
+    refetch();
+  };
 
   const handleSend = () => {
-    if (!text && !image) return;
-    if (!activeUserId || !token) return;
+    if ((!text.trim() && !image) || !activeUserId || !token) return;
 
     const tempId = Date.now();
     const formData = new FormData();
-    if (text) formData.append("message", text);
+    if (text.trim()) formData.append("message", text.trim());
     if (image) formData.append("file", image);
 
     setActiveConversation(prev => ({
@@ -90,7 +141,9 @@ const Messages = () => {
       ],
     }));
 
+    setImage(null);
     setImagePreview(null);
+    setText("");
 
     mutate(formData, {
       onSuccess: serverMessage => {
@@ -112,365 +165,382 @@ const Messages = () => {
         setShowEmoji(false);
       },
       onError: () => {
-        setActiveConversation(prev => ({
+        setActiveConversation((prev: any) => ({
           ...prev,
-          messages: prev?.messages.filter(msg => msg._id !== tempId),
+          messages: prev.messages.filter((m: any) => m._id !== tempId),
         }));
       },
     });
   };
 
   const handleApplyRating = () => {
+    // Here you would normally call an API to save the rating
     console.log("Rating submitted:", {
+      toUserId: activeConversation?.chatUser?.id,
       rating,
       reviewText,
-      buyer: activeConversation?.otherUser?.name,
+      fromUser: user?.name || user?._id,
     });
+
+    // Optional: show success message / toast
+    alert("Thank you for your rating!");
+
+    // Reset form
     setIsRatingModalOpen(false);
     setRating(0);
     setReviewText("");
-    alert("Thank you for your rating!");
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Conversations List */}
-      {!activeConversation && (
-        <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl">
-          <h2 className="text-[#404040] lg:text-2xl text-xl font-medium">
-            Messages
-          </h2>
-          <h5 className="text-[#5F5F5F] mt-2 text-sm lg:text-base">
-            Stay connected with interested buyers in real time
-          </h5>
+    <>
+      <div className="flex relative flex-col lg:flex-row gap-6  h-full">
+        {!activeConversation && (
+          <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl overflow-y-auto">
+            <h2 className="text-[#404040] text-xl lg:text-2xl font-medium">
+              Messages
+            </h2>
+            <p className="text-[#5F5F5F] mt-2 text-sm lg:text-base">
+              Stay connected with interested buyers in real time
+            </p>
 
-          <div className="mt-6 flex flex-col gap-4">
-            {conversations?.map((conv: any) => {
-              const lastMsg = conv?.lastMessage;
-              const otherUser = conv?.otherUser;
-              const previewText =
-                lastMsg?.isSentByMe === false
-                  ? `You: ${lastMsg?.preview}`
-                  : `${otherUser.name}: ${lastMsg?.preview}`;
+            <div className="mt-6 flex flex-col gap-4">
+              {conversations.map((conv: any) => {
+                const last = conv?.lastMessage;
+                const other = conv?.otherUser;
+                const preview =
+                  last?.isSentByMe === false
+                    ? `You: ${last?.preview || ""}`
+                    : `${other?.name || "User"}: ${last?.preview || ""}`;
 
-              return (
-                <div
-                  key={conv?.otherUser?.id}
-                  onClick={() => {
-                    setActiveConversation(conv);
-                    setActiveUserId(conv?.otherUser?.id ?? null);
-                  }}
-                  className="rounded-xl border border-[#E6F3FF] bg-[rgba(230,243,255,0.6)] p-4 flex flex-col sm:flex-row sm:justify-between gap-3 cursor-pointer w-full relative hover:bg-[#E6F3FF] transition"
-                >
-                  <div className="flex-1 w-full relative mb-3">
-                    <h3 className="text-[#404040]  mb-4 font-medium text-lg lg:text-xl">
-                      {conv?.property?.propertyName}
-                    </h3>
-                    <div className="w-full flex flex-row items-center justify-between">
-                      <div className="flex gap-x-3 flex-row items-center">
-                        <div className="relative">
-                          <Image
-                            src={
-                              otherUser?.profilePicture || "/default_avatar.jpg"
-                            }
-                            width={50}
-                            height={50}
-                            className="h-[50px] rounded-full w-[50px] object-cover"
-                            alt={otherUser?.name}
-                          />
-                          <span className="flex absolute items-center top-0 right-0 mt-[4px] mr-[-1px] gap-1">
-                            {otherUser?.isOnline ? (
-                              <span className="ml-2 w-3 h-3 bg-green-400 rounded-full"></span>
-                            ) : (
-                              <span className="ml-2 w-3 h-3 bg-red-500 rounded-full"></span>
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex flex-col">
-                          <h3 className="text-[#404040] font-medium text-lg lg:text-xl">
-                            {conv.title || otherUser?.name || "Conversation"}
-                          </h3>
-                        </div>
+                return (
+                  <div
+                    key={other?.id}
+                    onClick={() => {
+                      setActiveUserId(other?.id ?? null);
+                      setActiveConversation(conv);
+                    }}
+                    className="cursor-pointer rounded-xl border border-[#E6F3FF] bg-[rgba(230,243,255,0.3)] p-4 hover:bg-[#E6F3FF] transition"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative shrink-0">
+                        <Image
+                          src={other?.profilePicture || "/default_avatar.jpg"}
+                          width={50}
+                          height={50}
+                          className="rounded-full w-[50px] h-[50px] object-cover"
+                          alt={other?.name || "user"}
+                        />
+                        <div
+                          className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${
+                            other?.isOnline ? "bg-green-500" : "bg-gray-400"
+                          }`}
+                        />
                       </div>
-                      <div className="flex flex-col sm:flex-row gap-2 mt-1 text-[#404040] font-medium text-sm lg:text-base">
-                        {lastMsg?.sentAt && (
-                          <span>
-                            {new Date(lastMsg.sentAt).toLocaleDateString()}
-                          </span>
-                        )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-[#404040] truncate">
+                          {conv?.property?.propertyName ||
+                            other?.name ||
+                            "Conversation"}
+                        </h3>
+                        <p className="text-sm text-gray-600 truncate">
+                          {preview}
+                        </p>
                       </div>
-                    </div>
-
-                    <p className="text-[#404040] mt-2 text-sm lg:text-base">
-                      {previewText}
-                    </p>
-                  </div>
-
-                  {conv.unreadCount > 0 && (
-                    <button className="bg-[#0085FF] px-3 py-1.5 rounded-lg text-white text-sm sm:self-start">
-                      {conv.unreadCount}
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Active Conversation */}
-      {activeConversation && (
-        <div className="flex-1 flex flex-col bg-[#F9FAFB] py-6 md:px-4 px-2 lg:py-10 lg:px-8 rounded-2xl">
-          {/* Header */}
-          <div className="flex flex-col items-start gap-y-3 sm:flex-row justify-between mb-4">
-            <div className="flex gap-4">
-              <button
-                onClick={() => setActiveConversation(null)}
-                className="lg:hidden text-[#0085FF] text-2xl"
-              >
-                <IoArrowBack />
-              </button>
-              <div className="flex flex-col gap-y-5">
-                <div className="flex flex-row gap-x-3">
-                  <div className="relative">
-                    <Image
-                      src={
-                        activeConversation.chatUser?.profilePicture ||
-                        "/default_avatar.jpg"
-                      }
-                      width={50}
-                      height={50}
-                      className="h-[50px] rounded-full w-[50px] object-cover"
-                      alt={activeConversation.chatUser?.name}
-                    />
-                    <span className="flex absolute items-center top-0 right-0 mt-[4px] mr-[-1px] gap-1">
-                      {activeConversation.chatUser?.isOnline ? (
-                        <span className="ml-2 w-3 h-3 bg-green-400 rounded-full"></span>
-                      ) : (
-                        <span className="ml-2 w-3 h-3 bg-red-500 rounded-full"></span>
+                      {conv.unreadCount > 0 && (
+                        <span className="bg-[#0085FF] text-white text-xs px-2.5 py-1 rounded-full shrink-0">
+                          {conv.unreadCount}
+                        </span>
                       )}
-                    </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-y-1">
-                    <h2 className="text-[#404040]  lg:text-2xl md:text-lg text-base font-medium">
-                      {activeConversation?.chatUser?.name}
-                    </h2>
-                    <span className="text-sm">
-                      {activeConversation.chatUser?.isOnline
-                        ? "Active now"
-                        : "Offline"}
-                    </span>
-                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Active Chat */}
+        {activeConversation && (
+          <div className="flex-1 max-h-[80vh] flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-4 h-full">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setActiveConversation(null)}
+                  className="lg:hidden text-2xl text-[#0085FF]"
+                >
+                  <IoArrowBack />
+                </button>
+                <div className="relative shrink-0">
+                  <Image
+                    src={
+                      activeConversation.chatUser?.profilePicture ||
+                      "/default_avatar.jpg"
+                    }
+                    width={50}
+                    height={50}
+                    className="rounded-full w-[50px] h-[50px] object-cover"
+                    alt="chat user"
+                  />
+                  <div
+                    className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${
+                      activeConversation.chatUser?.isOnline
+                        ? "bg-green-500"
+                        : "bg-gray-400"
+                    }`}
+                  />
+                </div>
+                <div>
+                  <h2 className="font-medium text-[#404040] text-lg lg:text-xl">
+                    {activeConversation.chatUser?.name || "User"}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {activeConversation.chatUser?.isOnline
+                      ? "Active now"
+                      : "Offline"}
+                  </p>
                 </div>
               </div>
+              <button
+                onClick={() => setIsRatingModalOpen(true)}
+                className="flex items-center gap-2 bg-[#0085FF] text-white px-5 py-2.5 rounded-xl hover:bg-[#006edc] transition text-sm md:text-base font-medium"
+              >
+                <span>Give Rating</span>
+              </button>
             </div>
 
-            <button
-              onClick={() => setIsRatingModalOpen(true)}
-              className="flex cursor-pointer gap-2 items-center bg-[#0085FF] px-3 md:px-5 py-2 md:py-3 rounded-xl text-white md:text-base text-sm font-medium hover:bg-[#006edc] transition"
-            >
-              Give Rating
-            </button>
-          </div>
+            <hr className="border-gray-200 mb-5" />
 
-          <hr className="w-full  border-[0.5px] rounded-2xl border-solid border-gray-400 mb-4 " />
+            <div className="flex-1 overflow-y-auto flex flex-col gap-4 pb-6">
+              {hasMore && (
+                <div className="text-center py-6 sticky top-0 bg-[#F9FAFB] z-10">
+                  <button
+                    onClick={loadMoreMessages}
+                    disabled={loadingMore || isFetching}
+                    className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 rounded-xl text-sm font-medium disabled:opacity-50 transition"
+                  >
+                    {loadingMore || isFetching
+                      ? "Loading..."
+                      : "Load older messages"}
+                  </button>
+                </div>
+              )}
 
-          {/* Messages */}
-          <div className="overflow-y-auto h-[600px] flex flex-col gap-4 pb-4">
-            {activeConversation?.messages?.map((msg: any) => {
-              const isSentByMe = msg?.senderId?._id === user._id;
-              return (
-                <div
-                  key={msg._id}
-                  className={`flex gap-3 ${isSentByMe ? "justify-end" : "justify-start"}`}
-                >
-                  {!isSentByMe && (
-                    <div className="h-10 w-10 rounded-full flex justify-center items-center bg-[#E6F3FF] text-[#0085FF] text-sm font-bold">
-                      {activeConversation.otherUser?.name
-                        ?.split(" ")
-                        .map((n: string) => n[0])
-                        .join("")}
-                    </div>
-                  )}
+              {activeConversation?.messages?.map((msg: any) => {
+                const isMe = msg?.senderId?._id === user._id;
+                return (
+                  <div
+                    key={msg._id}
+                    className={`flex gap-3 ${isMe ? "justify-end" : "justify-start"}`}
+                  >
+                    {!isMe && (
+                      <Image
+                        src={
+                          activeConversation.chatUser?.profilePicture ||
+                          "/default_avatar.jpg"
+                        }
+                        width={40}
+                        height={40}
+                        className="rounded-full w-[40px] h-[40px] object-cover"
+                        alt="chat user"
+                      />
+                    )}
 
-                  <div className="max-w-[75%] flex flex-col gap-1">
-                    <div
-                      className={`px-4 py-3 rounded-2xl shadow-sm border ${isSentByMe ? "bg-[#0085FF] text-white border-transparent" : "bg-white border border-gray-100 text-gray-800"}`}
-                    >
-                      {msg.message && (
-                        <p className="text-base">{msg.message}</p>
-                      )}
-                      {msg.fileUrl && (
-                        <Image
-                          src={msg.fileUrl}
-                          alt="sent"
-                          className="rounded-lg mt-2 w-full max-h-64 object-cover"
-                          width={200}
-                          height={200}
-                        />
-                      )}
-                    </div>
-                    <div className="flex mt-1 flex-row justify-between  " >
-                      <span
-                        className={`text-xs ${isSentByMe ? "text-right text-gray-600" : "text-left text-gray-400"}`}
+                    <div className="max-w-[70%] md:max-w-[75%] flex flex-col gap-1">
+                      <div
+                        className={`px-4 py-3 rounded-2xl shadow-sm ${
+                          isMe
+                            ? "bg-[#0085FF] text-white"
+                            : "bg-white border border-gray-200 text-gray-800"
+                        }`}
                       >
+                        {msg.message && (
+                          <p className="break-words">{msg.message}</p>
+                        )}
+                        {msg.fileUrl && (
+                          <Image
+                            src={msg.fileUrl}
+                            alt="attachment"
+                            width={320}
+                            height={320}
+                            className="rounded-lg mt-2 max-h-64 object-contain"
+                          />
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 text-xs text-gray-500 px-1">
                         {new Date(msg.createdAt).toLocaleString([], {
-                          year: "numeric",
                           month: "short",
                           day: "numeric",
                           hour: "2-digit",
                           minute: "2-digit",
                           hour12: true,
                         })}
-                      </span>
-                      {msg.status === "pending" && isSentByMe && (
-                        <span className="text-xs text-gray-400 ml-1">sent</span>
-                      )}
+                        {isMe && msg.status === "pending" && (
+                          <span className="text-gray-400">Sent</span>
+                        )}
+                        {isMe && msg.status === "delivered" && (
+                          <span className="text-gray-400">Delivered</span>
+                        )}
+                        {isMe && msg.status === "seen" && (
+                          <span className="text-gray-400">Seen</span>
+                        )}
+                      </div>
                     </div>
+
+                    {isMe && (
+                      <Image
+                        src={user?.profilePicture || "/default_avatar.jpg"}
+                        alt="you"
+                        width={40}
+                        height={40}
+                        className="rounded-full w-[40px] h-[40px] object-cover shrink-0 border-2 border-white mt-1"
+                      />
+                    )}
                   </div>
+                );
+              })}
 
-                  {isSentByMe && (
-                    <Image
-                      src={user?.profilePicture || "/default_avatar.jpg"}
-                      alt="You"
-                      width={40}
-                      height={40}
-                      className="rounded-full w-[40px] h-[40px] object-cover border-2 border-white shadow shrink-0"
-                    />
-                  )}
-                </div>
-              );
-            })}
-            <div ref={messagesEndRef} /> {/* Auto-scroll target */}
-          </div>
-
-          {/* Image Preview */}
-          {imagePreview && (
-            <div className="mb-4 flex items-center gap-4">
-              <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
-                <Image
-                  src={imagePreview}
-                  alt="preview"
-                  fill
-                  className="object-cover"
-                />
-                <button
-                  onClick={() => setImage(null)}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
-                >
-                  ×
-                </button>
-              </div>
+              <div ref={messagesEndRef} />
             </div>
-          )}
+            {imagePreview && (
+              <div className="mb-4 flex items-center gap-4">
+                <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
+                  <Image
+                    src={imagePreview}
+                    alt="preview"
+                    fill
+                    className="object-cover"
+                  />
+                  <button
+                    onClick={() => {
+                      setImagePreview(null);
+                    }}
+                    className="absolute cursor-pointer top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            )}
 
-          {/* Input */}
-          <div className="relative bg-white border border-[#E7E7E7] rounded-2xl lg:px-5 px-2 lg:py-4 py-3 flex items-center lg:gap-4 gap-2 mt-4">
-            <BsEmojiSmile
-              className="cursor-pointer text-[#0085FF] md:text-xl text-lg"
-              onClick={() => setShowEmoji(p => !p)}
-            />
-            <input
-              value={text}
-              onChange={e => setText(e.target.value)}
-              onKeyDown={e =>
-                e.key === "Enter" &&
-                !e.shiftKey &&
-                (e.preventDefault(), handleSend())
-              }
-              type="text"
-              placeholder="Type your message"
-              className="flex-1 outline-none text-base"
-            />
+            <div className="mt-4 bg-white border border-gray-200 rounded-2xl p-3 flex items-center gap-3">
+              <BsEmojiSmile
+                className="text-[#0085FF] text-2xl cursor-pointer"
+                onClick={() => setShowEmoji(p => !p)}
+              />
 
-            <div className="flex items-center lg:gap-4 gap-2">
+              <input
+                value={text}
+                onChange={e => setText(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder="Type a message..."
+                className="flex-1 outline-none text-base min-h-[44px]"
+              />
+
               <VscFileMedia
-                className="cursor-pointer text-[#0085FF] lg:text-xl text-base"
+                className="text-[#0085FF] text-2xl cursor-pointer"
                 onClick={() => fileRef.current?.click()}
               />
               <input
                 ref={fileRef}
                 type="file"
-                hidden
                 accept="image/*"
+                hidden
                 onChange={e => {
-                  setImage(e.target.files?.[0] || null);
-                  setImagePreview(
-                    URL.createObjectURL(e.target.files?.[0] || null),
-                  );
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setImage(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }
                 }}
               />
+
               <IoSend
                 onClick={handleSend}
-                className="cursor-pointer text-[#0085FF] lg:text-2xl text-lg hover:scale-110 transition"
+                className={`text-2xl cursor-pointer transition ${
+                  (text.trim() || image) && !isPending
+                    ? "text-[#0085FF] hover:scale-110"
+                    : "text-gray-400 cursor-not-allowed"
+                }`}
               />
             </div>
-
-            {showEmoji && (
-              <div ref={emojiRef} className="absolute bottom-20 left-4 z-50">
-                <EmojiPicker
-                  onEmojiClick={e => setText(prev => prev + e.emoji)}
-                />
-              </div>
-            )}
           </div>
-        </div>
-      )}
-
-      {/* Rating Modal */}
+        )}
+        {showEmoji && (
+          <div ref={emojiRef} className="absolute bottom-20 left-4 z-50">
+            <EmojiPicker
+              onEmojiClick={emojiData => setText(p => p + emojiData.emoji)}
+            />
+          </div>
+        )}
+      </div>
       {isRatingModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8 relative">
             <button
               onClick={() => setIsRatingModalOpen(false)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 text-2xl"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl"
             >
               ×
             </button>
-            <h3 className="text-2xl font-medium text-[#101010] text-center mb-8">
-              Rating
+
+            <h3 className="text-2xl font-semibold text-center mb-6 text-gray-800">
+              Rate your experience
             </h3>
-            <div className="flex justify-center gap-4 mb-10">
+
+            {/* Stars */}
+            <div className="flex justify-center gap-3 md:gap-4 mb-8">
               {[1, 2, 3, 4, 5].map(star => (
                 <button
                   key={star}
+                  type="button"
                   onClick={() => setRating(star)}
-                  className="text-5xl transition transform hover:scale-110"
+                  className="text-4xl md:text-5xl transition-transform hover:scale-110 focus:outline-none"
                 >
                   {rating >= star ? (
-                    <IoStar className="text-yellow-400" />
+                    <IoStar className="text-yellow-400 drop-shadow" />
                   ) : (
                     <IoStarOutline className="text-gray-300" />
                   )}
                 </button>
               ))}
             </div>
+
+            {/* Review textarea */}
             <textarea
               value={reviewText}
               onChange={e => setReviewText(e.target.value)}
-              placeholder="Write your review..."
-              className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-lg text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0085FF] resize-none"
+              placeholder="Write your review (optional)..."
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0085FF] resize-none min-h-[100px]"
               rows={4}
             />
-            <div className="flex justify-end gap-4 mt-8">
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-4 mt-6">
               <button
                 onClick={() => setIsRatingModalOpen(false)}
-                className="px-8 py-3 rounded-xl border border-[#0085FF] text-[#0085FF] font-medium hover:bg-[#0085FF]/5 transition"
+                className="px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleApplyRating}
                 disabled={rating === 0}
-                className="px-8 py-3 rounded-xl bg-[#0085FF] text-white font-medium hover:bg-[#006edc] transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-xl bg-[#0085FF] text-white font-medium hover:bg-[#006edc] transition disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                Apply
+                Submit Rating
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
