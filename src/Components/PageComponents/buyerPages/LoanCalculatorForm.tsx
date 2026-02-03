@@ -86,7 +86,7 @@ const LoanCalculatorForm = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-[#0085FF] text-white py-3 px-8 rounded-md hover:bg-blue-600 transition-all disabled:bg-gray-400"
+            className="bg-[#0085FF] text-white py-3 px-8 rounded-md hover:bg-blue-600 transition-all disabled:bg-gray-400 cursor-pointer"
           >
             {isLoading ? "Calculating..." : "Calculate"}
           </button>
