@@ -21,14 +21,6 @@ export const sendMessage = (
     onSuccess: (data: any) => {
       if (data?.success) {
         toast.success(data?.message || "Message sent");
-
-        queryClient.invalidateQueries({
-          queryKey: ["single-user-message", userId],
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: ["conversations"],
-        });
       }
     },
     onError: (err: any) => {
@@ -50,15 +42,15 @@ export const useGetConversations = (token?: string) => {
 export const useGetSingleUserMessage = (
   token?: string,
   userId?: string,
-  cursor?: string | null,
+  cursor?: string,
 ) => {
-  const queryParams = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
-
   return useClientApi({
     method: "get",
-    key: ["single-user-message", userId, cursor],
+    key: ["messages", "conversation", userId, cursor ?? "first-page"],
     enabled: !!token && !!userId,
-    endpoint: `/chat/messages/${userId}${queryParams}`,
+    endpoint: `/chat/messages/${userId}${
+      cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""
+    }`,
     isPrivate: true,
   });
 };
