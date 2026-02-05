@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AosProvider from "@/Provider/AosProvider/AosProvider";
 import AuthProvider from "@/Provider/AuthProvider/AuthProvider";
 import QueryProvider from "@/Provider/QueryProvider/QueryProvider";
+import { SocketProvider } from "@/Provider/SocketProvider/SocketProvider";
 
 // Fonts
 const montserrat = Montserrat({
@@ -37,9 +38,8 @@ export default async function RootLayout({
             <AuthProvider>
               <AosProvider>
                 <Toaster />
-                {children}
+                <SocketProvider>{children}</SocketProvider>
               </AosProvider>
-              <Toaster />
             </AuthProvider>
           </QueryProvider>
         </GoogleOAuthProvider>

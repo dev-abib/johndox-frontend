@@ -18,564 +18,591 @@ import {
 } from "@/Hooks/api/message.api";
 import { getItem } from "@/lib/localStorage";
 import useAuth from "@/Hooks/useAuth";
-import { io, Socket } from "socket.io-client";
 import { formatDistanceToNow } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
-
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
-// Use ref to hold the socket instance → prevents race conditions in cleanup
-const socketRef = { current: null as Socket | null };
-
-const connectSocket = (token: string | undefined) => {
-  if (!token) return;
-  if (socketRef.current?.connected) return;
-
-  const newSocket = io(SOCKET_URL, {
-    query: { token },
-    reconnection: true,
-    reconnectionAttempts: 5,
-    reconnectionDelay: 3000,
-    transports: ["websocket"],
-    autoConnect: false,
-  });
-
-  newSocket.connect();
-
-  newSocket.on("connect", () =>
-    console.log("[SOCKET] Connected – ID:", newSocket.id),
-  );
-  newSocket.on("connect_error", err =>
-    console.error("[SOCKET] Connect error:", err.message),
-  );
-  newSocket.on("disconnect", reason =>
-    console.log("[SOCKET] Disconnected –", reason),
-  );
-
-  socketRef.current = newSocket;
-};
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
 
 const Messages = () => {
-const queryClient = useQueryClient();
-const { user } = useAuth();
+  const { socket, isConnected } = useSocket();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const searchParams = useSearchParams();
 
-const [token] = useState<string | undefined>(getItem("token"));
-const [text, setText] = useState("");
-const [image, setImage] = useState<File | null>(null);
-const [imagePreview, setImagePreview] = useState<string | null>(null);
-const [activeUserId, setActiveUserId] = useState<string | null>(null);
-const [showEmoji, setShowEmoji] = useState(false);
-const [messages, setMessages] = useState<any[]>([]);
-const [nextCursor, setNextCursor] = useState<{
-  createdAt: string;
-  _id: string;
-} | null>(null);
-const [hasMore, setHasMore] = useState(true);
-const [loadingMore, setLoadingMore] = useState(false);
-const [rating, setRating] = useState(0);
-const [reviewText, setReviewText] = useState("");
-const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
-const [isOtherTyping, setIsOtherTyping] = useState(false);
-const [partnerOnline, setPartnerOnline] = useState<boolean>(false);
-const [partnerLastSeen, setPartnerLastSeen] = useState<number | null>(null);
-const [fetchCursor, setFetchCursor] = useState<string | undefined>(undefined);
-const [isPrepending, setIsPrepending] = useState(false);
+  const [token] = useState<string | undefined>(getItem("token"));
+  const [text, setText] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [activeUserId, setActiveUserId] = useState<string | null>(null);
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [nextCursor, setNextCursor] = useState<{
+    createdAt: string;
+    _id: string;
+  } | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const [partnerOnline, setPartnerOnline] = useState<boolean>(false);
+  const [partnerLastSeen, setPartnerLastSeen] = useState<number | null>(null);
+  const [fetchCursor, setFetchCursor] = useState<string | undefined>(undefined);
+  const [isPrepending, setIsPrepending] = useState(false);
 
-const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-const fileRef = useRef<HTMLInputElement>(null);
-const messagesContainerRef = useRef<HTMLDivElement>(null);
-const emojiPickerRef = useRef<HTMLDivElement>(null);
-const lastRequestedCursor = useRef<string | null>(null);
-const prevScrollHeightRef = useRef<number | null>(null);
-const prevScrollTopRef = useRef<number | null>(null);
-const justSentMessageRef = useRef<boolean>(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const lastRequestedCursor = useRef<string | null>(null);
+  const prevScrollHeightRef = useRef<number | null>(null);
+  const prevScrollTopRef = useRef<number | null>(null);
+  const justSentMessageRef = useRef<boolean>(false);
 
-const queryKey = ["conversations", token];
-const { data: convData, refetch: refetchConversations } =
-  useGetConversations(token);
-const conversations = convData?.data?.conversations || [];
-
-const {
-  data: msgData,
-  isFetching,
-  isLoading,
-  refetch,
-} = useGetSingleUserMessage(token, activeUserId ?? undefined);
-
-const { mutate, isPending } = sendMessage(
-  token,
-  activeUserId ?? undefined,
-  !!token,
-);
-
-const chatUser = msgData?.data?.chatUser;
-const currentConv = conversations.find(
-  (c: any) => c.otherUser?.id === activeUserId,
-);
-const conversationId = currentConv?.conversationId;
-
-// Socket connection + cleanup
-useEffect(() => {
-  if (!token) {
-    if (socketRef.current) {
-      socketRef.current.disconnect();
-      socketRef.current = null;
+  // Set active chat from URL query param
+  useEffect(() => {
+    const chat = searchParams.get("chat");
+    if (chat && chat !== activeUserId) {
+      setActiveUserId(chat);
     }
-    return;
-  }
+  }, [searchParams, activeUserId]);
 
-  connectSocket(token);
+  const queryKey = ["conversations", token];
+  const { data: convData } = useGetConversations(token);
+  const conversations = convData?.data?.conversations || [];
 
-  return () => {
-    if (socketRef.current) {
-      socketRef.current.disconnect();
-      socketRef.current = null;
-    }
-  };
-}, [token]);
+  const {
+    data: msgData,
+    isFetching,
+    isLoading,
+    refetch,
+  } = useGetSingleUserMessage(token, activeUserId ?? undefined);
 
-// Notification permission
-useEffect(() => {
-  if (!("Notification" in window)) return;
-  if (Notification.permission === "default") {
-    Notification.requestPermission();
-  }
-}, []);
+  const { mutate, isPending } = sendMessage(
+    token,
+    activeUserId ?? undefined,
+    !!token,
+  );
 
-// Service Worker registration (background notifications)
-useEffect(() => {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then(() => console.log("Service Worker registered"))
-      .catch(err => console.error("Service Worker registration failed:", err));
-  }
-}, []);
+  const chatUser = msgData?.data?.chatUser;
+  const currentConv = conversations.find(
+    (c: any) => c.otherUser?.id === activeUserId,
+  );
+  const conversationId = currentConv?.conversationId;
 
-// Mark conversation seen when opening chat
-useEffect(() => {
-  const socket = socketRef.current;
-  if (!socket?.connected || !activeUserId || !conversationId) return;
+  // Mark messages seen when opening chat
+  useEffect(() => {
+    if (!socket || !isConnected || !activeUserId || !conversationId) return;
 
-  socket.emit("conversation-seen", { conversationId });
+    socket.emit("conversation-seen", { conversationId });
 
-  messages
-    .filter(
-      m =>
-        String(m.senderId?._id ?? m.senderId) !== String(user?._id) &&
-        m.status !== "seen",
-    )
-    .forEach(m => socket.emit("message-seen", { messageId: m._id }));
-}, [activeUserId, conversationId, messages.length, user?._id]);
-
-// Reset state on chat switch
-useEffect(() => {
-  setPartnerOnline(false);
-  setPartnerLastSeen(null);
-  setIsOtherTyping(false);
-  setMessages([]);
-  setNextCursor(null);
-  setHasMore(true);
-  setLoadingMore(false);
-  lastRequestedCursor.current = null;
-  setText("");
-  setImage(null);
-  setImagePreview(null);
-  setFetchCursor(undefined);
-}, [activeUserId]);
-
-// Real-time conversation list update
-const updateConversationInCache = useCallback(
-  (payload: any) => {
-    queryClient.setQueryData(queryKey, (old: any) => {
-      if (!old?.data?.conversations) return old;
-
-      const updated = old.data.conversations
-        .map((conv: any) => {
-          if (conv.conversationId !== payload.conversationId) return conv;
-          return {
-            ...conv,
-            unreadCount: payload.unreadCount ?? conv.unreadCount ?? 0,
-            lastMessage: payload.lastMessage
-              ? {
-                  ...conv.lastMessage,
-                  preview:
-                    payload.lastMessage.text || conv.lastMessage?.preview || "",
-                  sentAt: new Date(payload.lastMessage.timestamp),
-                  isSentByMe:
-                    payload.lastMessage.senderId === String(user?._id),
-                }
-              : conv.lastMessage,
-            lastMessageAt: payload.lastMessage?.timestamp
-              ? new Date(payload.lastMessage.timestamp)
-              : conv.lastMessageAt,
-          };
-        })
-        .sort((a: any, b: any) => {
-          const ta = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
-          const tb = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
-          return tb - ta;
-        });
-
-      return {
-        ...old,
-        data: {
-          ...old.data,
-          conversations: updated,
-          totalUnreadCount: updated.reduce(
-            (sum: number, c: any) => sum + (c.unreadCount || 0),
-            0,
-          ),
-        },
-      };
-    });
-  },
-  [queryClient, queryKey, user?._id],
-);
-
-useEffect(() => {
-  const socket = socketRef.current;
-  if (!socket) return;
-
-  socket.on("conversation-updated", updateConversationInCache);
-
-  return () => {
-    socket.off("conversation-updated", updateConversationInCache);
-  };
-}, [updateConversationInCache]);
-
-// ─── Main socket listeners ─────────────────────────────────────────
-useEffect(() => {
-  const socket = socketRef.current;
-  if (!socket) return;
-
-  const handleReceiveMessage = (msg: any) => {
-    const senderId = String(msg.senderId?._id ?? msg.senderId ?? "");
-    const isMyMessage = senderId === String(user?._id);
-    const isFromCurrentChat = senderId === activeUserId;
-
-    setMessages(prev => {
-      const incomingId = String(msg._id);
-      const tempIndex = prev.findIndex(
+    messages
+      .filter(
         m =>
-          m._id.startsWith("temp-") &&
-          (m.message || "").trim() === (msg.message || "").trim() &&
-          String(m.senderId?._id ?? m.senderId) === String(user?._id),
-      );
+          String(m.senderId?._id ?? m.senderId) !== String(user?._id) &&
+          m.status !== "seen",
+      )
+      .forEach(m => socket.emit("message-seen", { messageId: m._id }));
+  }, [activeUserId, conversationId, messages, socket, isConnected, user?._id]);
 
-      if (tempIndex !== -1) {
-        const newList = [...prev];
-        newList[tempIndex] = {
-          ...msg,
-          senderId: { _id: senderId },
-          status: msg.status || "sent",
-        };
-        return newList;
-      }
+  // Reset state on chat switch
+  useEffect(() => {
+    setPartnerOnline(false);
+    setPartnerLastSeen(null);
+    setIsOtherTyping(false);
+    setMessages([]);
+    setNextCursor(null);
+    setHasMore(true);
+    setLoadingMore(false);
+    lastRequestedCursor.current = null;
+    setText("");
+    setImage(null);
+    setImagePreview(null);
+    setFetchCursor(undefined);
+  }, [activeUserId]);
 
-      if (prev.some(m => String(m._id) === incomingId)) return prev;
+  // Update conversation cache (last message, unread, etc.)
+  const updateConversationInCache = useCallback(
+    (payload: any) => {
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
 
-      return [
-        ...prev,
-        {
-          ...msg,
-          senderId: { _id: senderId },
-          status: msg.status || "sent",
-        },
-      ];
-    });
+        const updated = old.data.conversations
+          .map((conv: any) => {
+            if (conv.conversationId !== payload.conversationId) return conv;
+            return {
+              ...conv,
+              unreadCount: payload.unreadCount ?? conv.unreadCount ?? 0,
+              lastMessage: payload.lastMessage
+                ? {
+                    ...conv.lastMessage,
+                    preview:
+                      payload.lastMessage.text ||
+                      conv.lastMessage?.preview ||
+                      "",
+                    sentAt: new Date(payload.lastMessage.timestamp),
+                    isSentByMe:
+                      payload.lastMessage.senderId === String(user?._id),
+                  }
+                : conv.lastMessage,
+              lastMessageAt: payload.lastMessage?.timestamp
+                ? new Date(payload.lastMessage.timestamp)
+                : conv.lastMessageAt,
+            };
+          })
+          .sort((a: any, b: any) => {
+            const ta = a.lastMessageAt
+              ? new Date(a.lastMessageAt).getTime()
+              : 0;
+            const tb = b.lastMessageAt
+              ? new Date(b.lastMessageAt).getTime()
+              : 0;
+            return tb - ta; // newest first
+          });
 
-    if (!isMyMessage) {
-      console.log(msg);
-      
-      // Sound
-      const audio = new Audio("/notification.mp3");
-      audio.volume = 0.5;
-      audio.play().catch(() => {});
-
-      // Foreground notification
-      if (document.hasFocus() && Notification.permission === "granted") {
-        const title = `New message from ${msg.senderName || "User"}`;
-        const body =
-          msg.message?.slice(0, 80) ||
-          (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
-        const notif = new Notification(title, {
-          body,
-          icon: msg.sender?.profilePicture || "/default_avatar.jpg",
-          tag: `msg-${msg._id}`,
-        });
-        notif.onclick = () => {
-          window.focus();
-          setActiveUserId(senderId);
-        };
-      }
-
-      // Background notification via service worker
-      if (navigator.serviceWorker?.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: "SHOW_NOTIFICATION",
-          payload: {
-            title: `New message from ${msg.senderName || "User"}`,
-            body:
-              msg.message?.slice(0, 120) ||
-              (msg.fileType ? `Sent a ${msg.fileType}` : "New message"),
-            icon: msg.sender?.profilePicture || "/default_avatar.jpg",
-            tag: `chat-msg-${msg._id || Date.now()}`,
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            conversations: updated,
+            totalUnreadCount: updated.reduce(
+              (sum: number, c: any) => sum + (c.unreadCount || 0),
+              0,
+            ),
           },
+        };
+      });
+    },
+    [queryClient, queryKey, user?._id],
+  );
+
+  // Global presence updates for conversation list (online/offline dots)
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleUserOnline = ({ userId }: { userId: string }) => {
+      if (userId === activeUserId) setPartnerOnline(true);
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
+        const updatedConvs = old.data.conversations.map((conv: any) => {
+          if (conv.otherUser?.id === userId) {
+            return {
+              ...conv,
+              otherUser: { ...conv.otherUser, isOnline: true },
+            };
+          }
+          return conv;
         });
+        return {
+          ...old,
+          data: { ...old.data, conversations: updatedConvs },
+        };
+      });
+    };
+
+    const handleUserOffline = ({
+      userId,
+      lastSeen,
+    }: {
+      userId: string;
+      lastSeen: number;
+    }) => {
+      if (userId === activeUserId) {
+        setPartnerOnline(false);
+        setPartnerLastSeen(lastSeen);
       }
 
-      // Auto mark seen if current chat is focused
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
+        const updatedConvs = old.data.conversations.map((conv: any) => {
+          if (conv.otherUser?.id === userId) {
+            return {
+              ...conv,
+              otherUser: { ...conv.otherUser, isOnline: false },
+            };
+          }
+          return conv;
+        });
+        return {
+          ...old,
+          data: { ...old.data, conversations: updatedConvs },
+        };
+      });
+    };
+
+    const handlePresenceUpdate = (data: {
+      userId: string;
+      isOnline: boolean;
+      lastSeen: number | null;
+    }) => {
+      if (data.userId === activeUserId) {
+        setPartnerOnline(data.isOnline);
+        setPartnerLastSeen(data.lastSeen);
+      }
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
+        const updatedConvs = old.data.conversations.map((conv: any) => {
+          if (conv.otherUser?.id === data.userId) {
+            return {
+              ...conv,
+              otherUser: { ...conv.otherUser, isOnline: data.isOnline },
+            };
+          }
+          return conv;
+        });
+        return {
+          ...old,
+          data: { ...old.data, conversations: updatedConvs },
+        };
+      });
+    };
+
+    socket.on("user-online", handleUserOnline);
+    socket.on("user-offline", handleUserOffline);
+    socket.on("presence-update", handlePresenceUpdate);
+
+    return () => {
+      socket.off("user-online", handleUserOnline);
+      socket.off("user-offline", handleUserOffline);
+      socket.off("presence-update", handlePresenceUpdate);
+    };
+  }, [socket, isConnected, activeUserId, queryClient, queryKey]);
+
+  // Main socket listeners for messages, typing, etc.
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleReceiveMessage = (msg: any) => {
+      const senderId = String(msg.senderId?._id ?? msg.senderId ?? "");
+      const isMyMessage = senderId === String(user?._id);
+      const isFromCurrentChat = senderId === activeUserId;
+      const isCurrentChatFocused = isFromCurrentChat && document.hasFocus();
+
+      setMessages(prev => {
+        const incomingId = String(msg._id);
+        const tempIndex = prev.findIndex(
+          m =>
+            m._id.startsWith("temp-") &&
+            (m.message || "").trim() === (msg.message || "").trim() &&
+            String(m.senderId?._id ?? m.senderId) === String(user?._id),
+        );
+
+        if (tempIndex !== -1) {
+          const newList = [...prev];
+          newList[tempIndex] = {
+            ...msg,
+            senderId: { _id: senderId },
+            status: msg.status || "sent",
+          };
+          return newList;
+        }
+
+        if (prev.some(m => String(m._id) === incomingId)) return prev;
+
+        return [
+          ...prev,
+          { ...msg, senderId: { _id: senderId }, status: msg.status || "sent" },
+        ];
+      });
+
+      // Play sound and show notification if not in current focused chat
+     if (!isMyMessage && !isCurrentChatFocused) {
+       // Play audio notification
+       const audio = new Audio("/notification.mp3");
+       audio.volume = 0.5;
+       audio.play().catch(err => console.error("[Audio] Failed:", err));
+
+       const title = `New message from ${msg.senderName || "User"}`;
+       const body =
+         msg.message?.slice(0, 80) ||
+         (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
+       const icon = msg.sender?.profilePicture || "/default_avatar.jpg";
+
+       const sendNotification = () => {
+         if (navigator.serviceWorker?.controller) {
+           console.log("[SW] Posting notification");
+           navigator.serviceWorker.controller.postMessage({
+             type: "SHOW_NOTIFICATION",
+             payload: {
+               title,
+               body,
+               icon,
+               tag: `chat-msg-${msg._id || Date.now()}`,
+               senderId,
+               url: `/messages?chat=${senderId}`,
+             },
+           });
+         } else {
+           console.log("[Notification] Direct fallback");
+           const notif = new Notification(title, { body, icon });
+           notif.onclick = () => {
+             window.focus();
+             setActiveUserId(senderId);
+           };
+         }
+       };
+
+       // Check permission
+       if ("Notification" in window) {
+         if (Notification.permission === "granted") {
+           sendNotification();
+         } else if (Notification.permission === "default") {
+           // Request permission if not yet decided
+           Notification.requestPermission().then(permission => {
+             if (permission === "granted") sendNotification();
+             else console.warn("[Notifications] Permission denied by user");
+           });
+         } else {
+           // User has denied notifications
+           console.warn("[Notifications] Permission denied");
+         }
+       } else {
+         console.warn("[Notifications] Not supported in this browser");
+       }
+     }
+
+
+      // Auto-mark seen if focused
       if (isFromCurrentChat && document.hasFocus() && socket.connected) {
         socket.emit("message-seen", { messageId: msg._id });
       }
-    }
-  };
+    };
 
-  const handleTyping = ({ senderId }: { senderId: string }) => {
-    if (senderId === activeUserId) {
-      setIsOtherTyping(true);
-      clearTimeout(typingTimeoutRef.current!);
-      typingTimeoutRef.current = setTimeout(
-        () => setIsOtherTyping(false),
-        4000,
+    const handleTyping = ({ senderId }: { senderId: string }) => {
+      if (senderId === activeUserId) {
+        setIsOtherTyping(true);
+        clearTimeout(typingTimeoutRef.current!);
+        typingTimeoutRef.current = setTimeout(
+          () => setIsOtherTyping(false),
+          4000,
+        );
+      }
+    };
+
+    const handleStopTyping = ({ senderId }: { senderId: string }) => {
+      if (senderId === activeUserId) setIsOtherTyping(false);
+    };
+
+    const handleDelivered = ({ messageId }: { messageId: string }) => {
+      setMessages(prev =>
+        prev.map(m =>
+          String(m._id) === messageId ? { ...m, status: "delivered" } : m,
+        ),
       );
-    }
-  };
+    };
 
-  const handleStopTyping = ({ senderId }: { senderId: string }) => {
-    if (senderId === activeUserId) setIsOtherTyping(false);
-  };
+    const handleSeen = ({ messageId }: { messageId: string }) => {
+      setMessages(prev =>
+        prev.map(m =>
+          String(m._id) === messageId ? { ...m, status: "seen" } : m,
+        ),
+      );
+    };
 
-  const handleDelivered = ({ messageId }: { messageId: string }) => {
-    setMessages(prev =>
-      prev.map(m =>
-        String(m._id) === messageId ? { ...m, status: "delivered" } : m,
-      ),
-    );
-  };
+    socket.on("receive-message", handleReceiveMessage);
+    socket.on("conversation-updated", updateConversationInCache);
+    socket.on("typing", handleTyping);
+    socket.on("stop-typing", handleStopTyping);
+    socket.on("message-delivered", handleDelivered);
+    socket.on("message-seen", handleSeen);
 
-  const handleSeen = ({ messageId }: { messageId: string }) => {
-    setMessages(prev =>
-      prev.map(m =>
-        String(m._id) === messageId ? { ...m, status: "seen" } : m,
-      ),
-    );
-  };
-
-  const handleUserOnline = ({ userId }: { userId: string }) => {
-    if (userId === activeUserId) setPartnerOnline(true);
-  };
-
-  const handleUserOffline = ({
-    userId,
-    lastSeen,
-  }: {
-    userId: string;
-    lastSeen: number;
-  }) => {
-    if (userId === activeUserId) {
-      setPartnerOnline(false);
-      setPartnerLastSeen(lastSeen);
-    }
-  };
-
-  const handlePresenceUpdate = (data: {
-    userId: string;
-    isOnline: boolean;
-    lastSeen: number | null;
-  }) => {
-    if (data.userId === activeUserId) {
-      setPartnerOnline(data.isOnline);
-      setPartnerLastSeen(data.lastSeen);
-    }
-  };
-
-  // Register listeners
-  socket.on("receive-message", handleReceiveMessage);
-  socket.on("conversation-updated", updateConversationInCache);
-  socket.on("typing", handleTyping);
-  socket.on("stop-typing", handleStopTyping);
-  socket.on("message-delivered", handleDelivered);
-  socket.on("message-seen", handleSeen);
-  socket.on("user-online", handleUserOnline);
-  socket.on("user-offline", handleUserOffline);
-  socket.on("presence-update", handlePresenceUpdate);
-
-  // Safe cleanup
-  return () => {
-    if (socket) {
+    return () => {
       socket.off("receive-message", handleReceiveMessage);
       socket.off("conversation-updated", updateConversationInCache);
       socket.off("typing", handleTyping);
       socket.off("stop-typing", handleStopTyping);
       socket.off("message-delivered", handleDelivered);
       socket.off("message-seen", handleSeen);
-      socket.off("user-online", handleUserOnline);
-      socket.off("user-offline", handleUserOffline);
-      socket.off("presence-update", handlePresenceUpdate);
+    };
+  }, [socket, isConnected, activeUserId, user?._id, updateConversationInCache]);
+
+  // Presence polling for active chat
+  useEffect(() => {
+    if (!socket || !isConnected || !activeUserId) return;
+
+    socket.emit("get-presence", { targetUserId: activeUserId });
+
+    const interval = setInterval(() => {
+      if (socket.connected && activeUserId) {
+        socket.emit("get-presence", { targetUserId: activeUserId });
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [socket, isConnected, activeUserId]);
+
+  // Load messages
+  useEffect(() => {
+    if (activeUserId) refetch();
+  }, [activeUserId, refetch]);
+
+  // Handle incoming messages data from query
+  useEffect(() => {
+    if (!msgData?.data || isLoading || !activeUserId) return;
+    if (lastRequestedCursor.current === fetchCursor) return;
+    lastRequestedCursor.current = fetchCursor || "initial";
+
+    const incoming = msgData.data.messages || [];
+    setMessages(prev => {
+      const ids = new Set(prev.map(m => String(m._id)));
+      const uniqueNew = incoming.filter((m: any) => !ids.has(String(m._id)));
+      return isPrepending ? [...uniqueNew, ...prev] : [...prev, ...uniqueNew];
+    });
+    setHasMore(!!msgData.data.hasMore);
+    setNextCursor(msgData.data.nextCursor ?? null);
+    setIsPrepending(false);
+  }, [msgData, activeUserId, isLoading, fetchCursor, isPrepending]);
+
+  const loadMoreMessages = useCallback(() => {
+    if (!hasMore || loadingMore || isFetching || isLoading || !nextCursor)
+      return;
+    const cursorStr = JSON.stringify({
+      createdAt: nextCursor.createdAt,
+      _id: nextCursor._id,
+    });
+    if (lastRequestedCursor.current === cursorStr) return;
+
+    if (messagesContainerRef.current) {
+      prevScrollHeightRef.current = messagesContainerRef.current.scrollHeight;
+      prevScrollTopRef.current = messagesContainerRef.current.scrollTop;
     }
-  };
-}, [
-  activeUserId,
-  user?._id,
-  updateConversationInCache,
-  // Add other stable dependencies here if needed
-]);
 
-// Presence polling
-useEffect(() => {
-  const socket = socketRef.current;
-  if (!socket || !activeUserId) return;
+    setIsPrepending(true);
+    setLoadingMore(true);
+    setFetchCursor(cursorStr);
+    refetch();
+  }, [hasMore, loadingMore, isFetching, isLoading, nextCursor, refetch]);
 
-  socket.emit("get-presence", { targetUserId: activeUserId });
+  useLayoutEffect(() => {
+    if (
+      !isPrepending ||
+      !prevScrollHeightRef.current ||
+      !messagesContainerRef.current
+    )
+      return;
 
-  const interval = setInterval(() => {
-    if (socket.connected && activeUserId) {
-      socket.emit("get-presence", { targetUserId: activeUserId });
+    const container = messagesContainerRef.current;
+    const delta = container.scrollHeight - prevScrollHeightRef.current;
+    container.scrollTop = (prevScrollTopRef.current ?? 0) + delta;
+
+    prevScrollHeightRef.current = null;
+    prevScrollTopRef.current = null;
+    setLoadingMore(false);
+  }, [isPrepending]);
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!messagesContainerRef.current) return;
+    const container = messagesContainerRef.current;
+    const nearBottom =
+      Math.abs(
+        container.scrollHeight - container.scrollTop - container.clientHeight,
+      ) < 120;
+
+    if (justSentMessageRef.current || nearBottom || messages.length <= 3) {
+      scrollToBottom(justSentMessageRef.current ? "smooth" : "instant");
+      justSentMessageRef.current = false;
     }
-  }, 30000);
+  }, [messages, scrollToBottom]);
 
-  return () => clearInterval(interval);
-}, [activeUserId]);
+  const handleTyping = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setText(e.target.value);
+      if (!socket || !isConnected || !activeUserId) return;
 
-// ─── Rest of your component remains unchanged ──────────────────────
-// Load messages, load more, typing, send, JSX, etc.
-
-useEffect(() => {
-  if (activeUserId) refetch();
-}, [activeUserId, refetch]);
-
-useEffect(() => {
-  if (!msgData?.data || isLoading || !activeUserId) return;
-  if (lastRequestedCursor.current === fetchCursor) return;
-  lastRequestedCursor.current = fetchCursor || "initial";
-
-  const incoming = msgData.data.messages || [];
-  setMessages(prev => {
-    const ids = new Set(prev.map(m => String(m._id)));
-    const uniqueNew = incoming.filter((m: any) => !ids.has(String(m._id)));
-    return isPrepending ? [...uniqueNew, ...prev] : [...prev, ...uniqueNew];
-  });
-  setHasMore(!!msgData.data.hasMore);
-  setNextCursor(msgData.data.nextCursor ?? null);
-  setIsPrepending(false);
-}, [msgData, activeUserId, isLoading, fetchCursor, isPrepending]);
-
-const loadMoreMessages = useCallback(() => {
-  if (!hasMore || loadingMore || isFetching || isLoading || !nextCursor) return;
-  const cursorStr = JSON.stringify({
-    createdAt: nextCursor.createdAt,
-    _id: nextCursor._id,
-  });
-  if (lastRequestedCursor.current === cursorStr) return;
-
-  if (messagesContainerRef.current) {
-    prevScrollHeightRef.current = messagesContainerRef.current.scrollHeight;
-    prevScrollTopRef.current = messagesContainerRef.current.scrollTop;
-  }
-
-  setIsPrepending(true);
-  setLoadingMore(true);
-  setFetchCursor(cursorStr);
-  refetch();
-}, [hasMore, loadingMore, isFetching, isLoading, nextCursor, refetch]);
-
-useLayoutEffect(() => {
-  if (
-    !isPrepending ||
-    !prevScrollHeightRef.current ||
-    !messagesContainerRef.current
-  )
-    return;
-
-  const container = messagesContainerRef.current;
-  const delta = container.scrollHeight - prevScrollHeightRef.current;
-  container.scrollTop = (prevScrollTopRef.current ?? 0) + delta;
-
-  prevScrollHeightRef.current = null;
-  prevScrollTopRef.current = null;
-  setLoadingMore(false);
-}, [isPrepending]);
-
-const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
-  messagesContainerRef.current?.scrollTo({
-    top: messagesContainerRef.current.scrollHeight,
-    behavior,
-  });
-}, []);
-
-useEffect(() => {
-  if (!messagesContainerRef.current) return;
-  const container = messagesContainerRef.current;
-  const nearBottom =
-    Math.abs(
-      container.scrollHeight - container.scrollTop - container.clientHeight,
-    ) < 120;
-
-  if (justSentMessageRef.current || nearBottom || messages.length <= 3) {
-    scrollToBottom(justSentMessageRef.current ? "smooth" : "instant");
-    justSentMessageRef.current = false;
-  }
-}, [messages, scrollToBottom]);
-
-const handleTyping = useCallback(
-  (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-    const socket = socketRef.current;
-    if (!activeUserId || !socket?.connected) return;
-
-    socket.emit("typing", { receiverId: activeUserId });
-    clearTimeout(typingTimeoutRef.current!);
-    typingTimeoutRef.current = setTimeout(() => {
-      socket.emit("stop-typing", { receiverId: activeUserId });
-    }, 1800);
-  },
-  [activeUserId],
-);
-
-const handleSend = () => {
-  if ((!text.trim() && !image) || !activeUserId || !token) return;
-
-  const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const formData = new FormData();
-  if (text.trim()) formData.append("message", text.trim());
-  if (image) formData.append("file", image);
-
-  justSentMessageRef.current = true;
-
-  setMessages(prev => [
-    ...prev,
-    {
-      _id: tempId,
-      message: text.trim() || "",
-      fileUrl: image ? URL.createObjectURL(image) : undefined,
-      senderId: { _id: user?._id },
-      createdAt: new Date().toISOString(),
-      status: "sending",
+      socket.emit("typing", { receiverId: activeUserId });
+      clearTimeout(typingTimeoutRef.current!);
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("stop-typing", { receiverId: activeUserId });
+      }, 1800);
     },
-  ]);
+    [socket, isConnected, activeUserId],
+  );
 
-  setText("");
-  setImage(null);
-  setImagePreview(null);
+  const handleSend = () => {
+    if ((!text.trim() && !image) || !activeUserId || !token) return;
 
-  mutate(formData, {
-    onError: () => {
-      setMessages(prev =>
-        prev.map(m => (m._id === tempId ? { ...m, status: "failed" } : m)),
-      );
-    },
-  });
-};
+    const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const formData = new FormData();
+    if (text.trim()) formData.append("message", text.trim());
+    if (image) formData.append("file", image);
 
-const handleApplyRating = () => {
-  console.log("Rating submitted:", rating, reviewText);
-  setIsRatingModalOpen(false);
-  setRating(0);
-  setReviewText("");
+    justSentMessageRef.current = true;
+
+    setMessages(prev => [
+      ...prev,
+      {
+        _id: tempId,
+        message: text.trim() || "",
+        fileUrl: image ? URL.createObjectURL(image) : undefined,
+        senderId: { _id: user?._id },
+        createdAt: new Date().toISOString(),
+        status: "sending",
+      },
+    ]);
+
+    setText("");
+    setImage(null);
+    setImagePreview(null);
+
+    mutate(formData, {
+      onSuccess: response => {
+        const savedMsg = response?.data;
+        if (savedMsg) {
+          setMessages(prev =>
+            prev.map(m =>
+              m._id === tempId
+                ? {
+                    ...savedMsg,
+                    senderId: { _id: user?._id },
+                    status: "sent",
+                  }
+                : m,
+            ),
+          );
+          // Optional: invalidate conversations to refetch if cache update missed
+          queryClient.invalidateQueries({ queryKey });
+        }
+      },
+      onError: () => {
+        setMessages(prev =>
+          prev.map(m => (m._id === tempId ? { ...m, status: "failed" } : m)),
+        );
+      },
+    });
   };
-  
+
+  const handleApplyRating = () => {
+    console.log("Rating submitted:", rating, reviewText);
+    setIsRatingModalOpen(false);
+    setRating(0);
+    setReviewText("");
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showEmoji &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowEmoji(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showEmoji]);
+
   return (
     <>
       <div className="flex relative flex-col lg:flex-row gap-6 h-full">

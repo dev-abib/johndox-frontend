@@ -18,46 +18,16 @@ import {
 } from "@/Hooks/api/message.api";
 import { getItem } from "@/lib/localStorage";
 import useAuth from "@/Hooks/useAuth";
-import { io, Socket } from "socket.io-client";
 import { formatDistanceToNow } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
-
-const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
-// Use ref to hold the socket instance → prevents race conditions in cleanup
-const socketRef = { current: null as Socket | null };
-
-const connectSocket = (token: string | undefined) => {
-  if (!token) return;
-  if (socketRef.current?.connected) return;
-
-  const newSocket = io(SOCKET_URL, {
-    query: { token },
-    reconnection: true,
-    reconnectionAttempts: 5,
-    reconnectionDelay: 3000,
-    transports: ["websocket"],
-    autoConnect: false,
-  });
-
-  newSocket.connect();
-
-  newSocket.on("connect", () =>
-    console.log("[SOCKET] Connected – ID:", newSocket.id),
-  );
-  newSocket.on("connect_error", err =>
-    console.error("[SOCKET] Connect error:", err.message),
-  );
-  newSocket.on("disconnect", reason =>
-    console.log("[SOCKET] Disconnected –", reason),
-  );
-
-  socketRef.current = newSocket;
-};
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
 
 const Messages = () => {
+  const { socket, isConnected } = useSocket();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const searchParams = useSearchParams();
 
   const [token] = useState<string | undefined>(getItem("token"));
   const [text, setText] = useState("");
@@ -90,9 +60,25 @@ const Messages = () => {
   const prevScrollTopRef = useRef<number | null>(null);
   const justSentMessageRef = useRef<boolean>(false);
 
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then(permission => {
+        console.log("[Notifications] Permission:", permission);
+      });
+    }
+  }, []);
+
+
+  // Set active chat from URL query param
+  useEffect(() => {
+    const chat = searchParams.get("chat");
+    if (chat && chat !== activeUserId) {
+      setActiveUserId(chat);
+    }
+  }, [searchParams, activeUserId]);
+
   const queryKey = ["conversations", token];
-  const { data: convData, refetch: refetchConversations } =
-    useGetConversations(token);
+  const { data: convData } = useGetConversations(token);
   const conversations = convData?.data?.conversations || [];
 
   const {
@@ -114,50 +100,9 @@ const Messages = () => {
   );
   const conversationId = currentConv?.conversationId;
 
-  // Socket connection + cleanup
+  // Mark messages seen when opening chat
   useEffect(() => {
-    if (!token) {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-      return;
-    }
-
-    connectSocket(token);
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
-  }, [token]);
-
-  // Notification permission
-  useEffect(() => {
-    if (!("Notification" in window)) return;
-    if (Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  // Service Worker registration (background notifications)
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then(() => console.log("Service Worker registered"))
-        .catch(err =>
-          console.error("Service Worker registration failed:", err),
-        );
-    }
-  }, []);
-
-  // Mark conversation seen when opening chat
-  useEffect(() => {
-    const socket = socketRef.current;
-    if (!socket?.connected || !activeUserId || !conversationId) return;
+    if (!socket || !isConnected || !activeUserId || !conversationId) return;
 
     socket.emit("conversation-seen", { conversationId });
 
@@ -168,7 +113,7 @@ const Messages = () => {
           m.status !== "seen",
       )
       .forEach(m => socket.emit("message-seen", { messageId: m._id }));
-  }, [activeUserId, conversationId, messages.length, user?._id]);
+  }, [activeUserId, conversationId, messages, socket, isConnected, user?._id]);
 
   // Reset state on chat switch
   useEffect(() => {
@@ -186,7 +131,7 @@ const Messages = () => {
     setFetchCursor(undefined);
   }, [activeUserId]);
 
-  // Real-time conversation list update
+  // Update conversation cache (last message, unread, etc.)
   const updateConversationInCache = useCallback(
     (payload: any) => {
       queryClient.setQueryData(queryKey, (old: any) => {
@@ -222,7 +167,7 @@ const Messages = () => {
             const tb = b.lastMessageAt
               ? new Date(b.lastMessageAt).getTime()
               : 0;
-            return tb - ta;
+            return tb - ta; // newest first
           });
 
         return {
@@ -241,26 +186,109 @@ const Messages = () => {
     [queryClient, queryKey, user?._id],
   );
 
+  // Global presence updates for conversation list (online/offline dots)
   useEffect(() => {
-    const socket = socketRef.current;
-    if (!socket) return;
+    if (!socket || !isConnected) return;
 
-    socket.on("conversation-updated", updateConversationInCache);
+    const handleUserOnline = ({ userId }: { userId: string }) => {
+      if (userId === activeUserId) setPartnerOnline(true);
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
+        const updatedConvs = old.data.conversations.map((conv: any) => {
+          if (conv.otherUser?.id === userId) {
+            return {
+              ...conv,
+              otherUser: { ...conv.otherUser, isOnline: true },
+            };
+          }
+          return conv;
+        });
+        return {
+          ...old,
+          data: { ...old.data, conversations: updatedConvs },
+        };
+      });
+    };
+
+    const handleUserOffline = ({
+      userId,
+      lastSeen,
+    }: {
+      userId: string;
+      lastSeen: number;
+    }) => {
+      if (userId === activeUserId) {
+        setPartnerOnline(false);
+        setPartnerLastSeen(lastSeen);
+      }
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
+        const updatedConvs = old.data.conversations.map((conv: any) => {
+          if (conv.otherUser?.id === userId) {
+            return {
+              ...conv,
+              otherUser: { ...conv.otherUser, isOnline: false },
+            };
+          }
+          return conv;
+        });
+        return {
+          ...old,
+          data: { ...old.data, conversations: updatedConvs },
+        };
+      });
+    };
+
+    const handlePresenceUpdate = (data: {
+      userId: string;
+      isOnline: boolean;
+      lastSeen: number | null;
+    }) => {
+      if (data.userId === activeUserId) {
+        setPartnerOnline(data.isOnline);
+        setPartnerLastSeen(data.lastSeen);
+      }
+
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.data?.conversations) return old;
+        const updatedConvs = old.data.conversations.map((conv: any) => {
+          if (conv.otherUser?.id === data.userId) {
+            return {
+              ...conv,
+              otherUser: { ...conv.otherUser, isOnline: data.isOnline },
+            };
+          }
+          return conv;
+        });
+        return {
+          ...old,
+          data: { ...old.data, conversations: updatedConvs },
+        };
+      });
+    };
+
+    socket.on("user-online", handleUserOnline);
+    socket.on("user-offline", handleUserOffline);
+    socket.on("presence-update", handlePresenceUpdate);
 
     return () => {
-      socket.off("conversation-updated", updateConversationInCache);
+      socket.off("user-online", handleUserOnline);
+      socket.off("user-offline", handleUserOffline);
+      socket.off("presence-update", handlePresenceUpdate);
     };
-  }, [updateConversationInCache]);
+  }, [socket, isConnected, activeUserId, queryClient, queryKey]);
 
-  // ─── Main socket listeners ─────────────────────────────────────────
+  // Main socket listeners for messages, typing, etc.
   useEffect(() => {
-    const socket = socketRef.current;
-    if (!socket) return;
+    if (!socket || !isConnected) return;
 
     const handleReceiveMessage = (msg: any) => {
       const senderId = String(msg.senderId?._id ?? msg.senderId ?? "");
       const isMyMessage = senderId === String(user?._id);
       const isFromCurrentChat = senderId === activeUserId;
+      const isCurrentChatFocused = isFromCurrentChat && document.hasFocus();
 
       setMessages(prev => {
         const incomingId = String(msg._id);
@@ -285,56 +313,72 @@ const Messages = () => {
 
         return [
           ...prev,
-          {
-            ...msg,
-            senderId: { _id: senderId },
-            status: msg.status || "sent",
-          },
+          { ...msg, senderId: { _id: senderId }, status: msg.status || "sent" },
         ];
       });
 
-      if (!isMyMessage) {
-        // Sound
+      // Play sound and show notification if not in current focused chat
+      if (!isMyMessage && !isCurrentChatFocused) {
+        // Play audio notification
         const audio = new Audio("/notification.mp3");
         audio.volume = 0.5;
-        audio.play().catch(() => {});
+        audio.play().catch(err => console.error("[Audio] Failed:", err));
+        console.log(msg);
+        
 
-        // Foreground notification
-        if (document.hasFocus() && Notification.permission === "granted") {
-          const title = `New message from ${msg.senderName || "User"}`;
-          const body =
-            msg.message?.slice(0, 80) ||
-            (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
-          const notif = new Notification(title, {
-            body,
-            icon: msg.sender?.profilePicture || "/default_avatar.jpg",
-            tag: `msg-${msg._id}`,
-          });
-          notif.onclick = () => {
-            window.focus();
-            setActiveUserId(senderId);
-          };
-        }
+        const title = `New message from ${msg.senderName || "User"}`;
+        const body =
+          msg.message?.slice(0, 80) ||
+          (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
+        const icon = msg.sender?.profilePicture || "/default_avatar.jpg";
 
-        // Background notification via service worker
-        if (navigator.serviceWorker?.controller) {
-          navigator.serviceWorker.controller.postMessage({
-            type: "SHOW_NOTIFICATION",
-            payload: {
-              title: `New message from ${msg.senderName || "User"}`,
-              body:
-                msg.message?.slice(0, 120) ||
-                (msg.fileType ? `Sent a ${msg.fileType}` : "New message"),
-              icon: msg.sender?.profilePicture || "/default_avatar.jpg",
-              tag: `chat-msg-${msg._id || Date.now()}`,
-            },
-          });
-        }
+        const sendNotification = () => {
+          if (navigator.serviceWorker?.controller) {
+            console.log("[SW] Posting notification");
+            navigator.serviceWorker.controller.postMessage({
+              type: "SHOW_NOTIFICATION",
+              payload: {
+                title,
+                body,
+                icon,
+                tag: `chat-msg-${msg._id || Date.now()}`,
+                senderId,
+                url: `/messages?chat=${senderId}`,
+              },
+            });
+          } else {
+            console.log("[Notification] Direct fallback");
+            const notif = new Notification(title, { body, icon });
+            notif.onclick = () => {
+              window.focus();
+              setActiveUserId(senderId);
+            };
+          }
+        };
 
-        // Auto mark seen if current chat is focused
-        if (isFromCurrentChat && document.hasFocus() && socket.connected) {
-          socket.emit("message-seen", { messageId: msg._id });
+        // Check permission
+        if ("Notification" in window) {
+          if (Notification.permission === "granted") {
+            sendNotification();
+          } else if (Notification.permission === "default") {
+            // Request permission if not yet decided
+            Notification.requestPermission().then(permission => {
+              if (permission === "granted") sendNotification();
+              else console.warn("[Notifications] Permission denied by user");
+            });
+          } else {
+            // User has denied notifications
+            console.warn("[Notifications] Permission denied");
+          }
+        } else {
+          console.warn("[Notifications] Not supported in this browser");
         }
+      }
+
+
+      // Auto-mark seen if focused
+      if (isFromCurrentChat && document.hasFocus() && socket.connected) {
+        socket.emit("message-seen", { messageId: msg._id });
       }
     };
 
@@ -369,70 +413,26 @@ const Messages = () => {
       );
     };
 
-    const handleUserOnline = ({ userId }: { userId: string }) => {
-      if (userId === activeUserId) setPartnerOnline(true);
-    };
-
-    const handleUserOffline = ({
-      userId,
-      lastSeen,
-    }: {
-      userId: string;
-      lastSeen: number;
-    }) => {
-      if (userId === activeUserId) {
-        setPartnerOnline(false);
-        setPartnerLastSeen(lastSeen);
-      }
-    };
-
-    const handlePresenceUpdate = (data: {
-      userId: string;
-      isOnline: boolean;
-      lastSeen: number | null;
-    }) => {
-      if (data.userId === activeUserId) {
-        setPartnerOnline(data.isOnline);
-        setPartnerLastSeen(data.lastSeen);
-      }
-    };
-
-    // Register listeners
     socket.on("receive-message", handleReceiveMessage);
     socket.on("conversation-updated", updateConversationInCache);
     socket.on("typing", handleTyping);
     socket.on("stop-typing", handleStopTyping);
     socket.on("message-delivered", handleDelivered);
     socket.on("message-seen", handleSeen);
-    socket.on("user-online", handleUserOnline);
-    socket.on("user-offline", handleUserOffline);
-    socket.on("presence-update", handlePresenceUpdate);
 
-    // Safe cleanup
     return () => {
-      if (socket) {
-        socket.off("receive-message", handleReceiveMessage);
-        socket.off("conversation-updated", updateConversationInCache);
-        socket.off("typing", handleTyping);
-        socket.off("stop-typing", handleStopTyping);
-        socket.off("message-delivered", handleDelivered);
-        socket.off("message-seen", handleSeen);
-        socket.off("user-online", handleUserOnline);
-        socket.off("user-offline", handleUserOffline);
-        socket.off("presence-update", handlePresenceUpdate);
-      }
+      socket.off("receive-message", handleReceiveMessage);
+      socket.off("conversation-updated", updateConversationInCache);
+      socket.off("typing", handleTyping);
+      socket.off("stop-typing", handleStopTyping);
+      socket.off("message-delivered", handleDelivered);
+      socket.off("message-seen", handleSeen);
     };
-  }, [
-    activeUserId,
-    user?._id,
-    updateConversationInCache,
-    // Add other stable dependencies here if needed
-  ]);
+  }, [socket, isConnected, activeUserId, user?._id, updateConversationInCache]);
 
-  // Presence polling
+  // Presence polling for active chat
   useEffect(() => {
-    const socket = socketRef.current;
-    if (!socket || !activeUserId) return;
+    if (!socket || !isConnected || !activeUserId) return;
 
     socket.emit("get-presence", { targetUserId: activeUserId });
 
@@ -443,15 +443,14 @@ const Messages = () => {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [activeUserId]);
+  }, [socket, isConnected, activeUserId]);
 
-  // ─── Rest of your component remains unchanged ──────────────────────
-  // Load messages, load more, typing, send, JSX, etc.
-
+  // Load messages
   useEffect(() => {
     if (activeUserId) refetch();
   }, [activeUserId, refetch]);
 
+  // Handle incoming messages data from query
   useEffect(() => {
     if (!msgData?.data || isLoading || !activeUserId) return;
     if (lastRequestedCursor.current === fetchCursor) return;
@@ -529,8 +528,7 @@ const Messages = () => {
   const handleTyping = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setText(e.target.value);
-      const socket = socketRef.current;
-      if (!activeUserId || !socket?.connected) return;
+      if (!socket || !isConnected || !activeUserId) return;
 
       socket.emit("typing", { receiverId: activeUserId });
       clearTimeout(typingTimeoutRef.current!);
@@ -538,7 +536,7 @@ const Messages = () => {
         socket.emit("stop-typing", { receiverId: activeUserId });
       }, 1800);
     },
-    [activeUserId],
+    [socket, isConnected, activeUserId],
   );
 
   const handleSend = () => {
@@ -568,6 +566,24 @@ const Messages = () => {
     setImagePreview(null);
 
     mutate(formData, {
+      onSuccess: response => {
+        const savedMsg = response?.data;
+        if (savedMsg) {
+          setMessages(prev =>
+            prev.map(m =>
+              m._id === tempId
+                ? {
+                    ...savedMsg,
+                    senderId: { _id: user?._id },
+                    status: "sent",
+                  }
+                : m,
+            ),
+          );
+          // Optional: invalidate conversations to refetch if cache update missed
+          queryClient.invalidateQueries({ queryKey });
+        }
+      },
       onError: () => {
         setMessages(prev =>
           prev.map(m => (m._id === tempId ? { ...m, status: "failed" } : m)),
@@ -582,6 +598,21 @@ const Messages = () => {
     setRating(0);
     setReviewText("");
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showEmoji &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowEmoji(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showEmoji]);
 
   return (
     <>
