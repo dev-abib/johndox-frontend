@@ -84,7 +84,7 @@ const Messages = () => {
     isFetching,
     isLoading,
     refetch,
-  } = useGetSingleUserMessage(token, activeUserId ?? undefined);
+  } = useGetSingleUserMessage(token, activeUserId ?? undefined, fetchCursor);
 
   const { mutate, isPending } = sendMessage(
     token,
@@ -309,33 +309,47 @@ const Messages = () => {
     if (activeUserId) refetch();
   }, [activeUserId, refetch]);
 
-  // Handle incoming messages data from query
   useEffect(() => {
     if (!msgData?.data || isLoading || !activeUserId) return;
     if (lastRequestedCursor.current === fetchCursor) return;
+
     lastRequestedCursor.current = fetchCursor || "initial";
 
     const incoming = msgData.data.messages || [];
+
     setMessages(prev => {
-      const ids = new Set(prev.map(m => String(m._id)));
-      const uniqueNew = incoming
-        .filter((m: any) => !ids.has(String(m._id)))
-        .reverse();
-      return isPrepending ? [...uniqueNew, ...prev] : [...prev, ...uniqueNew];
+      const existingIds = new Set(prev.map(m => String(m._id)));
+
+      // Filter out already present messages
+      const newUnique = incoming.filter(
+        (m: any) => !existingIds.has(String(m._id)),
+      );
+
+      if (isPrepending) {
+        return [...newUnique, ...prev];
+      } else {
+        return [...newUnique.reverse(), ...prev];
+      }
     });
+
     setHasMore(!!msgData.data.hasMore);
     setNextCursor(msgData.data.nextCursor ?? null);
     setIsPrepending(false);
   }, [msgData, activeUserId, isLoading, fetchCursor, isPrepending]);
 
   const loadMoreMessages = useCallback(() => {
-    if (!hasMore || loadingMore || isFetching || isLoading || !nextCursor)
+    if (!hasMore || loadingMore || isFetching || isLoading || !nextCursor) {
       return;
+    }
+
     const cursorStr = JSON.stringify({
       createdAt: nextCursor.createdAt,
       _id: nextCursor._id,
     });
-    if (lastRequestedCursor.current === cursorStr) return;
+
+    if (lastRequestedCursor.current === cursorStr) {
+      return;
+    }
 
     if (messagesContainerRef.current) {
       prevScrollHeightRef.current = messagesContainerRef.current.scrollHeight;
@@ -345,6 +359,7 @@ const Messages = () => {
     setIsPrepending(true);
     setLoadingMore(true);
     setFetchCursor(cursorStr);
+
     refetch();
   }, [hasMore, loadingMore, isFetching, isLoading, nextCursor, refetch]);
 
