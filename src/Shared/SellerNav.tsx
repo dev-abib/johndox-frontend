@@ -77,7 +77,7 @@ const SellerNav = () => {
                   href="/seller/contact-us"
                   className="hover:text-black transition"
                 >
-                  Contract Us
+                  Contact Us
                 </Link>
               </li>
 
