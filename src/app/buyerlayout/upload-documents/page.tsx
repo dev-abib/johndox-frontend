@@ -54,7 +54,7 @@ const DocumentVerificationPage = () => {
       <Container>
         {/* Back Link */}
         <Link
-          href="/seller/profile-info"
+          href="/buyer/profile-info"
           className="flex items-center gap-x-2 text-[#0085FF] text-xl sm:text-2xl lg:text-3xl font-medium mb-8 hover:underline"
         >
           <IoIosArrowBack className="size-7 lg:size-9" />

@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
+import { useRouter } from "next/router";
 
 // Request Tour
 export const RequestTour = (token?: string) => {
@@ -94,17 +95,32 @@ export const useCurrencyConverter = () => {
     endpoint: "/convert-hnl-to-usd",
     headers: {
       Authorization: token ? `Bearer ${token}` : "",
-    }
+    },
   });
 };
 // Loan Converter
 export const LoanConverter = () => {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   return useClientApi({
     method: "post",
     key: ["LoanConverter"],
     endpoint: "/price-estimator",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+};
+
+export const usePropertyView = () => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  return useClientApi({
+    method: "get",
+    trigger: true,
+    key: ["propertyView"],
     headers: {
       Authorization: token ? `Bearer ${token}` : "",
     },

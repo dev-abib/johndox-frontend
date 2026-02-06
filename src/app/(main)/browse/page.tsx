@@ -26,8 +26,8 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import toast from "react-hot-toast";
-import { usePathname } from "next/navigation";
-import { AddFavourite } from "@/Hooks/api/post_api";
+import { usePathname, useRouter } from "next/navigation";
+import { AddFavourite, usePropertyView } from "@/Hooks/api/post_api";
 
 const page = () => {
   const { mutate } = AddFavourite();
@@ -48,6 +48,23 @@ const page = () => {
   const [bathrooms, setBathrooms] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
+  const router = useRouter();
+  const propertyViewMutation = usePropertyView();
+
+  const handleContact = async (id: string) => {
+    if (!id) return;
+
+    try {
+      await propertyViewMutation.mutateAsync({
+        endpoint: `/property/${id}/view`,
+      });
+
+      router.push(`/browse/${id}`);
+    } catch (err) {
+      console.error("Tracking failed, navigating anyway", err);
+      router.push(`/browse/${id}`);
+    }
+  };
 
   const handleSearch = () => {
     const filters = {
@@ -544,11 +561,12 @@ const page = () => {
                       </div>
                     </div>
 
-                    <Link href={`/browse/${item._id}`}>
-                      <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
-                        Contact
-                      </button>
-                    </Link>
+                    <button
+                      onClick={() => handleContact(item._id)}
+                      className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
+                    >
+                      Contact
+                    </button>
                   </div>
                 </div>
               ))}
