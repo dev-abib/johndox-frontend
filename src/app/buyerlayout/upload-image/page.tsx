@@ -55,7 +55,7 @@ const EditPhotoPage = () => {
     <section className="mt-10">
       <Container>
         <Link
-          href="/seller/profile-info"
+          href="/buyer/profile-info"
           className="flex items-center gap-x-2 text-[#0085FF] text-[24px] lg:text-[32px] font-medium mb-8 hover:underline"
         >
           <IoIosArrowBack className="size-7 lg:size-9" />
