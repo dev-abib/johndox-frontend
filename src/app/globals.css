@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-
-  --color-primary-blue: #0085FF;
+  --color-primary-blue: #0085ff;
   --color-secondary-blue: #0184ff;
-  --color-text-dark: #5F5F5F;
-  --color-muted-gray: #DFE3E8;
+  --color-text-dark: #5f5f5f;
+  --color-muted-gray: #dfe3e8;
   --font-montserrat: var(--font-montserrat);
 
   /* Breakpoints */
@@ -20,6 +19,7 @@
 
 body {
   @apply font-montserrat;
+  top: 0 !important;
 }
 
 /* Custom CSS */
@@ -28,19 +28,18 @@ body {
   @apply text-xl;
 }
 .footer_text {
-  @apply  xl:text-[20px] font-medium leading-[30px] text-muted-gray;
+  @apply xl:text-[20px] font-medium leading-[30px] text-muted-gray;
 }
 .menu_item {
-  @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark ;
+  @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark;
 }
 .Auth_section_title {
-  @apply 2xl:text-[32px] font-semibold leading-[48px] text-primary-blue ;
+  @apply 2xl:text-[32px] font-semibold leading-[48px] text-primary-blue;
 }
 
 .section_description {
   @apply text-base;
 }
-
 
 .bannerhero {
   background-image: url("../Assets/aboutbanner.png");
@@ -53,4 +52,13 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.goog-te-banner-frame,
+.goog-te-gadget-icon,
+.goog-te-gadget-simple {
+  display: none !important;
+}
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none;
 }

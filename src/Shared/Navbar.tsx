@@ -165,6 +165,17 @@ const Navbar = () => {
     );
   };
 
+  const changeLanguage = (lang: "en" | "es") => {
+    const select = document.querySelector(
+      ".goog-te-combo",
+    ) as HTMLSelectElement;
+
+    if (!select) return;
+
+    select.value = lang;
+    select.dispatchEvent(new Event("change"));
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
@@ -191,7 +202,6 @@ const Navbar = () => {
             <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
               {config.desktopLinks.map(renderDesktopLink)}
 
-              {/* Language dropdown */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
@@ -220,6 +230,7 @@ const Navbar = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
+                        changeLanguage(lang === "Spanish" ? "es" : "en");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
                     >
@@ -297,6 +308,7 @@ const Navbar = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
+                        changeLanguage(lang === "English" ? "es" : "en");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
                     >
