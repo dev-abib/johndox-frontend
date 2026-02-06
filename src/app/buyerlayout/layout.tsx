@@ -9,7 +9,7 @@ export default function BuyerLayout({
 }) {
   return (
     <PrivateRoute allowedRoles={["buyer"]}>
-      <BuyerNav /> <main className="min-h-screen mt-28">{children}</main>
+      <BuyerNav /> <main className="mt-28">{children}</main>
       <Footer />
     </PrivateRoute>
   );
