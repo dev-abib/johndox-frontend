@@ -45,8 +45,6 @@ export const rateUser = (
     },
     enabled,
     onSuccess: (data: any) => {
-      console.log(data);
-      
       if (data?.success) {
         toast.success(data?.message);
       }
@@ -60,7 +58,7 @@ export const rateUser = (
 export const useGetConversations = (token?: string) => {
   return useClientApi({
     method: "get",
-    key: ["conversations"],
+    key: ["conversations", token],
     enabled: !!token,
     endpoint: "/chat/conversations",
     isPrivate: true,
