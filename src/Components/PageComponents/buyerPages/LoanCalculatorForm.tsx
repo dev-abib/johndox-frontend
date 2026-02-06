@@ -1,9 +1,9 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
-import Container from "@/Components/Common/Container";
 import { LoanConverter } from "@/Hooks/api/post_api";
+import Container from "@/Components/Common/Container";
+import { useForm, Controller } from "react-hook-form";
 
 type LoanFormInput = {
   assetsPrice: string;
@@ -13,8 +13,8 @@ type LoanFormInput = {
 };
 
 const LoanCalculatorForm = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState<LoanFormInput | null>(
     null,
   );
@@ -24,7 +24,7 @@ const LoanCalculatorForm = () => {
       assetsPrice: "950000",
       downPayment: "20000",
       loanTerms: "30",
-      interestRate: "18",
+      interestRate: "18",       
     },
   });
 
