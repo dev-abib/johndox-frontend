@@ -39,13 +39,12 @@ const steps = [
   { id: 2, name: "Details" },
   { id: 3, name: "Media" },
 ];
-const TOTAL_STEPS = steps.length;
 
 export default function EditListingPage() {
   const params = useParams();
   const queryClient = useQueryClient();
-  const [currentStep, setCurrentStep] = useState(1);
   const listingId = params?.id?.toString() || "";
+  const [currentStep, setCurrentStep] = useState(1);
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const { data } = useAlllisting(token);

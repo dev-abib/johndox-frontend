@@ -1,91 +1,107 @@
 "use client";
 
-import { useState } from "react";
+import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { PiSpinnerBold } from "react-icons/pi";
 import Container from "@/Components/Common/Container";
+import { useCurrencyConverter } from "@/Hooks/api/post_api";
 
 type ConverterForm = {
   lempira: string;
-  downPayment: string;
+  usd: string;
 };
 
 const CurrencyConverter = () => {
   const { register, handleSubmit, setValue, watch } = useForm<ConverterForm>({
     defaultValues: {
-      lempira: "$ 950,000",
-      downPayment: "$ 2000",
+      lempira: "20,000",
+      usd: "755.32",
     },
   });
 
-  const [isSwapped, setIsSwapped] = useState(false);
+  const { mutate, isLoading } = useCurrencyConverter();
 
   const onSubmit = (data: ConverterForm) => {
-    console.log("Converter Data:", data);
+    const cleanedLempira = data.lempira.replace(/[^0-9.]/g, "");
+
+    mutate(
+      { lempira: cleanedLempira },
+      {
+        onSuccess: (res: any) => {
+          if (res?.data) {
+            toast.success("Currency converted successfully");
+            setValue("lempira", res.data.lempira.toLocaleString());
+            setValue("usd", res.data.usd.toLocaleString());
+          }
+        },
+      },
+    );
   };
 
+  // 4. Handle Swap Logic
   const handleSwap = () => {
-    const left = watch("lempira");
-    const right = watch("downPayment");
+    const currentLempira = watch("lempira");
+    const currentUsd = watch("usd");
 
-    setValue("lempira", right);
-    setValue("downPayment", left);
-
-    setIsSwapped(prev => !prev);
+    setValue("lempira", currentUsd);
+    setValue("usd", currentLempira);
   };
 
   return (
     <Container>
       <div className="w-full mb-30">
-        {/* Title */}
         <h2 className="text-xl font-semibold text-[#212B36] mb-4">
           Currency Converter
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Gray Wrapper */}
           <div className="bg-[#F9FAFB] rounded-xl px-6 py-8">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-end">
-              {/* Left Input */}
+              {/* Lempira Input */}
               <div>
                 <label className="block text-sm font-medium text-[#5F5F5F] mb-2">
-                  Lempira
+                  Lempira (HNL)
                 </label>
                 <input
                   {...register("lempira")}
-                  className="w-full border border-[#CFCFCF] bg-white px-4 py-3 rounded-lg text-sm text-[#212B36] focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                  className="w-full border border-[#CFCFCF] bg-white px-4 py-3 rounded-lg text-sm text-[#212B36] focus:outline-none focus:border-primary-blue"
                 />
               </div>
 
-              {/* Swap Icon */}
+              {/* Swap Button */}
               <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={handleSwap}
-                  className="w-10 h-10 rounded-full bg-[#ECECEC] flex items-center justify-center hover:bg-[#E0E0E0] transition cursor-pointer"
+                  className="w-10 h-10 rounded-full bg-[#ECECEC] flex items-center justify-center hover:bg-[#E0E0E0] transition-colors"
                 >
-                  <span className="text-lg text-[#212B36]">⇄</span>
+                  ⇄
                 </button>
               </div>
 
-              {/* Right Input */}
+              {/* USD Input */}
               <div>
                 <label className="block text-sm font-medium text-[#5F5F5F] mb-2">
-                  Down Payment
+                  USD ($)
                 </label>
                 <input
-                  {...register("downPayment")}
-                  className="w-full border border-[#CFCFCF] bg-white px-4 py-3 rounded-lg text-sm text-[#212B36] focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                  {...register("usd")}
+                  className="w-full border border-[#CFCFCF] bg-white px-4 py-3 rounded-lg text-sm text-[#212B36] focus:outline-none focus:border-primary-blue"
                 />
               </div>
             </div>
           </div>
 
-          {/* OK Button */}
           <button
             type="submit"
-            className="mt-6 w-[100px] bg-primary-blue text-white py-2 rounded-lg text-sm font-medium hover:opacity-90 transition cursor-pointer"
+            disabled={isLoading}
+            className="mt-6 w-[100px] cursor-pointer bg-primary-blue text-white py-2 rounded-lg text-sm font-medium hover:opacity-90 disabled:bg-gray-400"
           >
-            OK
+            {isLoading ? (
+              <PiSpinnerBold className="animate-spin size-[20px] fill-white mx-auto" />
+            ) : (
+              "OK"
+            )}
           </button>
         </form>
       </div>

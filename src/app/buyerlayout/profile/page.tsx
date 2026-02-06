@@ -1,5 +1,5 @@
 "use client";
-import React, { SVGProps, useState } from "react";
+import React, { SVGProps, useEffect, useState } from "react";
 import Container from "@/Components/Common/Container";
 import SavedSearches from "@/Components/PageComponents/buyerPages/SavedSearches";
 import {
@@ -11,6 +11,8 @@ import {
 import MyFavorites from "@/Components/PageComponents/buyerPages/MyFavorites";
 import Messages from "@/Components/PageComponents/buyerPage/Profile/Messages";
 import Setting from "@/Components/PageComponents/buyerPage/Profile/Setting";
+import { getItem } from "@/lib/localStorage";
+import { useGetConversations } from "@/Hooks/api/message.api";
 
 interface Tab {
   label: string;
@@ -20,36 +22,43 @@ interface Tab {
   hasUnread?: boolean;
 }
 
-const tabs: Tab[] = [
-  {
-    label: "Favorites",
-    icon: Listing,
-    active: false,
-    badge: null,
-  },
-  {
-    label: "Searches",
-    icon: Analytics,
-    active: false,
-    badge: null,
-  },
-  {
-    label: "Messages",
-    icon: Message,
-    active: true,
-    badge: 2,
-    hasUnread: true,
-  },
-  {
-    label: "Settings",
-    icon: Settings,
-    active: false,
-    badge: null,
-  },
-];
-
 const page = () => {
   const [activetab, setActiveTab] = useState("Favorites");
+  const [token, setToken] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    setToken(getItem("token"));
+  }, []);
+
+  const { data: msgData } = useGetConversations(token);
+
+
+  const tabs: Tab[] = [
+    {
+      label: "Favorites",
+      icon: Listing,
+      active: false,
+      badge: null,
+    },
+    {
+      label: "Searches",
+      icon: Analytics,
+      active: false,
+      badge: null,
+    },
+    {
+      label: "Messages",
+      icon: Message,
+      active: true,
+      badge: msgData?.data?.totalUnreadCount,
+      hasUnread: true,
+    },
+    {
+      label: "Settings",
+      icon: Settings,
+      active: false,
+      badge: null,
+    },
+  ];
 
   return (
     <section className="lg:pt-10 pt-0">
@@ -83,9 +92,9 @@ const page = () => {
                   <item.icon />
                 </div>
                 {item.label}
-                {item.badge && (
+                {item?.badge !== null && item?.badge !== 0 && (
                   <span className="ml-2 bg-red-500 text-white text-sm px-2 py-0.5 rounded-full">
-                    {item.badge}
+                    {item?.badge}
                   </span>
                 )}
               </button>
