@@ -14,6 +14,7 @@ import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
 import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListing";
 import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
 import { GetAnalytics } from "@/Hooks/api/dashboard_api";
+import { useGetConversations } from "@/Hooks/api/message.api";
 
 interface Tab {
   label: string;
@@ -21,19 +22,25 @@ interface Tab {
   badge?: number | null;
 }
 
-const tabs: Tab[] = [
-  { label: "My Listings", icon: Listing },
-  { label: "Messages", icon: Message, badge: 2 },
-  { label: "Analytics", icon: Analytics },
-  { label: "Settings", icon: Settings },
-  { label: "Subscription", icon: Subscription },
-];
-
 const page = () => {
   const [activetab, setActiveTab] = useState("My Listings");
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { data } = GetAnalytics(token);
+
+  const { data: msgData } = useGetConversations(token);
+
+  const tabs: Tab[] = [
+    { label: "My Listings", icon: Listing },
+    {
+      label: "Messages",
+      icon: Message,
+      badge: msgData?.data?.totalUnreadCount,
+    },
+    { label: "Analytics", icon: Analytics },
+    { label: "Settings", icon: Settings },
+    { label: "Subscription", icon: Subscription },
+  ];
 
   const stats = [
     { value: data?.data?.allListing || 0, label: "Active Listings" },
@@ -89,9 +96,9 @@ const page = () => {
               >
                 <item.icon />
                 {item.label}
-                {item.badge && (
+                {item.badge && item?.badge !== null && item?.badge !== 0 && (
                   <span className="ml-2 bg-red-500 text-white text-sm px-2 py-0.5 rounded-full">
-                    {item.badge}
+                    {item?.badge}
                   </span>
                 )}
               </button>

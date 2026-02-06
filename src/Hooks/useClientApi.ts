@@ -53,29 +53,24 @@ export default function useClientApi({
       refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
-
-      // Allow override if needed
       ...queryOptions,
     });
   }
 
-  // =======================================================
-  // MUTATION — NO CACHE BY NATURE
   return useMutation({
     mutationKey: key,
-    mutationFn: async (variables?: { endpoint?: string; data?: any } | any) => {
-      const dynamicEndpoint = variables?.endpoint || endpoint;
-      const payload = variables?.data ?? variables;
-
-      const res = await axiosInstance[method](dynamicEndpoint!, payload, {
-        headers,
+    mutationFn: async (variables?: any) => {
+      const res = await axiosInstance[method](endpoint!, variables, {
+        headers: {
+          ...headers,
+        },
         ...axiosOptions,
       });
-
       return res.data;
     },
     onSuccess,
     onError,
     ...mutationOptions,
   });
+
 }

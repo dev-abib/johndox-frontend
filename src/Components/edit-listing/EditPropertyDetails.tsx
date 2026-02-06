@@ -18,26 +18,20 @@ export default function EditPropertyDetails({
 
   useEffect(() => {
     if (listing) {
-      // 1. Get existing form values to prevent overwriting Basic Info
       const currentValues = getValues();
 
-      // 2. Convert API string array ['Garden', 'Gym'] to object { garden: true, gym: true }
       const amenitiesObject: Record<string, boolean> = {};
       if (Array.isArray(listing.amenities)) {
         listing.amenities.forEach((item: string) => {
-          // Convert "MountainView" to "mountainView" to match your register keys
           const key = item.charAt(0).toLowerCase() + item.slice(1);
           amenitiesObject[key] = true;
         });
       }
-
-      // 3. Reset form with mapped property details
       reset({
         ...currentValues,
         bedrooms: listing.bedrooms,
         bathrooms: listing.bathrooms,
         yearBuilt: listing.yearBuilt,
-        // Map API areaInMeter to your form "area" field
         area: listing.areaInMeter,
         lotSize: listing.areaInSqMeter,
         amenities: amenitiesObject,

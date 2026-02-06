@@ -5,31 +5,24 @@ import { FaTimes } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
 import { getItem } from "@/lib/localStorage";
 import { sendMessage } from "@/Hooks/api/message.api";
-import useAuth from "@/Hooks/useAuth";
+import { useParams } from "next/navigation";
 
-const MessageModal = ({
-  isOpen,
-  onClose,
-  userId,
-}: {
+interface MessageModalProps {
   isOpen: boolean;
   onClose: () => void;
   userId: string;
-}) => {
+}
+
+const MessageModal = ({ isOpen, onClose, userId }: MessageModalProps) => {
+  const { id: propertyId } = useParams(); // property id from route
   const [token, setToken] = useState<string | undefined>(undefined);
+
   const {
     control,
     reset,
     handleSubmit,
     formState: { errors },
-  } = useForm();
-  const [submittedData, setSubmittedData] = useState<any>(null);
-
-  if (token === undefined || null) {
-    return
-  }
-
-  const { mutate, isPending } = sendMessage(token, userId);
+  } = useForm<{ message: string }>();
 
   useEffect(() => {
     if (isOpen) {
@@ -37,9 +30,15 @@ const MessageModal = ({
     }
   }, [isOpen]);
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    mutate(data, {
+  // Initialize sendMessage hook
+  const { mutate, isPending } = sendMessage(token, userId, !!token);
+
+  const onSubmit = (data: { message: string }) => {
+    // Prepare payload with optional propertyId
+    const payload: any = { message: data.message };
+    if (propertyId) payload.propertyId = propertyId;
+
+    mutate(payload, {
       onSuccess: () => {
         reset();
         onClose();
@@ -85,14 +84,13 @@ const MessageModal = ({
                   {...field}
                   placeholder="I'm interested in this property..."
                   className="w-full px-4 py-2 border border-[#E7E7E7] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={4}
                 ></textarea>
               )}
             />
             {errors.message && (
-              <p className="text-sm text-red-500">
-                {typeof errors.message.message === "string"
-                  ? errors.message.message
-                  : "Message is required"}
+              <p className="text-sm text-red-500 mt-1">
+                {errors.message.message}
               </p>
             )}
           </div>
@@ -101,9 +99,14 @@ const MessageModal = ({
           <div className="text-center">
             <button
               type="submit"
-              className="w-full bg-primary-blue text-white font-medium py-3 rounded-2xl hover:bg-transparent hover:text-primary-blue border border-primary-blue transition-all duration-300"
+              disabled={isPending}
+              className={`w-full font-medium py-3 rounded-2xl transition-all duration-300 ${
+                isPending
+                  ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+                  : "bg-primary-blue text-white hover:bg-transparent hover:text-primary-blue border border-primary-blue"
+              }`}
             >
-              Send Message
+              {isPending ? "Sending..." : "Send Message"}
             </button>
           </div>
         </form>
