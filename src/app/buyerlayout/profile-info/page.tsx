@@ -7,7 +7,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import React, { useEffect, useState } from "react";
 import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
-import Profilepic from "../../../Assets/profilepic.png";
+import Profilepic from "../../../Assets/dummy.jpg";
 import {
   useGetUserData,
   useLogout,
@@ -31,7 +31,6 @@ const AccountSettingsPage = () => {
   useEffect(() => {
     setToken(getItem("token"));
   }, []);
-
 
   const { data } = useGetUserData(token);
   const { data: msgData } = useGetConversations(token);

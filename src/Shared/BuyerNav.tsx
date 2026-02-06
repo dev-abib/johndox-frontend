@@ -119,7 +119,7 @@ const BuyerNav = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
-                        changeLanguage(lang === "Spanish" ? "es" : "en");
+                        changeLanguage(lang === "English" ? "en" : "es");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
                     >
@@ -227,7 +227,7 @@ const BuyerNav = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
-                        changeLanguage(lang === "Spanish" ? "es" : "en");
+                         changeLanguage(lang === "English" ? "en" : "es");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
                     >

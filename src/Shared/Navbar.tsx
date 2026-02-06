@@ -308,7 +308,7 @@ const Navbar = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
-                        changeLanguage(lang === "English" ? "es" : "en");
+                        changeLanguage(lang === "English" ? "en" : "es");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
                     >
