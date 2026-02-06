@@ -1,17 +1,25 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PiSpinnerBold } from "react-icons/pi";
 import Container from "@/Components/Common/Container";
-import { useUpdateUserBuyer } from "@/Hooks/api/auth_api";
-import DefaultProfilePic from "../../../Assets/profilepic.png";
+import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
+import DefaultProfilePic from "../../../Assets/dummy.jpg";
 import { IoIosArrowBack, IoMdCloudUpload } from "react-icons/io";
+import { getItem } from "@/lib/localStorage";
 
 const EditPhotoPage = () => {
   const { mutate, isPending } = useUpdateUserBuyer();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [token, setToken] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setToken(getItem("token"));
+  }, []);
+
+  const { data } = useGetUserData(token);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,7 +55,7 @@ const EditPhotoPage = () => {
     <section className="mt-10">
       <Container>
         <Link
-          href="/seller/profile-info"
+          href="/buyer/profile-info"
           className="flex items-center gap-x-2 text-[#0085FF] text-[24px] lg:text-[32px] font-medium mb-8 hover:underline"
         >
           <IoIosArrowBack className="size-7 lg:size-9" />
@@ -65,7 +73,7 @@ const EditPhotoPage = () => {
 
           <div className="flex justify-center mb-5 lg:mb-12">
             <Image
-              src={displayImage}
+              src={data?.data?.profilePicture || displayImage}
               alt="Profile preview"
               width={200}
               height={200}

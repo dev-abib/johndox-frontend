@@ -12,6 +12,7 @@ import React, {
 } from "react";
 import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import {
+  rateUser,
   sendMessage,
   useGetConversations,
   useGetSingleUserMessage,
@@ -19,12 +20,13 @@ import {
 import { getItem } from "@/lib/localStorage";
 import useAuth from "@/Hooks/useAuth";
 import { formatDistanceToNow } from "date-fns";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
+import toast from "react-hot-toast";
 
 const Messages = () => {
-  const { socket, isConnected } = useSocket();
+  const { socket, isConnected, setActiveChatId } = useSocket();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const searchParams = useSearchParams();
@@ -59,6 +61,7 @@ const Messages = () => {
   const prevScrollHeightRef = useRef<number | null>(null);
   const prevScrollTopRef = useRef<number | null>(null);
   const justSentMessageRef = useRef<boolean>(false);
+  const isInitialLoadRef = useRef<boolean>(true);
 
   // Set active chat from URL query param
   useEffect(() => {
@@ -67,6 +70,10 @@ const Messages = () => {
       setActiveUserId(chat);
     }
   }, [searchParams, activeUserId]);
+
+  useEffect(() => {
+    setActiveChatId(activeUserId);
+  }, [activeUserId, setActiveChatId]);
 
   const queryKey = ["conversations", token];
   const { data: convData } = useGetConversations(token);
@@ -77,7 +84,7 @@ const Messages = () => {
     isFetching,
     isLoading,
     refetch,
-  } = useGetSingleUserMessage(token, activeUserId ?? undefined);
+  } = useGetSingleUserMessage(token, activeUserId ?? undefined, fetchCursor);
 
   const { mutate, isPending } = sendMessage(
     token,
@@ -85,9 +92,16 @@ const Messages = () => {
     !!token,
   );
 
+  const { mutate: addRating, isPending: isUserRatingPending } = rateUser(
+    token,
+    activeUserId ?? undefined,
+    !!token,
+  );
+
   const chatUser = msgData?.data?.chatUser;
   const currentConv = conversations.find(
-    (c: any) => c.otherUser?.id === activeUserId,
+    (c: any) =>
+      String(c.otherUser?.id ?? c.otherUser?._id) === String(activeUserId),
   );
   const conversationId = currentConv?.conversationId;
 
@@ -106,7 +120,6 @@ const Messages = () => {
       .forEach(m => socket.emit("message-seen", { messageId: m._id }));
   }, [activeUserId, conversationId, messages, socket, isConnected, user?._id]);
 
-  // Reset state on chat switch
   useEffect(() => {
     setPartnerOnline(false);
     setPartnerLastSeen(null);
@@ -120,166 +133,16 @@ const Messages = () => {
     setImage(null);
     setImagePreview(null);
     setFetchCursor(undefined);
+    isInitialLoadRef.current = true;
   }, [activeUserId]);
 
-  // Update conversation cache (last message, unread, etc.)
-  const updateConversationInCache = useCallback(
-    (payload: any) => {
-      queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old?.data?.conversations) return old;
-
-        const updated = old.data.conversations
-          .map((conv: any) => {
-            if (conv.conversationId !== payload.conversationId) return conv;
-            return {
-              ...conv,
-              unreadCount: payload.unreadCount ?? conv.unreadCount ?? 0,
-              lastMessage: payload.lastMessage
-                ? {
-                    ...conv.lastMessage,
-                    preview:
-                      payload.lastMessage.text ||
-                      conv.lastMessage?.preview ||
-                      "",
-                    sentAt: new Date(payload.lastMessage.timestamp),
-                    isSentByMe:
-                      payload.lastMessage.senderId === String(user?._id),
-                  }
-                : conv.lastMessage,
-              lastMessageAt: payload.lastMessage?.timestamp
-                ? new Date(payload.lastMessage.timestamp)
-                : conv.lastMessageAt,
-            };
-          })
-          .sort((a: any, b: any) => {
-            const ta = a.lastMessageAt
-              ? new Date(a.lastMessageAt).getTime()
-              : 0;
-            const tb = b.lastMessageAt
-              ? new Date(b.lastMessageAt).getTime()
-              : 0;
-            return tb - ta; // newest first
-          });
-
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            conversations: updated,
-            totalUnreadCount: updated.reduce(
-              (sum: number, c: any) => sum + (c.unreadCount || 0),
-              0,
-            ),
-          },
-        };
-      });
-    },
-    [queryClient, queryKey, user?._id],
-  );
-
-  // Global presence updates for conversation list (online/offline dots)
-  useEffect(() => {
-    if (!socket || !isConnected) return;
-
-    const handleUserOnline = ({ userId }: { userId: string }) => {
-      if (userId === activeUserId) setPartnerOnline(true);
-
-      queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old?.data?.conversations) return old;
-        const updatedConvs = old.data.conversations.map((conv: any) => {
-          if (conv.otherUser?.id === userId) {
-            return {
-              ...conv,
-              otherUser: { ...conv.otherUser, isOnline: true },
-            };
-          }
-          return conv;
-        });
-        return {
-          ...old,
-          data: { ...old.data, conversations: updatedConvs },
-        };
-      });
-    };
-
-    const handleUserOffline = ({
-      userId,
-      lastSeen,
-    }: {
-      userId: string;
-      lastSeen: number;
-    }) => {
-      if (userId === activeUserId) {
-        setPartnerOnline(false);
-        setPartnerLastSeen(lastSeen);
-      }
-
-      queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old?.data?.conversations) return old;
-        const updatedConvs = old.data.conversations.map((conv: any) => {
-          if (conv.otherUser?.id === userId) {
-            return {
-              ...conv,
-              otherUser: { ...conv.otherUser, isOnline: false },
-            };
-          }
-          return conv;
-        });
-        return {
-          ...old,
-          data: { ...old.data, conversations: updatedConvs },
-        };
-      });
-    };
-
-    const handlePresenceUpdate = (data: {
-      userId: string;
-      isOnline: boolean;
-      lastSeen: number | null;
-    }) => {
-      if (data.userId === activeUserId) {
-        setPartnerOnline(data.isOnline);
-        setPartnerLastSeen(data.lastSeen);
-      }
-
-      queryClient.setQueryData(queryKey, (old: any) => {
-        if (!old?.data?.conversations) return old;
-        const updatedConvs = old.data.conversations.map((conv: any) => {
-          if (conv.otherUser?.id === data.userId) {
-            return {
-              ...conv,
-              otherUser: { ...conv.otherUser, isOnline: data.isOnline },
-            };
-          }
-          return conv;
-        });
-        return {
-          ...old,
-          data: { ...old.data, conversations: updatedConvs },
-        };
-      });
-    };
-
-    socket.on("user-online", handleUserOnline);
-    socket.on("user-offline", handleUserOffline);
-    socket.on("presence-update", handlePresenceUpdate);
-
-    return () => {
-      socket.off("user-online", handleUserOnline);
-      socket.off("user-offline", handleUserOffline);
-      socket.off("presence-update", handlePresenceUpdate);
-    };
-  }, [socket, isConnected, activeUserId, queryClient, queryKey]);
-
-  // Main socket listeners for messages, typing, etc.
+  // Main socket listeners for messages, typing, etc. (chat-specific)
   useEffect(() => {
     if (!socket || !isConnected) return;
 
     const handleReceiveMessage = (msg: any) => {
       const senderId = String(msg.senderId?._id ?? msg.senderId ?? "");
       const isMyMessage = senderId === String(user?._id);
-      const isFromCurrentChat = senderId === activeUserId;
-      const isCurrentChatFocused = isFromCurrentChat && document.hasFocus();
 
       setMessages(prev => {
         const incomingId = String(msg._id);
@@ -308,65 +171,13 @@ const Messages = () => {
         ];
       });
 
-      // Play sound and show notification if not in current focused chat
-     if (!isMyMessage && !isCurrentChatFocused) {
-       // Play audio notification
-       const audio = new Audio("/notification.mp3");
-       audio.volume = 0.5;
-       audio.play().catch(err => console.error("[Audio] Failed:", err));
-
-       const title = `New message from ${msg.senderName || "User"}`;
-       const body =
-         msg.message?.slice(0, 80) ||
-         (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
-       const icon = msg.sender?.profilePicture || "/default_avatar.jpg";
-
-       const sendNotification = () => {
-         if (navigator.serviceWorker?.controller) {
-           console.log("[SW] Posting notification");
-           navigator.serviceWorker.controller.postMessage({
-             type: "SHOW_NOTIFICATION",
-             payload: {
-               title,
-               body,
-               icon,
-               tag: `chat-msg-${msg._id || Date.now()}`,
-               senderId,
-               url: `/messages?chat=${senderId}`,
-             },
-           });
-         } else {
-           console.log("[Notification] Direct fallback");
-           const notif = new Notification(title, { body, icon });
-           notif.onclick = () => {
-             window.focus();
-             setActiveUserId(senderId);
-           };
-         }
-       };
-
-       // Check permission
-       if ("Notification" in window) {
-         if (Notification.permission === "granted") {
-           sendNotification();
-         } else if (Notification.permission === "default") {
-           // Request permission if not yet decided
-           Notification.requestPermission().then(permission => {
-             if (permission === "granted") sendNotification();
-             else console.warn("[Notifications] Permission denied by user");
-           });
-         } else {
-           // User has denied notifications
-           console.warn("[Notifications] Permission denied");
-         }
-       } else {
-         console.warn("[Notifications] Not supported in this browser");
-       }
-     }
-
-
       // Auto-mark seen if focused
-      if (isFromCurrentChat && document.hasFocus() && socket.connected) {
+      if (
+        !isMyMessage &&
+        document.hasFocus() &&
+        socket.connected &&
+        senderId === activeUserId
+      ) {
         socket.emit("message-seen", { messageId: msg._id });
       }
     };
@@ -402,24 +213,81 @@ const Messages = () => {
       );
     };
 
+    const handleConversationUpdated = (payload: any) => {
+      // Conversation updates now handled by SocketProvider
+      // This handler is kept for compatibility but SocketProvider manages cache
+    };
+
     socket.on("receive-message", handleReceiveMessage);
-    socket.on("conversation-updated", updateConversationInCache);
     socket.on("typing", handleTyping);
     socket.on("stop-typing", handleStopTyping);
     socket.on("message-delivered", handleDelivered);
     socket.on("message-seen", handleSeen);
+    socket.on("conversation-updated", handleConversationUpdated);
 
     return () => {
       socket.off("receive-message", handleReceiveMessage);
-      socket.off("conversation-updated", updateConversationInCache);
       socket.off("typing", handleTyping);
       socket.off("stop-typing", handleStopTyping);
       socket.off("message-delivered", handleDelivered);
       socket.off("message-seen", handleSeen);
+      socket.off("conversation-updated", handleConversationUpdated);
     };
-  }, [socket, isConnected, activeUserId, user?._id, updateConversationInCache]);
+  }, [socket, isConnected, activeUserId, user?._id, queryClient, queryKey]);
 
-  // Presence polling for active chat
+  // Global presence listener for all conversations (updates status in list)
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handlePresenceUpdate = (data: {
+      userId: string;
+      isOnline: boolean;
+      lastSeen: number | null;
+    }) => {
+      // Update active chat display state (conversation list updates handled by SocketProvider)
+      if (String(data.userId) === String(activeUserId)) {
+        setPartnerOnline(data.isOnline);
+        setPartnerLastSeen(data.lastSeen);
+      }
+    };
+
+    socket.on("presence-update", handlePresenceUpdate);
+
+    return () => {
+      socket.off("presence-update", handlePresenceUpdate);
+    };
+  }, [socket, isConnected, activeUserId]);
+
+  // Periodically fetch presence for all users in conversation list
+  useEffect(() => {
+    if (!socket || !isConnected || !conversations.length) return;
+
+    // Initial fetch of presence for all users
+    conversations.forEach((conv: any) => {
+      const userId = conv.otherUser?.id ?? conv.otherUser?._id;
+      if (userId) {
+        socket.emit("get-presence", { targetUserId: userId });
+      }
+    });
+
+    // Periodic refresh every 30 seconds
+    const interval = setInterval(() => {
+      if (socket.connected && conversations.length) {
+        conversations.forEach((conv: any) => {
+          const userId = conv.otherUser?.id ?? conv.otherUser?._id;
+          if (userId) {
+            socket.emit("get-presence", { targetUserId: userId });
+          }
+        });
+      }
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [socket, isConnected, conversations]);
+
+  // Presence for active chat
   useEffect(() => {
     if (!socket || !isConnected || !activeUserId) return;
 
@@ -431,7 +299,9 @@ const Messages = () => {
       }
     }, 30000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, [socket, isConnected, activeUserId]);
 
   // Load messages
@@ -439,31 +309,47 @@ const Messages = () => {
     if (activeUserId) refetch();
   }, [activeUserId, refetch]);
 
-  // Handle incoming messages data from query
   useEffect(() => {
     if (!msgData?.data || isLoading || !activeUserId) return;
     if (lastRequestedCursor.current === fetchCursor) return;
+
     lastRequestedCursor.current = fetchCursor || "initial";
 
     const incoming = msgData.data.messages || [];
+
     setMessages(prev => {
-      const ids = new Set(prev.map(m => String(m._id)));
-      const uniqueNew = incoming.filter((m: any) => !ids.has(String(m._id)));
-      return isPrepending ? [...uniqueNew, ...prev] : [...prev, ...uniqueNew];
+      const existingIds = new Set(prev.map(m => String(m._id)));
+
+      // Filter out already present messages
+      const newUnique = incoming.filter(
+        (m: any) => !existingIds.has(String(m._id)),
+      );
+
+      if (isPrepending) {
+        return [...newUnique, ...prev];
+      } else {
+        return [...newUnique.reverse(), ...prev];
+      }
     });
+
     setHasMore(!!msgData.data.hasMore);
     setNextCursor(msgData.data.nextCursor ?? null);
     setIsPrepending(false);
   }, [msgData, activeUserId, isLoading, fetchCursor, isPrepending]);
 
   const loadMoreMessages = useCallback(() => {
-    if (!hasMore || loadingMore || isFetching || isLoading || !nextCursor)
+    if (!hasMore || loadingMore || isFetching || isLoading || !nextCursor) {
       return;
+    }
+
     const cursorStr = JSON.stringify({
       createdAt: nextCursor.createdAt,
       _id: nextCursor._id,
     });
-    if (lastRequestedCursor.current === cursorStr) return;
+
+    if (lastRequestedCursor.current === cursorStr) {
+      return;
+    }
 
     if (messagesContainerRef.current) {
       prevScrollHeightRef.current = messagesContainerRef.current.scrollHeight;
@@ -473,6 +359,7 @@ const Messages = () => {
     setIsPrepending(true);
     setLoadingMore(true);
     setFetchCursor(cursorStr);
+
     refetch();
   }, [hasMore, loadingMore, isFetching, isLoading, nextCursor, refetch]);
 
@@ -485,33 +372,46 @@ const Messages = () => {
       return;
 
     const container = messagesContainerRef.current;
-    const delta = container.scrollHeight - prevScrollHeightRef.current;
-    container.scrollTop = (prevScrollTopRef.current ?? 0) + delta;
 
-    prevScrollHeightRef.current = null;
-    prevScrollTopRef.current = null;
-    setLoadingMore(false);
+    requestAnimationFrame(() => {
+      if (prevScrollHeightRef.current && prevScrollTopRef.current !== null) {
+        const newScrollHeight = container.scrollHeight;
+        const heightAdded = newScrollHeight - prevScrollHeightRef.current;
+
+        container.scrollTop = (prevScrollTopRef.current ?? 0) + heightAdded;
+      }
+
+      prevScrollHeightRef.current = null;
+      prevScrollTopRef.current = null;
+      setLoadingMore(false);
+    });
   }, [isPrepending]);
 
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
-    messagesContainerRef.current?.scrollTo({
-      top: messagesContainerRef.current.scrollHeight,
-      behavior,
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "auto") => {
+    if (!messagesContainerRef.current) return;
+    requestAnimationFrame(() => {
+      if (messagesContainerRef.current) {
+        messagesContainerRef.current.scrollTop =
+          messagesContainerRef.current.scrollHeight;
+      }
     });
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!messagesContainerRef.current) return;
     const container = messagesContainerRef.current;
-    const nearBottom =
-      Math.abs(
-        container.scrollHeight - container.scrollTop - container.clientHeight,
-      ) < 120;
+    const distanceFromBottom =
+      container.scrollHeight - (container.scrollTop + container.clientHeight);
+    const isNearBottom = distanceFromBottom < 200;
 
-    if (justSentMessageRef.current || nearBottom || messages.length <= 3) {
-      scrollToBottom(justSentMessageRef.current ? "smooth" : "instant");
-      justSentMessageRef.current = false;
+    if (justSentMessageRef.current) {
+      scrollToBottom("auto");
+    } else if (isNearBottom || isInitialLoadRef.current) {
+      scrollToBottom("auto");
     }
+
+    if (isInitialLoadRef.current) isInitialLoadRef.current = false;
+    justSentMessageRef.current = false;
   }, [messages, scrollToBottom]);
 
   const handleTyping = useCallback(
@@ -569,8 +469,46 @@ const Messages = () => {
                 : m,
             ),
           );
-          // Optional: invalidate conversations to refetch if cache update missed
-          queryClient.invalidateQueries({ queryKey });
+
+          // Update conversation cache for sent message
+          queryClient.setQueryData(queryKey, (old: any) => {
+            if (!old?.data?.conversations) return old;
+
+            const updated = old.data.conversations.map((conv: any) => {
+              if (
+                String(conv.otherUser?.id ?? conv.otherUser?._id) !==
+                String(activeUserId)
+              )
+                return conv;
+
+              return {
+                ...conv,
+                lastMessage: {
+                  preview:
+                    savedMsg.message ||
+                    (savedMsg.fileType ? `[${savedMsg.fileType}]` : ""),
+                  sentAt: new Date(savedMsg.createdAt),
+                  isSentByMe: true,
+                },
+                lastMessageAt: new Date(savedMsg.createdAt),
+              };
+            });
+
+            const sorted = updated.sort((a: any, b: any) => {
+              const ta = a.lastMessageAt
+                ? new Date(a.lastMessageAt).getTime()
+                : 0;
+              const tb = b.lastMessageAt
+                ? new Date(b.lastMessageAt).getTime()
+                : 0;
+              return tb - ta;
+            });
+
+            return {
+              ...old,
+              data: { ...old.data, conversations: sorted },
+            };
+          });
         }
       },
       onError: () => {
@@ -582,10 +520,22 @@ const Messages = () => {
   };
 
   const handleApplyRating = () => {
-    console.log("Rating submitted:", rating, reviewText);
-    setIsRatingModalOpen(false);
-    setRating(0);
-    setReviewText("");
+    addRating(
+      {
+        token,
+        reciverId: activeUserId!,
+        rating: rating,
+        comment: reviewText,
+      },
+      {
+        onSuccess: (response: any) => {
+          setIsRatingModalOpen(false);
+          setRating(0);
+          setReviewText("");
+          toast.success(response?.message);
+        },
+      },
+    );
   };
 
   useEffect(() => {
@@ -722,7 +672,7 @@ const Messages = () => {
             {/* Messages list */}
             <div
               ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto flex flex-col gap-4 pb-6 scroll-smooth"
+              className="flex-1 overflow-y-auto flex flex-col gap-4 pb-6 overscroll-contain"
             >
               {hasMore && (
                 <div className="text-center py-6 sticky top-0 bg-[#F9FAFB] z-10">
