@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Container from "@/Components/Common/Container";
 import { CheckSvg } from "@/Components/Svg/SvgContainer2";
+import { getItem } from "@/lib/localStorage";
+import { checkOutPlan } from "@/Hooks/api/payment.api";
+import toast from "react-hot-toast";
 
 interface pricingprops {
   data?: any;
@@ -11,6 +14,8 @@ interface pricingprops {
 
 const PricingTable = ({ data, plan }: pricingprops) => {
   const [isYearly, setIsYearly] = useState(false);
+  const [token] = useState<string | undefined>(getItem("token"));
+  const { mutate, isPending } = checkOutPlan(token);
 
   const plansArray = plan?.data?.plans || [];
 
@@ -19,10 +24,39 @@ const PricingTable = ({ data, plan }: pricingprops) => {
       (a.pricing?.monthly?.amount || 0) - (b.pricing?.monthly?.amount || 0),
   );
 
+  const handleCheckOut = (
+    billingCycle: "monthly" | "yearly",
+    planKey: string,
+  ) => {
+    if (!token) {
+      toast.error("Please login to continue");
+      return;
+    }
+    if (isPending) return;
+
+    mutate(
+      {
+        token,
+        planKey,
+        billingCycle: billingCycle,
+      },
+      {
+        onSuccess: (response: any) => {
+          if (response?.data?.url) {
+            window.location.href = response?.data?.url;
+            return;
+          }
+        },
+        onError: (err: any) => {
+          console.error("Checkout error:", err);
+        },
+      },
+    );
+  };
+
   return (
     <section className="lg:px-6 px-3 lg:pt-10">
       <Container>
-
         <div className="text-center mb-12">
           <h2 className="text-xl md:text-3xl lg:text-[56px] font-bold text-[#0085FF]">
             {data?.data?.mainTitle || "Pricing Plans"}
@@ -68,6 +102,8 @@ const PricingTable = ({ data, plan }: pricingprops) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-[45px]">
           {sortedPlans.map((item: any) => {
+            console.log(item);
+
             const isPopular = item.isPopular;
             const price = isYearly
               ? item.pricing?.yearly?.amount
@@ -110,7 +146,12 @@ const PricingTable = ({ data, plan }: pricingprops) => {
                     </span>
                   </div>
 
-                  <button className="lg:mt-8 mt-3 md:mt-[50px] mb-8 md:mb-10 w-full rounded-xl border-2 text-base md:text-lg xl:text-2xl leading-tight md:leading-[36px] border-[#0085FF] xl:py-3 py-2 text-[#0085FF] font-semibold group-hover:bg-[#0085FF] group-hover:text-white transition">
+                  <button
+                    onClick={() =>
+                      handleCheckOut(isYearly ? "yearly" : "monthly", item?.key)
+                    }
+                    className="lg:mt-8 mt-3 md:mt-[50px] mb-8 md:mb-10 w-full rounded-xl border-2 text-base md:text-lg xl:text-2xl leading-tight md:leading-[36px] border-[#0085FF] xl:py-3 py-2 text-[#0085FF] font-semibold group-hover:bg-[#0085FF] group-hover:text-white transition"
+                  >
                     {buttonText}
                   </button>
 

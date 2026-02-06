@@ -29,10 +29,36 @@ export const sendMessage = (
   });
 };
 
+export const rateUser = (
+  token: string | undefined,
+  reciverId: string | undefined,
+  enabled: boolean,
+) => {
+  const queryClient = useQueryClient();
+
+  return useClientApi({
+    method: "post",
+    key: ["rate-user"],
+    endpoint: `/rate/${reciverId}`,
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    enabled,
+    onSuccess: (data: any) => {
+      if (data?.success) {
+        toast.success(data?.message);
+      }
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message);
+    },
+  });
+};
+
 export const useGetConversations = (token?: string) => {
   return useClientApi({
     method: "get",
-    key: ["conversations"],
+    key: ["conversations", token],
     enabled: !!token,
     endpoint: "/chat/conversations",
     isPrivate: true,
