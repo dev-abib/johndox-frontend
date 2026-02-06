@@ -12,6 +12,7 @@ import React, {
 } from "react";
 import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import {
+  rateUser,
   sendMessage,
   useGetConversations,
   useGetSingleUserMessage,
@@ -22,6 +23,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
+import toast from "react-hot-toast";
 
 const Messages = () => {
   const { socket, isConnected } = useSocket();
@@ -85,6 +87,12 @@ const Messages = () => {
     !!token,
   );
 
+  const { mutate: addRating, isPending: isUserRatingPending } = rateUser(
+    token,
+    activeUserId ?? undefined,
+    !!token,
+  );
+
   const chatUser = msgData?.data?.chatUser;
   const currentConv = conversations.find(
     (c: any) => c.otherUser?.id === activeUserId,
@@ -106,7 +114,6 @@ const Messages = () => {
       .forEach(m => socket.emit("message-seen", { messageId: m._id }));
   }, [activeUserId, conversationId, messages, socket, isConnected, user?._id]);
 
-  // Reset state on chat switch
   useEffect(() => {
     setPartnerOnline(false);
     setPartnerLastSeen(null);
@@ -309,61 +316,60 @@ const Messages = () => {
       });
 
       // Play sound and show notification if not in current focused chat
-     if (!isMyMessage && !isCurrentChatFocused) {
-       // Play audio notification
-       const audio = new Audio("/notification.mp3");
-       audio.volume = 0.5;
-       audio.play().catch(err => console.error("[Audio] Failed:", err));
+      if (!isMyMessage && !isCurrentChatFocused) {
+        // Play audio notification
+        const audio = new Audio("/notification.mp3");
+        audio.volume = 0.5;
+        audio.play().catch(err => console.error("[Audio] Failed:", err));
 
-       const title = `New message from ${msg.senderName || "User"}`;
-       const body =
-         msg.message?.slice(0, 80) ||
-         (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
-       const icon = msg.sender?.profilePicture || "/default_avatar.jpg";
+        const title = `New message from ${msg.senderName || "User"}`;
+        const body =
+          msg.message?.slice(0, 80) ||
+          (msg.fileType ? `Sent a ${msg.fileType}` : "Sent a message");
+        const icon = msg.sender?.profilePicture || "/default_avatar.jpg";
 
-       const sendNotification = () => {
-         if (navigator.serviceWorker?.controller) {
-           console.log("[SW] Posting notification");
-           navigator.serviceWorker.controller.postMessage({
-             type: "SHOW_NOTIFICATION",
-             payload: {
-               title,
-               body,
-               icon,
-               tag: `chat-msg-${msg._id || Date.now()}`,
-               senderId,
-               url: `/messages?chat=${senderId}`,
-             },
-           });
-         } else {
-           console.log("[Notification] Direct fallback");
-           const notif = new Notification(title, { body, icon });
-           notif.onclick = () => {
-             window.focus();
-             setActiveUserId(senderId);
-           };
-         }
-       };
+        const sendNotification = () => {
+          if (navigator.serviceWorker?.controller) {
+            console.log("[SW] Posting notification");
+            navigator.serviceWorker.controller.postMessage({
+              type: "SHOW_NOTIFICATION",
+              payload: {
+                title,
+                body,
+                icon,
+                tag: `chat-msg-${msg._id || Date.now()}`,
+                senderId,
+                url: `/messages?chat=${senderId}`,
+              },
+            });
+          } else {
+            console.log("[Notification] Direct fallback");
+            const notif = new Notification(title, { body, icon });
+            notif.onclick = () => {
+              window.focus();
+              setActiveUserId(senderId);
+            };
+          }
+        };
 
-       // Check permission
-       if ("Notification" in window) {
-         if (Notification.permission === "granted") {
-           sendNotification();
-         } else if (Notification.permission === "default") {
-           // Request permission if not yet decided
-           Notification.requestPermission().then(permission => {
-             if (permission === "granted") sendNotification();
-             else console.warn("[Notifications] Permission denied by user");
-           });
-         } else {
-           // User has denied notifications
-           console.warn("[Notifications] Permission denied");
-         }
-       } else {
-         console.warn("[Notifications] Not supported in this browser");
-       }
-     }
-
+        // Check permission
+        if ("Notification" in window) {
+          if (Notification.permission === "granted") {
+            sendNotification();
+          } else if (Notification.permission === "default") {
+            // Request permission if not yet decided
+            Notification.requestPermission().then(permission => {
+              if (permission === "granted") sendNotification();
+              else console.warn("[Notifications] Permission denied by user");
+            });
+          } else {
+            // User has denied notifications
+            console.warn("[Notifications] Permission denied");
+          }
+        } else {
+          console.warn("[Notifications] Not supported in this browser");
+        }
+      }
 
       // Auto-mark seen if focused
       if (isFromCurrentChat && document.hasFocus() && socket.connected) {
@@ -582,10 +588,24 @@ const Messages = () => {
   };
 
   const handleApplyRating = () => {
-    console.log("Rating submitted:", rating, reviewText);
-    setIsRatingModalOpen(false);
-    setRating(0);
-    setReviewText("");
+    console.log(activeUserId);
+
+    addRating(
+      {
+        token,
+        reciverId: activeUserId!,
+        rating: rating,
+        comment: reviewText,
+      },
+      {
+        onSuccess: (response: any) => {
+          setIsRatingModalOpen(false);
+          setRating(0);
+          setReviewText("");
+          toast.success(response?.message);
+        },
+      },
+    );
   };
 
   useEffect(() => {

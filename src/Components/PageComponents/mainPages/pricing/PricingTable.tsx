@@ -32,10 +32,6 @@ const PricingTable = ({ data, plan }: pricingprops) => {
       toast.error("Please login to continue");
       return;
     }
-
-    console.log(plan, planKey);
-    
-
     if (isPending) return;
 
     mutate(
@@ -46,8 +42,6 @@ const PricingTable = ({ data, plan }: pricingprops) => {
       },
       {
         onSuccess: (response: any) => {
-          console.log(response.data);
-
           if (response?.data?.url) {
             window.location.href = response?.data?.url;
             return;
