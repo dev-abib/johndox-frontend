@@ -15,6 +15,7 @@ import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListin
 import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
 import { GetAnalytics } from "@/Hooks/api/dashboard_api";
 import { useGetConversations } from "@/Hooks/api/message.api";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Tab {
   label: string;
@@ -30,16 +31,28 @@ const page = () => {
 
   const { data: msgData } = useGetConversations(token);
 
-  const tabs: Tab[] = [
-    { label: "My Listings", icon: Listing },
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const tabs = [
+    {
+      label: "My Listings",
+      icon: Listing,
+      route: "/seller/my-listing",
+    },
     {
       label: "Messages",
       icon: Message,
+      route: "/seller/message",
       badge: msgData?.data?.totalUnreadCount,
     },
-    { label: "Analytics", icon: Analytics },
-    { label: "Settings", icon: Settings },
-    { label: "Subscription", icon: Subscription },
+    { label: "Analytics", icon: Analytics, route: "/seller/analytics" },
+    { label: "Settings", icon: Settings, route: "/seller/settings" },
+    {
+      label: "Subscription",
+      icon: Subscription,
+      route: "/seller/subscriptions",
+    },
   ];
 
   const stats = [
@@ -79,38 +92,33 @@ const page = () => {
 
         <div className="lg:my-15 my-8 xl:flex lg:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
           {tabs.map(item => {
-            const isActive = activetab === item.label;
+            const isActive = pathname === item.route;
 
             return (
               <button
                 key={item.label}
-                onClick={() => setActiveTab(item.label)}
+                onClick={() => router.push(item.route)}
                 className={`
-          xl:px-12 px-5 py-2 xl:text-[20px] lg:text-lg text-base font-medium cursor-pointer 
-          flex gap-x-2 items-center rounded-[36px] transition-all
-          ${
-            isActive
-              ? "bg-white text-[#101010] shadow-sm"
-              : "text-[#101010]/70 hover:text-[#101010] hover:bg-white/30"
-          }`}
+        xl:px-12 px-5 py-2 xl:text-[20px] lg:text-lg text-base font-medium cursor-pointer 
+        flex gap-x-2 items-center rounded-[36px] transition-all
+        ${
+          isActive
+            ? "bg-white text-[#101010] shadow-sm"
+            : "text-[#101010]/70 hover:text-[#101010] hover:bg-white/30"
+        }
+      `}
               >
                 <item.icon />
                 {item.label}
-                {item.badge && item?.badge !== null && item?.badge !== 0 && (
+                {item.badge && item.badge !== 0 && (
                   <span className="ml-2 bg-red-500 text-white text-sm px-2 py-0.5 rounded-full">
-                    {item?.badge}
+                    {item.badge}
                   </span>
                 )}
               </button>
             );
           })}
         </div>
-
-        {activetab === "My Listings" && <MyListings />}
-        {activetab === "Messages" && <Messages />}
-        {activetab === "Analytics" && <Analytic />}
-        {activetab === "Settings" && <Setting />}
-        {activetab === "Subscription" && <SubsCription />}
       </Container>
     </section>
   );
