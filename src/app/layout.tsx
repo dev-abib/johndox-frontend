@@ -7,6 +7,7 @@ import AosProvider from "@/Provider/AosProvider/AosProvider";
 import AuthProvider from "@/Provider/AuthProvider/AuthProvider";
 import QueryProvider from "@/Provider/QueryProvider/QueryProvider";
 import { SocketProvider } from "@/Provider/SocketProvider/SocketProvider";
+import GoogleTranslateLoader from "@/Components/GoogleTranslateLoader";
 
 // Fonts
 const montserrat = Montserrat({
@@ -33,6 +34,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
+        <GoogleTranslateLoader />
         <GoogleOAuthProvider clientId="841975640697-u4amnqfefa6ndr8rvijlbfpu3qovsgur.apps.googleusercontent.com">
           <QueryProvider>
             <AuthProvider>

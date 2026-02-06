@@ -15,6 +15,7 @@ type apiProps = {
   params?: any;
   headers?: any;
   enabled?: boolean;
+  trigger?: boolean; // New: force mutation behavior
 };
 
 export default function useClientApi({
@@ -30,47 +31,49 @@ export default function useClientApi({
   mutationOptions,
   axiosOptions,
   enabled = true,
+  trigger = false,
 }: apiProps): any {
   const axiosInstance = isPrivate ? axiosSecure : axiosPublic;
 
-  // =======================================================
-  // GET (QUERY) — NO CACHE
-  if (method === "get") {
+  // Standard GET Request (Automatic fetch)
+  if (method === "get" && !trigger) {
     return useQuery({
       queryKey: key,
       queryFn: async () => {
-        const res = await axiosInstance.get(endpoint!, {
-          params,
-          headers,
-        });
+        const res = await axiosInstance.get(endpoint!, { params, headers });
         return res.data;
       },
       enabled,
-
-      // 🔥 HARD NO-CACHE DEFAULTS
       staleTime: 0,
-      cacheTime: 0,
-      refetchOnMount: true,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
       ...queryOptions,
     });
   }
 
+  // Mutation Request (Manual trigger on click)
   return useMutation({
     mutationKey: key,
     mutationFn: async (variables?: any) => {
-      const res = await axiosInstance[method](endpoint!, variables, {
-        headers: {
-          ...headers,
-        },
-        ...axiosOptions,
-      });
+      // Allow overriding endpoint dynamically
+      const finalEndpoint = variables?.endpoint || endpoint;
+
+      if (method === "get") {
+        const res = await axiosInstance.get(finalEndpoint!, {
+          params: variables?.params || params,
+          headers,
+          ...axiosOptions,
+        });
+        return res.data;
+      }
+
+      const res = await axiosInstance[method](
+        finalEndpoint!,
+        variables?.data || variables,
+        { headers, ...axiosOptions },
+      );
       return res.data;
     },
     onSuccess,
     onError,
     ...mutationOptions,
   });
-
 }

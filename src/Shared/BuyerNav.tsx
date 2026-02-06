@@ -27,6 +27,17 @@ const BuyerNav = () => {
 
   const languages = ["English", "Spanish"];
 
+  const changeLanguage = (lang: "en" | "es") => {
+    const select = document.querySelector(
+      ".goog-te-combo",
+    ) as HTMLSelectElement;
+
+    if (!select) return;
+
+    select.value = lang;
+    select.dispatchEvent(new Event("change"));
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
@@ -108,6 +119,7 @@ const BuyerNav = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
+                        changeLanguage(lang === "English" ? "en" : "es");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
                     >
@@ -215,6 +227,7 @@ const BuyerNav = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
+                         changeLanguage(lang === "English" ? "en" : "es");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
                     >

@@ -169,9 +169,6 @@ export default function CreateListingPage() {
     if (data.video) {
       formData.append("video", data.video[0]);
     }
-
-    console.log("Submitting formData with photos:", data.photos?.length || 0);
-
     addListing(formData);
   };
 

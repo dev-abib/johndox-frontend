@@ -21,10 +21,10 @@ const LoanCalculatorForm = () => {
 
   const { control, handleSubmit } = useForm<LoanFormInput>({
     defaultValues: {
-      assetsPrice: "950000",
-      downPayment: "20000",
-      loanTerms: "30",
-      interestRate: "18",       
+      assetsPrice: "00",
+      downPayment: "00",
+      loanTerms: "00",
+      interestRate: "00",       
     },
   });
 

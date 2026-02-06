@@ -1,4 +1,7 @@
 "use client";
+
+import Link from "next/link";
+
 interface heroprops {
   hero: any;
 }
@@ -28,10 +31,11 @@ const SellerPageHero = ({ hero }: heroprops) => {
           <p className="mt-4 text-base sm:text-lg text-white/90">
             {hero?.data?.subtitle}
           </p>
-
-          <button className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#2F80ED] px-8 py-4 text-white text-base font-medium hover:opacity-90 transition cursor-pointer">
-            {hero?.data?.btnTxt}
-          </button>
+          <Link href={"/seller/pricing"}>
+            <button className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#2F80ED] px-8 py-4 text-white text-base font-medium hover:opacity-90 transition cursor-pointer">
+              {hero?.data?.btnTxt}
+            </button>
+          </Link>
         </div>
       </div>
     </section>
