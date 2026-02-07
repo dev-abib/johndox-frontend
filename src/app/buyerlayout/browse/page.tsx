@@ -9,7 +9,7 @@ import {
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
 import Image from "next/image";
-import { FaCheck } from "react-icons/fa";  
+import { FaCheck } from "react-icons/fa";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
@@ -18,7 +18,11 @@ import {
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { AddFavourite, usePropertyView, UseSearchSave } from "@/Hooks/api/post_api";
+import {
+  AddFavourite,
+  usePropertyView,
+  UseSearchSave,
+} from "@/Hooks/api/post_api";
 import { ListPropertyBrowse, useGetProperties } from "@/Hooks/api/cms_api";
 import { BrowseDetailsSkeleton } from "@/Components/Skeleton/BrowseDetailsSkeleton";
 import {
@@ -50,27 +54,27 @@ const page = () => {
   const { data, isLoading } = useGetProperties(activeFilters);
   const { mutate: saveSearch } = UseSearchSave();
 
-    const router = useRouter();
-    const propertyViewMutation = usePropertyView();
-  
+  const router = useRouter();
+  const propertyViewMutation = usePropertyView();
+
   const handleContact = async (id: string) => {
     if (!id) return;
-  
+
     try {
       await propertyViewMutation.mutateAsync({
         endpoint: `/property/${id}/view`,
       });
-  
+
       router.push(`/buyerlayout/browse/${id}`);
     } catch (err) {
       console.error("Tracking failed, navigating anyway", err);
       router.push(`/browse/${id}`);
     }
-    };
+  };
 
   const handleSearch = () => {
     const filters = {
-      propertyType:                      
+      propertyType:
         propertyType === "All" ? undefined : propertyType.toLowerCase(),
       minPrice: minPrice || undefined,
       maxPrice: maxPrice || undefined,

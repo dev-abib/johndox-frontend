@@ -10,7 +10,7 @@ import {
 } from "@vis.gl/react-google-maps";
 
 interface MapsProps {
-  item?: any; 
+  item?: any;
 }
 
 const Maps: React.FC<MapsProps> = ({ item }) => {
@@ -26,7 +26,7 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
   };
 
   return (
-    <section className="lg:py-[150px] py-10">
+    <section className="lg:py-[100px] py-10">
       <Container>
         <h2 className="text-[24px] font-medium text-[#000000] mb-5">MAP</h2>
 
