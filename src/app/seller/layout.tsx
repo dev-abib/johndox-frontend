@@ -1,5 +1,5 @@
-import SellerNav from "@/Shared/SellerNav";
 import Footer from "@/Shared/Footer";
+import SellerNav from "@/Shared/SellerNav";
 import PrivateRoute from "@/Private/PrivateLayout";
 
 export default function SellerLayout({
@@ -10,7 +10,7 @@ export default function SellerLayout({
   return (
     <PrivateRoute allowedRoles={["seller"]}>
       <SellerNav />
-      <main className="min-h-screen mt-28">{children}</main>
+      <main className=" mt-28">{children}</main>
       <Footer />
     </PrivateRoute>
   );

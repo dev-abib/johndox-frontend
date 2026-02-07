@@ -24,7 +24,7 @@ const LoanCalculatorForm = () => {
       assetsPrice: "00",
       downPayment: "00",
       loanTerms: "00",
-      interestRate: "00",       
+      interestRate: "00",
     },
   });
 
@@ -49,7 +49,7 @@ const LoanCalculatorForm = () => {
 
   return (
     <Container>
-      <div className="my-10 w-full">
+      <div className="mb-20 w-full">
         <h2 className="text-xl font-semibold text-[#212B36] mb-4">
           Loan Calculator
         </h2>

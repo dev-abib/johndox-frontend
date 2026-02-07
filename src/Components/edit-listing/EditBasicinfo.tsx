@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   UseFormRegister,
@@ -94,7 +94,7 @@ export default function EditBasicinfo({
   }, [price, setValue, isInitializing]);
 
   return (
-    <div className="space-y-5 mx-20">
+    <div className="space-y-5 lg:mx-20">
       <h2 className="text-2xl font-medium">Basic Information</h2>
 
       {/* Property Name */}
@@ -232,7 +232,7 @@ export default function EditBasicinfo({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-16 w-full">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-16 w-full">
         {/* Category */}
         <div>
           <label className="block text-sm font-medium mb-2">

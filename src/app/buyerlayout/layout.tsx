@@ -1,6 +1,6 @@
-import PrivateRoute from "@/Private/PrivateLayout";
-import BuyerNav from "@/Shared/BuyerNav";
 import Footer from "@/Shared/Footer";
+import BuyerNav from "@/Shared/BuyerNav";
+import PrivateRoute from "@/Private/PrivateLayout";
 
 export default function BuyerLayout({
   children,
@@ -9,7 +9,7 @@ export default function BuyerLayout({
 }) {
   return (
     <PrivateRoute allowedRoles={["buyer"]}>
-      <BuyerNav /> <main className="min-h-screen mt-28">{children}</main>
+      <BuyerNav /> <main className="mt-28">{children}</main>
       <Footer />
     </PrivateRoute>
   );

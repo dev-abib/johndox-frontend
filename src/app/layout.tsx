@@ -6,8 +6,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AosProvider from "@/Provider/AosProvider/AosProvider";
 import AuthProvider from "@/Provider/AuthProvider/AuthProvider";
 import QueryProvider from "@/Provider/QueryProvider/QueryProvider";
-import { SocketProvider } from "@/Provider/SocketProvider/SocketProvider";
 import GoogleTranslateLoader from "@/Components/GoogleTranslateLoader";
+import { SocketProvider } from "@/Provider/SocketProvider/SocketProvider";
 
 // Fonts
 const montserrat = Montserrat({

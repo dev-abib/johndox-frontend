@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect } from "react";
 import {
   UseFormRegister,
@@ -64,7 +64,7 @@ export default function BasicInfoStep({
   }, [price, setValue]);
 
   return (
-    <div className="space-y-5 mx-20">
+    <div className="space-y-5 lg:mx-20">
       <h2 className="text-2xl font-medium">Basic Information</h2>
 
       {/* Property Name */}
@@ -204,7 +204,7 @@ export default function BasicInfoStep({
           )}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-16 w-full">
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-16 w-full">
         {/* Listing Type */}
         <div>
           <label className="block text-sm font-medium mb-2">
@@ -245,7 +245,6 @@ export default function BasicInfoStep({
                 })}
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="100 $ Dollar"
-    
               />
               {errors.priceUSD && (
                 <p className="text-red-500 text-sm mt-1">

@@ -175,10 +175,10 @@ export default function CreateListingPage() {
   return (
     <section className="py-10">
       <Container>
-        <button className="flex items-center gap-2 text-2xl lg:text-3xl font-medium text-[#0085FF] mb-12 hover:underline">
+        {/* <button className="flex items-center gap-2 text-2xl lg:text-3xl font-medium text-[#0085FF] mb-12 hover:underline">
           <IoIosArrowBack className="size-8" />
           Back
-        </button>
+        </button> */}
 
         <div className="mb-5">
           <h2 className="text-[#404040] lg:text-[32px] text-[20px] font-medium">

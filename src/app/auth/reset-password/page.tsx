@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { PiSpinnerBold } from "react-icons/pi";
 import Container from "@/Components/Common/Container";
+import { UseResetPassword } from "@/Hooks/api/auth_api";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { UseResetPassword } from "@/Hooks/api/auth_api";
-import { PiSpinnerBold } from "react-icons/pi";
 
 type LoginFormData = {
   password: string;

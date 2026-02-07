@@ -267,7 +267,7 @@ const page = () => {
                 Real Estate & Homes For Rent
               </h2>
               <p className="font-normal text-[#212B36] lg:text-base text-sm">
-                ( Showing 24 properties )
+                ( Showing {displayedProperties?.length} properties )
               </p>
             </div>
             <div className="w-full md:w-auto">

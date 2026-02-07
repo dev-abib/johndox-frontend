@@ -10,22 +10,23 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import {
   rateUser,
   sendMessage,
   useGetConversations,
   useGetSingleUserMessage,
 } from "@/Hooks/api/message.api";
-import { getItem } from "@/lib/localStorage";
-import useAuth from "@/Hooks/useAuth";
-import { formatDistanceToNow } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
 import toast from "react-hot-toast";
+import useAuth from "@/Hooks/useAuth";
+import { getItem } from "@/lib/localStorage";
+import { formatDistanceToNow } from "date-fns";
+import { useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import Container from "@/Components/Common/Container";
+import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
+import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 
-const Messages = () => {
+const Chatting = () => {
   const { socket, isConnected, setActiveChatId } = useSocket();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -62,6 +63,7 @@ const Messages = () => {
   const prevScrollTopRef = useRef<number | null>(null);
   const justSentMessageRef = useRef<boolean>(false);
   const isInitialLoadRef = useRef<boolean>(true);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Set active chat from URL query param
   useEffect(() => {
@@ -553,8 +555,18 @@ const Messages = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showEmoji]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
+      }
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [messages]);
+
   return (
-    <>
+    <Container>
       <div className="flex relative flex-col lg:flex-row gap-6 h-full">
         {!activeUserId && (
           <div className="flex-1 bg-[#F9FAFB] py-6 px-4 lg:py-10 lg:px-6 rounded-2xl overflow-y-auto">
@@ -617,10 +629,17 @@ const Messages = () => {
         )}
 
         {activeUserId && (
-          <div className="flex-1 flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-4 h-full max-h-[80vh]">
+          <div className="flex-1 flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-2 h-full max-h-[80vh] overflow-y-auto">
+            <button
+              onClick={() => setIsRatingModalOpen(true)}
+              className=" gap-2 bg-[#0085FF] lg:hidden w-fit block text-white text-center px-5 py-2.5 rounded-xl hover:bg-[#006edc] text-sm md:text-base font-medium mb-5"
+            >
+              Give Rating
+            </button>
+            <hr className="border-gray-200 mb-5" />
             {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-start gap-3">
                 <button
                   onClick={() => setActiveUserId(null)}
                   className="lg:hidden text-2xl text-[#0085FF]"
@@ -661,7 +680,7 @@ const Messages = () => {
               </div>
               <button
                 onClick={() => setIsRatingModalOpen(true)}
-                className="flex items-center gap-2 bg-[#0085FF] text-white px-5 py-2.5 rounded-xl hover:bg-[#006edc] text-sm md:text-base font-medium"
+                className="gap-2 bg-[#0085FF] lg:block hidden text-white px-5 py-2.5 rounded-xl hover:bg-[#006edc] text-sm md:text-base font-medium"
               >
                 Give Rating
               </button>
@@ -671,7 +690,7 @@ const Messages = () => {
 
             {/* Messages list */}
             <div
-              ref={messagesContainerRef}
+              ref={chatContainerRef}
               className="flex-1 overflow-y-auto flex flex-col gap-4 pb-6 overscroll-contain"
             >
               {hasMore && (
@@ -782,7 +801,7 @@ const Messages = () => {
                   }
                 }}
                 placeholder="Type a message..."
-                className="flex-1 outline-none text-base min-h-[44px]"
+                className="flex-1 outline-none text-base md:min-h-[44px] h-[30px]"
               />
               <VscFileMedia
                 className="text-[#0085FF] text-2xl cursor-pointer"
@@ -922,8 +941,8 @@ const Messages = () => {
           </div>
         </div>
       )}
-    </>
+    </Container>
   );
 };
 
-export default Messages;
+export default Chatting;

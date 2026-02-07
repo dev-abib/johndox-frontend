@@ -1,62 +1,56 @@
 "use client";
-import React, { SVGProps, useEffect, useState } from "react";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Container from "@/Components/Common/Container";
-import SavedSearches from "@/Components/PageComponents/buyerPages/SavedSearches";
+import React, { SVGProps, useEffect, useState } from "react";
 import {
   Analytics,
   Listing,
   Message,
   Settings,
 } from "@/Components/Svg/SvgContainer";
-import MyFavorites from "@/Components/PageComponents/buyerPages/MyFavorites";
-import Messages from "@/Components/PageComponents/buyerPage/Profile/Messages";
-import Setting from "@/Components/PageComponents/buyerPage/Profile/Setting";
 import { getItem } from "@/lib/localStorage";
 import { useGetConversations } from "@/Hooks/api/message.api";
 
 interface Tab {
   label: string;
+  href: string;
   icon: React.ComponentType<SVGProps<SVGSVGElement>>;
-  active: boolean;
-  badge: number | null;
-  hasUnread?: boolean;
+  badge?: number;
 }
 
-const page = () => {
-  const [activetab, setActiveTab] = useState("Favorites");
-  const [token, setToken] = useState<string | undefined>(undefined);
+const Page = () => {
+  const pathname = usePathname();
+  const [token, setToken] = useState<string | null>(null);
+
   useEffect(() => {
     setToken(getItem("token"));
   }, []);
 
-  const { data: msgData } = useGetConversations(token);
-
+  const { data: msgData } = useGetConversations(token ?? undefined);
 
   const tabs: Tab[] = [
     {
       label: "Favorites",
+      href: "/buyerlayout/favourites",
       icon: Listing,
-      active: false,
-      badge: null,
     },
     {
       label: "Searches",
+      href: "/buyerlayout/searches",
       icon: Analytics,
-      active: false,
-      badge: null,
     },
     {
       label: "Messages",
+      href: "/buyerlayout/messages",
       icon: Message,
-      active: true,
-      badge: msgData?.data?.totalUnreadCount,
-      hasUnread: true,
+      badge: msgData?.data?.totalUnreadCount ?? 0,
     },
     {
       label: "Settings",
+      href: "/buyerlayout/settings",
       icon: Settings,
-      active: false,
-      badge: null,
     },
   ];
 
@@ -72,43 +66,37 @@ const page = () => {
 
         <div className="lg:my-15 my-8 md:flex md:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
           {tabs.map(item => {
-            const isActive = activetab === item.label;
+            const isActive = pathname === item.href;
 
             return (
-              <button
+              <Link
                 key={item.label}
-                onClick={() => setActiveTab(item.label)}
+                href={item.href}
                 className={`
-          xl:px-12 px-5 py-2 xl:text-[20px] lg:text-lg text-base font-medium cursor-pointer 
-          flex gap-x-2 items-center rounded-[36px] transition-all
-          ${
-            isActive
-              ? "bg-white text-[#101010] shadow-sm"
-              : "text-[#101010]/70 hover:text-[#101010] hover:bg-white/30"
-          }
-        `}
+                  xl:px-12 px-5 py-2 xl:text-[20px] lg:text-lg text-base font-medium 
+                  flex gap-x-2 items-center rounded-[36px] transition-all
+                  ${
+                    isActive
+                      ? "bg-white text-[#101010] shadow-sm"
+                      : "text-[#101010]/70 hover:text-[#101010] hover:bg-white/30"
+                  }
+                `}
               >
-                <div>
-                  <item.icon />
-                </div>
+                <item.icon />
                 {item.label}
-                {item?.badge !== null && item?.badge !== 0 && (
+
+                {item.badge !== undefined && item.badge > 0 && (
                   <span className="ml-2 bg-red-500 text-white text-sm px-2 py-0.5 rounded-full">
-                    {item?.badge}
+                    {item.badge}
                   </span>
                 )}
-              </button>
+              </Link>
             );
           })}
         </div>
-
-        {activetab === "Favorites" && <MyFavorites />}
-        {activetab === "Searches" && <SavedSearches />}
-        {activetab === "Messages" && <Messages />}
-        {activetab === "Settings" && <Setting />}
       </Container>
     </section>
   );
 };
 
-export default page;
+export default Page;

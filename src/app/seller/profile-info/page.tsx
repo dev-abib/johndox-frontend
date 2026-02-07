@@ -81,10 +81,12 @@ const AccountSettingsPage = () => {
   return (
     <section className="mt-10">
       <Container>
-        <h3 className="flex items-center gap-x-2 cursor-pointer text-[24px] lg:text-[32px] font-medium text-[#0085FF] mb-12">
-          <IoIosArrowBack className="size-8" />
-          Account Settings
-        </h3>
+        <Link href={"/seller/profile"}>
+          <h3 className="flex items-center gap-x-2 cursor-pointer text-[24px] lg:text-[32px] font-medium text-[#0085FF] mb-12">
+            <IoIosArrowBack className="size-8" />
+            Account Settings
+          </h3>
+        </Link>
         <div className="bg-[#F5F5F5] p-3 lg:p-10 rounded-[28px]">
           <h4 className="text-[24px] lg:text-[32px] font-medium text-[#101010] lg:mb-10 mb-5">
             My Profile
