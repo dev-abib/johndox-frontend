@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import { PricingPlan } from "@/Hooks/api/cms_api";
+import { useGetUserData } from "@/Hooks/api/auth_api";
 import Container from "@/Components/Common/Container";
 import { CheckSvg } from "@/Components/Svg/SvgContainer2";
-import { useGetUserData } from "@/Hooks/api/auth_api";
-import { PricingPlan } from "@/Hooks/api/cms_api";
 
 const Subscription = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +16,12 @@ const Subscription = () => {
   const { data: planRes, isLoading } = PricingPlan();
   const plans = planRes?.data?.plans || [];
 
-  if (isLoading) return null;
+  if (isLoading)
+    return (
+      <div className="">
+        <p>Loaing....</p>
+      </div>
+    );
 
   return (
     <Container>
