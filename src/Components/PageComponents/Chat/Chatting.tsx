@@ -10,21 +10,21 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 import {
   rateUser,
   sendMessage,
   useGetConversations,
   useGetSingleUserMessage,
 } from "@/Hooks/api/message.api";
-import { getItem } from "@/lib/localStorage";
-import useAuth from "@/Hooks/useAuth";
-import { formatDistanceToNow } from "date-fns";
-import { useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
 import toast from "react-hot-toast";
+import useAuth from "@/Hooks/useAuth";
+import { getItem } from "@/lib/localStorage";
+import { formatDistanceToNow } from "date-fns";
+import { useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import Container from "@/Components/Common/Container";
+import { useSocket } from "@/Provider/SocketProvider/SocketProvider";
+import { IoSend, IoArrowBack, IoStar, IoStarOutline } from "react-icons/io5";
 
 const Chatting = () => {
   const { socket, isConnected, setActiveChatId } = useSocket();
@@ -63,6 +63,7 @@ const Chatting = () => {
   const prevScrollTopRef = useRef<number | null>(null);
   const justSentMessageRef = useRef<boolean>(false);
   const isInitialLoadRef = useRef<boolean>(true);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Set active chat from URL query param
   useEffect(() => {
@@ -554,6 +555,16 @@ const Chatting = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showEmoji]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
+      }
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [messages]);
+
   return (
     <Container>
       <div className="flex relative flex-col lg:flex-row gap-6 h-full">
@@ -618,7 +629,7 @@ const Chatting = () => {
         )}
 
         {activeUserId && (
-          <div className="flex-1 flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-4 h-full max-h-[80vh]">
+          <div className="flex-1 flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-4 h-full max-h-[80vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
@@ -672,7 +683,7 @@ const Chatting = () => {
 
             {/* Messages list */}
             <div
-              ref={messagesContainerRef}
+              ref={chatContainerRef}
               className="flex-1 overflow-y-auto flex flex-col gap-4 pb-6 overscroll-contain"
             >
               {hasMore && (
