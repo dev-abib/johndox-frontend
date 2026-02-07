@@ -76,7 +76,7 @@ const Footer = () => {
                   </li>
 
                   <li>
-                    <a href="/pricing" className="hover:text-white">
+                    <a href="#" className="hover:text-white">
                       Pricing
                     </a>
                   </li>
