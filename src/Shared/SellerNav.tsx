@@ -121,7 +121,7 @@ const SellerNav = () => {
                       onClick={() => {
                         setActiveLang(lang);
                         setLangOpen(false);
-                         changeLanguage(lang === "English" ? "en" : "es");
+                        changeLanguage(lang === "English" ? "en" : "es");
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
                     >
@@ -133,7 +133,7 @@ const SellerNav = () => {
             </ul>
             <div className="hidden xl:flex items-center gap-4">
               <Link
-                href="/seller/profile"
+                href="/seller/my-listing"
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
               >
                 <GoListUnordered className="size-7" />
@@ -248,7 +248,7 @@ const SellerNav = () => {
             </ul>
             <div className="px-6 flex flex-col gap-4">
               <Link
-                href="/seller/profile"
+                href="/seller/my-listing"
                 onClick={() => setIsOpen(false)}
                 className="rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue flex gap-x-2 items-center"
               >
