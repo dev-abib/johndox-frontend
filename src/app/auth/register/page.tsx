@@ -244,6 +244,16 @@ const Login = () => {
                 )}
               </button>
             </form>
+
+            <p className="text-center text-gray-500 mt-5">
+              Already have an account?{" "}
+              <a
+                href="/auth/login"
+                className="text-primary-blue font-medium hover:underline"
+              >
+                Login
+              </a>
+            </p>
           </div>
         </div>
       </div>
