@@ -1,6 +1,6 @@
-import PrivateRoute from "@/Private/PrivateLayout";
-import BuyerNav from "@/Shared/BuyerNav";
 import Footer from "@/Shared/Footer";
+import BuyerNav from "@/Shared/BuyerNav";
+import PrivateRoute from "@/Private/PrivateLayout";
 
 export default function BuyerLayout({
   children,

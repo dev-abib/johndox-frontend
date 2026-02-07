@@ -3,9 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
 import { FaBars, FaTimes } from "react-icons/fa";
-
 import Container from "@/Components/Common/Container";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
@@ -47,7 +45,7 @@ const Navbar = () => {
       {
         type: "li-link",
         label: "For Sellers",
-        href: "/forseller",
+        href: "/forseller",   
         linkClassName: "hover:text-black transition",
       },
       {

@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { Mark } from "@/Components/Svg/SvgContainer";
-import Container from "@/Components/Common/Container";
 import { TermsCondition } from "@/Hooks/api/cms_api";
+import Container from "@/Components/Common/Container";
 
 const TermsPage = () => {
   const { data } = TermsCondition();

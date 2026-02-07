@@ -1,5 +1,5 @@
-import SellerNav from "@/Shared/SellerNav";
 import Footer from "@/Shared/Footer";
+import SellerNav from "@/Shared/SellerNav";
 import PrivateRoute from "@/Private/PrivateLayout";
 
 export default function SellerLayout({

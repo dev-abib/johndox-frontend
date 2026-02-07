@@ -8,11 +8,6 @@ import {
   Settings,
   Subscription,
 } from "@/Components/Svg/SvgContainer";
-import Setting from "@/Components/PageComponents/sellerPages/Profile/Setting";
-import Analytic from "@/Components/PageComponents/sellerPages/Profile/Analytic";
-import Messages from "@/Components/PageComponents/sellerPages/Profile/Messages";
-import MyListings from "@/Components/PageComponents/sellerPages/Profile/MyListing";
-import SubsCription from "@/Components/PageComponents/sellerPages/Profile/SubsCription";
 import { GetAnalytics } from "@/Hooks/api/dashboard_api";
 import { useGetConversations } from "@/Hooks/api/message.api";
 import { usePathname, useRouter } from "next/navigation";

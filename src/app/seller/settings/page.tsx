@@ -2,8 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { CiUser } from "react-icons/ci";
 import { MdArrowForwardIos } from "react-icons/md";
-import { Document, Notification } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
+import { Document, Notification } from "@/Components/Svg/SvgContainer";
 
 const Setting = () => {
   return (

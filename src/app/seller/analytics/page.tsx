@@ -19,8 +19,8 @@ import {
   useDelete,
 } from "@/Hooks/api/dashboard_api";
 import Link from "next/link";
-import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 import Container from "@/Components/Common/Container";
+import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 
 const Analytics = () => {
   const token =

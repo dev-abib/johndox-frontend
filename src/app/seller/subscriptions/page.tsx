@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { CheckSvg } from "@/Components/Svg/SvgContainer2";
 import Container from "@/Components/Common/Container";
+import { CheckSvg } from "@/Components/Svg/SvgContainer2";
 
 const Subscription = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
