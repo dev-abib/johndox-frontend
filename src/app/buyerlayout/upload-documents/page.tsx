@@ -13,7 +13,6 @@ const DocumentVerificationPage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Optional: validate file type (PDF or image)
       const validTypes = [
         "image/jpeg",
         "image/png",
@@ -27,7 +26,6 @@ const DocumentVerificationPage = () => {
 
       setDocumentName(file.name);
 
-      // Preview only if it's an image
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -35,7 +33,7 @@ const DocumentVerificationPage = () => {
         };
         reader.readAsDataURL(file);
       } else {
-        setPreviewUrl(null); // No preview for PDF
+        setPreviewUrl(null); 
       }
     }
   };
@@ -54,7 +52,7 @@ const DocumentVerificationPage = () => {
       <Container>
         {/* Back Link */}
         <Link
-          href="/buyer/profile-info"
+          href="/buyerlayout/profile-info"
           className="flex items-center gap-x-2 text-[#0085FF] text-xl sm:text-2xl lg:text-3xl font-medium mb-8 hover:underline"
         >
           <IoIosArrowBack className="size-7 lg:size-9" />

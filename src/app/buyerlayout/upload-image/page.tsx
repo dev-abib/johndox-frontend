@@ -49,13 +49,13 @@ const EditPhotoPage = () => {
     mutate(formData);
   };
 
-  const displayImage = previewUrl || DefaultProfilePic;
-
+  const displayImage = previewUrl || data?.data?.profilePicture || DefaultProfilePic;
+  
   return (
     <section className="mt-10">
       <Container>
         <Link
-          href="/buyer/profile-info"
+          href="/buyerlayout/profile-info"
           className="flex items-center gap-x-2 text-[#0085FF] text-[24px] lg:text-[32px] font-medium mb-8 hover:underline"
         >
           <IoIosArrowBack className="size-7 lg:size-9" />
@@ -73,7 +73,7 @@ const EditPhotoPage = () => {
 
           <div className="flex justify-center mb-5 lg:mb-12">
             <Image
-              src={data?.data?.profilePicture || displayImage}
+              src={displayImage}
               alt="Profile preview"
               width={200}
               height={200}

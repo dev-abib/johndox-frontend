@@ -49,7 +49,7 @@ const EditPhotoPage = () => {
     mutate(formData);
   };
 
-  const displayImage = previewUrl || DefaultProfilePic;
+  const displayImage = previewUrl || data?.data?.profilePicture || DefaultProfilePic;
 
   return (
     <section className="mt-10">
@@ -73,7 +73,7 @@ const EditPhotoPage = () => {
 
           <div className="flex justify-center mb-5 lg:mb-12">
             <Image
-              src={data?.data?.profilePicture || displayImage}
+              src={displayImage}
               alt="Profile preview"
               width={200}
               height={200}
