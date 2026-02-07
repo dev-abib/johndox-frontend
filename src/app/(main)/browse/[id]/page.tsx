@@ -26,7 +26,7 @@ const page = () => {
     <>
       <BrowseDetails data={singleProductDetails} />
       <BrowseDescription data={singleProductDetails} />
-      {/* <Maps /> */}
+      <Maps item={singleProductDetails} />
       <LoanCalculatorForm />
       <ListPropertyCTA Listproperty={Listproperty} />
     </>
