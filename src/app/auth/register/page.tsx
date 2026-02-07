@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { PiSpinnerBold } from "react-icons/pi";
 import { useRegister } from "@/Hooks/api/auth_api";
 import Container from "@/Components/Common/Container";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { PiSpinnerBold } from "react-icons/pi";
 
 type TabType = "Buyer" | "Seller";
 

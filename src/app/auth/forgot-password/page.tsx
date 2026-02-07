@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import Container from "@/Components/Common/Container";
-import { MdOutlineArrowBackIosNew } from "react-icons/md";
-import { useForgotPassWord } from "@/Hooks/api/auth_api";
 import { PiSpinnerBold } from "react-icons/pi";
+import Container from "@/Components/Common/Container";
+import { useForgotPassWord } from "@/Hooks/api/auth_api";
+import { MdOutlineArrowBackIosNew } from "react-icons/md";
 
 type LoginFormData = {
   email: string;

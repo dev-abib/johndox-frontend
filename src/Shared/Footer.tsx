@@ -1,10 +1,10 @@
 "use client";
-import Container from "@/Components/Common/Container";
-import { SiteSettings } from "@/Hooks/api/cms_api";
-import { CiLinkedin } from "react-icons/ci";
-import { FaInstagram, FaTelegram, FaWhatsapp, FaYoutube } from "react-icons/fa";
-import { LiaFacebookSquare } from "react-icons/lia";
 import { RiTwitterXFill } from "react-icons/ri";
+import { CiLinkedin } from "react-icons/ci";
+import { LiaFacebookSquare } from "react-icons/lia";
+import { SiteSettings } from "@/Hooks/api/cms_api";
+import Container from "@/Components/Common/Container";
+import { FaInstagram, FaTelegram, FaWhatsapp, FaYoutube } from "react-icons/fa";
 
 const socialIcons: Record<string, any> = {
   facebook: LiaFacebookSquare,
@@ -25,7 +25,7 @@ const Footer = () => {
         <div>
           <div className="mt-16">
             <img
-              src={data?.data?.footerLogo}
+              src={data?.data?.footerLogo}      
               alt=""
               className="mx-auto xl:mx-0"
             />

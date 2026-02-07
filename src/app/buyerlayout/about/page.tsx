@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+import AboutSkeleton from "@/Components/Skeleton/AboutSkeleton";
 import Banner from "@/Components/PageComponents/mainPages/About/Banner";
 import Community from "@/Components/PageComponents/mainPages/About/Community";
 import OurMission from "@/Components/PageComponents/mainPages/About/OurMission";
@@ -13,7 +13,6 @@ import {
   Corevalues,
   ListPropertyBrowse,
 } from "@/Hooks/api/cms_api";
-import AboutSkeleton from "@/Components/Skeleton/AboutSkeleton";
 
 const page = () => {
   const { data, isLoading: bannerLoading } = AboutBanner();
