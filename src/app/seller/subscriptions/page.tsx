@@ -8,7 +8,6 @@ import { CheckSvg } from "@/Components/Svg/SvgContainer2";
 const Subscription = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
-
   const token = localStorage.getItem("token");
   const { data: userRes } = useGetUserData(token);
   const currentPlanKey = userRes?.data?.subscription?.planKey;
@@ -19,7 +18,7 @@ const Subscription = () => {
   if (isLoading)
     return (
       <div className="">
-        <p>Loaing....</p>
+        <p>Loading....</p>
       </div>
     );
 
@@ -40,7 +39,10 @@ const Subscription = () => {
             return (
               <div
                 key={plan._id}
-                className="rounded-2xl border border-gray-200 bg-[rgba(230,243,255,0.20)] p-4 xl:p-8 group shadow-sm hover:border hover:border-[#0085FF] transition-all"
+                className={`rounded-2xl border p-4 xl:p-8 group shadow-sm transition-all
+                  ${plan.isPopular ? "bg-[rgba(230,243,255,0.20)]" : "bg-white"}
+                  ${isCurrentPlan ? "border-[#0085FF]" : "border-gray-200"}
+                  hover:border-[#0085FF]`}
               >
                 {plan.isPopular && (
                   <div className="bg-[#0085FF] text-white text-center py-3 text-xl md:text-2xl font-medium rounded-t-lg -mx-4 -mt-4 xl:-mx-8 xl:-mt-8 mb-4">

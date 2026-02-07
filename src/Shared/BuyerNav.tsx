@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { GoListUnordered } from "react-icons/go";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Container from "@/Components/Common/Container";
+import { useGetUserData } from "@/Hooks/api/auth_api";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg, LoveSvg } from "@/Components/Svg/SvgContainer2";
-import { useGetUserData } from "@/Hooks/api/auth_api";
 
 const BuyerNav = () => {
   const [isOpen, setIsOpen] = useState(false);
