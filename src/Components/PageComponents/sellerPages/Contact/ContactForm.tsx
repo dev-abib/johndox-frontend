@@ -14,7 +14,7 @@ type ContactFormData = {
   subject: string;
   email: string;
   phoneNumber: string;
-  fullName: string; 
+  fullName: string;
   message: string;
 };
 
@@ -217,16 +217,16 @@ const ContactForm = () => {
               <h3 className="text-[24px] font-semibold text-[#404040]">
                 Follow Us
               </h3>
-              <div className="flex gap-x-8 mt-7">
+              <div className="flex flex-wrap gap-8 mt-7">
                 {data?.data?.socialLinks &&
                   Object.entries(data.data.socialLinks).map(([key, url]) => {
-                    if (!url || typeof url !== "string") return null; 
+                    if (!url || typeof url !== "string") return null;
                     const Icon = socialIcons[key];
                     if (!Icon) return null;
                     return (
                       <a
                         key={key}
-                        href={url} 
+                        href={url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[#339DFF] text-2xl hover:opacity-80 transition"

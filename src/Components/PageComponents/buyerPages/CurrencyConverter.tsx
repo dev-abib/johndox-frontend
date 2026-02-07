@@ -49,14 +49,14 @@ const CurrencyConverter = () => {
 
   return (
     <Container>
-      <div className="w-full mb-30">
+      <div className="w-full lg:mb-30 mb-10">
         <h2 className="text-xl font-semibold text-[#212B36] mb-4">
           Currency Converter
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="bg-[#F9FAFB] rounded-xl px-6 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] lg:gap-6 gap-3 items-end">
               {/* Lempira Input */}
               <div>
                 <label className="block text-sm font-medium text-[#5F5F5F] mb-2">

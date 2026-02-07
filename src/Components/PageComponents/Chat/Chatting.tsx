@@ -629,10 +629,17 @@ const Chatting = () => {
         )}
 
         {activeUserId && (
-          <div className="flex-1 flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-4 h-full max-h-[80vh] overflow-y-auto">
+          <div className="flex-1 flex flex-col bg-[#f9fafb] rounded-2xl lg:p-8 p-2 h-full max-h-[80vh] overflow-y-auto">
+            <button
+              onClick={() => setIsRatingModalOpen(true)}
+              className=" gap-2 bg-[#0085FF] lg:hidden w-fit block text-white text-center px-5 py-2.5 rounded-xl hover:bg-[#006edc] text-sm md:text-base font-medium mb-5"
+            >
+              Give Rating
+            </button>
+            <hr className="border-gray-200 mb-5" />
             {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-start gap-3">
                 <button
                   onClick={() => setActiveUserId(null)}
                   className="lg:hidden text-2xl text-[#0085FF]"
@@ -673,7 +680,7 @@ const Chatting = () => {
               </div>
               <button
                 onClick={() => setIsRatingModalOpen(true)}
-                className="flex items-center gap-2 bg-[#0085FF] text-white px-5 py-2.5 rounded-xl hover:bg-[#006edc] text-sm md:text-base font-medium"
+                className="gap-2 bg-[#0085FF] lg:block hidden text-white px-5 py-2.5 rounded-xl hover:bg-[#006edc] text-sm md:text-base font-medium"
               >
                 Give Rating
               </button>
@@ -794,7 +801,7 @@ const Chatting = () => {
                   }
                 }}
                 placeholder="Type a message..."
-                className="flex-1 outline-none text-base min-h-[44px]"
+                className="flex-1 outline-none text-base md:min-h-[44px] h-[30px]"
               />
               <VscFileMedia
                 className="text-[#0085FF] text-2xl cursor-pointer"

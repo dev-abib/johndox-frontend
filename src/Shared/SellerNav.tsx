@@ -201,7 +201,7 @@ const SellerNav = () => {
 
               <li>
                 <Link
-                  href="/seller/conatact-us"
+                  href="/seller/contact-us"
                   onClick={() => setIsOpen(false)}
                 >
                   Contract Us
