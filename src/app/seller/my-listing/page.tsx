@@ -10,6 +10,7 @@ import {
   BsCalendar3,
 } from "react-icons/bs";
 import { MdEdit, MdDelete } from "react-icons/md";
+import Container from "@/Components/Common/Container";
 import { useAlllisting, useDelete } from "@/Hooks/api/dashboard_api";
 import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 
@@ -36,9 +37,8 @@ const MyListing = () => {
     return <MyListingSkeleton />;
   }
 
-
   return (
-    <>
+    <Container>
       <div className="md:flex justify-between items-end">
         <div>
           <h2 className="text-[#404040] lg:text-[28px] text-[24px] font-medium">
@@ -139,7 +139,7 @@ const MyListing = () => {
           )}
         </div>
       </div>
-    </>
+    </Container>
   );
 };
 

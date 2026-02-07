@@ -3,10 +3,11 @@ import Link from "next/link";
 import { CiUser } from "react-icons/ci";
 import { MdArrowForwardIos } from "react-icons/md";
 import { Document, Notification } from "@/Components/Svg/SvgContainer";
+import Container from "@/Components/Common/Container";
 
 const Setting = () => {
   return (
-    <>
+    <Container>
       <div className="bg-[#F9FAFB] p-4 lg:p-10 rounded-[24px]">
         <h2 className="text-[#404040] text-[24px] lg:text-[28px] font-medium">
           Account Settings
@@ -76,7 +77,7 @@ const Setting = () => {
           </Link>
         </div>
       </div>
-    </>
+    </Container>
   );
 };
 

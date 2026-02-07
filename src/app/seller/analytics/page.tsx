@@ -19,10 +19,12 @@ import {
   useDelete,
 } from "@/Hooks/api/dashboard_api";
 import Link from "next/link";
+import Container from "@/Components/Common/Container";
 import { MyListingSkeleton } from "@/Components/Skeleton/MyListingSkeleton";
 
 const Analytics = () => {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { data: apiData, isLoading } = GetStatistics(token);
   const { mutate: deleteListing, isLoading: isDeleting } = useDelete();
   const { data: alllisting } = useAlllisting(token);
@@ -55,7 +57,7 @@ const Analytics = () => {
   }
 
   return (
-    <div>
+    <Container>
       <h2 className="text-[#404040] lg:text-[28px] text-[24px] font-medium">
         Performance Analytics
       </h2>
@@ -223,7 +225,7 @@ const Analytics = () => {
           )}
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

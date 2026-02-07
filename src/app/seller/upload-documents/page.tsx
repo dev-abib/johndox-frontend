@@ -1,52 +1,59 @@
 "use client";
-import React, { useState } from "react";
 import Link from "next/link";
+import React, { useState } from "react";
 import Container from "@/Components/Common/Container";
+import { useUpdateUserBuyer } from "@/Hooks/api/auth_api";
 import { IoIosArrowBack, IoMdCloudUpload, IoMdDocument } from "react-icons/io";
 
 const DocumentVerificationPage = () => {
-  const [documentName, setDocumentName] = useState(
-    "PassportDocument_2025-11-22.jpg"
-  );
+  const { mutate, isPending } = useUpdateUserBuyer();
+
+  const [documentName, setDocumentName] = useState<string>("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Optional: validate file type (PDF or image)
-      const validTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-        "application/pdf",
-      ];
-      if (!validTypes.includes(file.type)) {
-        alert("Please upload a valid image (JPEG/PNG) or PDF document.");
-        return;
-      }
+    if (!file) return;
 
-      setDocumentName(file.name);
+    const validTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "application/pdf",
+    ];
 
-      // Preview only if it's an image
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewUrl(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setPreviewUrl(null); // No preview for PDF
-      }
+    if (!validTypes.includes(file.type)) {
+      alert("Please upload a valid image (JPEG/PNG) or PDF document.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setDocumentName(file.name);
+
+    // Preview only for images
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewUrl(null); // No preview for PDF
     }
   };
 
   const handleSave = () => {
-    if (!documentName) {
+    if (!selectedFile) {
       alert("Please upload a document first.");
       return;
     }
-    console.log("Document saved:", documentName);
-    alert("Document updated successfully!");
+
+    const formData = new FormData();
+    // BACKEND EXPECTS THIS NAME 👇
+    formData.append("identity_document", selectedFile);
+
+    mutate(formData);
   };
 
   return (
@@ -67,8 +74,7 @@ const DocumentVerificationPage = () => {
         </h1>
 
         {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-[#E5E7EB] p-6 sm:p-8 lg:p-12  mx-auto">
-          {/* Section Title */}
+        <div className="bg-white rounded-3xl shadow-sm border border-[#E5E7EB] p-6 sm:p-8 lg:p-12 mx-auto">
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-[#101010] mb-4">
             Identity Verification
           </h3>
@@ -77,9 +83,9 @@ const DocumentVerificationPage = () => {
             verification.
           </p>
 
-          {/* Uploaded Document Preview */}
-          <div className="flex flex-col  mb-12 max-w-[400px]">
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-2xl w-full  p-8 sm:p-12 text-center">
+          {/* Document Preview */}
+          <div className="flex flex-col mb-12 max-w-[400px]">
+            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-2xl w-full p-8 sm:p-12 text-center">
               {previewUrl ? (
                 <img
                   src={previewUrl}
@@ -89,7 +95,7 @@ const DocumentVerificationPage = () => {
               ) : (
                 <div className="space-y-4">
                   <IoMdDocument className="text-gray-400 text-6xl mx-auto" />
-                  <p className="text-gray-600 lg:text-base sm:text-base text-xs font-medium break-all">
+                  <p className="text-gray-600 text-sm sm:text-base font-medium break-all">
                     {documentName || "No document uploaded yet"}
                   </p>
                 </div>
@@ -98,7 +104,7 @@ const DocumentVerificationPage = () => {
           </div>
 
           {/* Upload Button */}
-          <div className="flex  mb-12 max-w-[400px]">
+          <div className="flex mb-12 max-w-[400px]">
             <label
               htmlFor="document-upload"
               className="flex items-center justify-center gap-3 bg-white border-2 border-dashed border-[#0085FF] text-[#0085FF] px-6 py-4 rounded-xl cursor-pointer hover:bg-[#0085FF]/5 transition font-medium text-base sm:text-lg shadow-sm w-full"
@@ -119,10 +125,10 @@ const DocumentVerificationPage = () => {
           <div className="flex max-w-[400px]">
             <button
               onClick={handleSave}
-              disabled={!documentName}
+              disabled={!selectedFile || isPending}
               className="bg-[#0085FF] text-white px-12 py-4 rounded-lg text-lg sm:text-xl font-medium hover:bg-[#006edc] transition disabled:bg-gray-300 disabled:cursor-not-allowed w-full cursor-pointer"
             >
-              Save
+              {isPending ? "Uploading..." : "Save"}
             </button>
           </div>
         </div>

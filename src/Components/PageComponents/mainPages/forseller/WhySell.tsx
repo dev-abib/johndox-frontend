@@ -8,7 +8,7 @@ interface whysellprops {
 
 const WhySell = ({ data }: whysellprops) => {
   return (
-    <section className="py-20 lg:pt-[150px]">
+    <section className="pt-20 lg:pt-[150px]">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-2xl sm:text-4xl xl:text-[38px]">

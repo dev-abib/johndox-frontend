@@ -1,8 +1,8 @@
 'use client'
-import FAQSection from "@/Components/PageComponents/mainPages/pricing/FAQSection";
-import PricingTable from "@/Components/PageComponents/mainPages/pricing/PricingTable";
 import PricingSkeleton from "@/Components/Skeleton/PricingSkeleton";
 import { AllFaw, PricingPage, PricingPlan } from "@/Hooks/api/cms_api";
+import FAQSection from "@/Components/PageComponents/mainPages/pricing/FAQSection";
+import PricingTable from "@/Components/PageComponents/mainPages/pricing/PricingTable";
 
 export default function Page() {
  const { data: faq, isLoading: faqLoading } = AllFaw();
@@ -22,4 +22,3 @@ export default function Page() {
     </>
   );
 }
-// 

@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { getItem } from "@/lib/localStorage";
 import { PiSpinnerBold } from "react-icons/pi";
+import React, { useEffect, useState } from "react";
 import Container from "@/Components/Common/Container";
-import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
 import DefaultProfilePic from "../../../Assets/dummy.jpg";
 import { IoIosArrowBack, IoMdCloudUpload } from "react-icons/io";
-import { getItem } from "@/lib/localStorage";
+import { useGetUserData, useUpdateUserBuyer } from "@/Hooks/api/auth_api";
 
 const EditPhotoPage = () => {
   const { mutate, isPending } = useUpdateUserBuyer();
@@ -49,7 +49,7 @@ const EditPhotoPage = () => {
     mutate(formData);
   };
 
-  const displayImage = previewUrl || DefaultProfilePic;
+  const displayImage = previewUrl || data?.data?.profilePicture || DefaultProfilePic;
 
   return (
     <section className="mt-10">
@@ -73,7 +73,7 @@ const EditPhotoPage = () => {
 
           <div className="flex justify-center mb-5 lg:mb-12">
             <Image
-              src={data?.data?.profilePicture || displayImage}
+              src={displayImage}
               alt="Profile preview"
               width={200}
               height={200}

@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { PiSpinnerBold } from "react-icons/pi";
 import { useRegister } from "@/Hooks/api/auth_api";
 import Container from "@/Components/Common/Container";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { PiSpinnerBold } from "react-icons/pi";
 
 type TabType = "Buyer" | "Seller";
 
@@ -244,6 +244,16 @@ const Login = () => {
                 )}
               </button>
             </form>
+
+            <p className="text-center text-gray-500 mt-5">
+              Already have an account?{" "}
+              <a
+                href="/auth/login"
+                className="text-primary-blue font-medium hover:underline"
+              >
+                Login
+              </a>
+            </p>
           </div>
         </div>
       </div>

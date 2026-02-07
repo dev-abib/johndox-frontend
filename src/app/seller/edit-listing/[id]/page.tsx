@@ -45,7 +45,8 @@ export default function EditListingPage() {
   const queryClient = useQueryClient();
   const listingId = params?.id?.toString() || "";
   const [currentStep, setCurrentStep] = useState(1);
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const { data } = useAlllisting(token);
   const { mutate: EditListing, isPending } = useEditListing(listingId);
@@ -120,81 +121,84 @@ export default function EditListingPage() {
         return true;
     }
   };
-const onSubmit = async (data: ListingFormData) => {
-  try {
-    const formData = new FormData();
+  const onSubmit = async (data: ListingFormData) => {
+    try {
+      const formData = new FormData();
 
-    // 1. Basic Information
-    formData.append("propertyName", data.propertyName);
-    formData.append("description", data.description);
-    formData.append("propertyType", data.propertyType.toLowerCase());
-    formData.append("listingType", data.listingType.toLowerCase());
-    formData.append("fullAddress", data.streetAddress);
-    formData.append("city", data.city);
-    formData.append("state", data.state);
-    formData.append("price", data.priceUSD.toString());
-    formData.append("category", data.category);
+      // 1. Basic Information
+      formData.append("propertyName", data.propertyName);
+      formData.append("description", data.description);
+      formData.append("propertyType", data.propertyType.toLowerCase());
+      formData.append("listingType", data.listingType.toLowerCase());
+      formData.append("fullAddress", data.streetAddress);
+      formData.append("city", data.city);
+      formData.append("state", data.state);
+      formData.append("price", data.priceUSD.toString());
+      formData.append("category", data.category);
 
-    // 2. Property Details (Numeric fields converted to string)
-    if (data.bedrooms) formData.append("bedrooms", data.bedrooms.toString());
-    if (data.bathrooms) formData.append("bathrooms", data.bathrooms.toString());
-    if (data.yearBuilt) formData.append("yearBuilt", data.yearBuilt.toString());
-    if (data.area) formData.append("areaInMeter", data.area.toString());
-    if (data.lotSize) formData.append("areaInSqMeter", data.lotSize.toString());
+      // 2. Property Details (Numeric fields converted to string)
+      if (data.bedrooms) formData.append("bedrooms", data.bedrooms.toString());
+      if (data.bathrooms)
+        formData.append("bathrooms", data.bathrooms.toString());
+      if (data.yearBuilt)
+        formData.append("yearBuilt", data.yearBuilt.toString());
+      if (data.area) formData.append("areaInMeter", data.area.toString());
+      if (data.lotSize)
+        formData.append("areaInSqMeter", data.lotSize.toString());
 
-    // 3. Amenities (Array of strings)
-    if (data.amenities) {
-      Object.entries(data.amenities).forEach(([key, value]) => {
-        if (value) {
-          const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
-          formData.append("amenities", formattedKey);
-        }
+      // 3. Amenities (Array of strings)
+      if (data.amenities) {
+        Object.entries(data.amenities).forEach(([key, value]) => {
+          if (value) {
+            const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
+            formData.append("amenities", formattedKey);
+          }
+        });
+      }
+
+      // 4. NEW Media (Files)
+      if (data.photos && data.photos.length > 0) {
+        Array.from(data.photos).forEach(file => {
+          formData.append("photos", file);
+        });
+      }
+
+      if (data.video && data.video.length > 0) {
+        formData.append("video", data.video[0]);
+      }
+
+      if (data.existingMedia && data.existingMedia.length > 0) {
+        data.existingMedia.forEach((url: string) => {
+          formData.append("existingMedia", url);
+        });
+      }
+
+      // 6. DELETED Images - FIXED FOR JSON ARRAY ERROR
+      if (data.deletedImages && data.deletedImages.length > 0) {
+        formData.append("deleteImages", JSON.stringify(data.deletedImages));
+      }
+
+      // 7. API Call & Cache Invalidation
+      await EditListing(formData);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["listing"],
+        exact: false,
       });
+    } catch (error) {
+      console.error("Error updating listing:", error);
     }
-
-    // 4. NEW Media (Files)
-    if (data.photos && data.photos.length > 0) {
-      Array.from(data.photos).forEach(file => {
-        formData.append("photos", file);
-      });
-    }
-
-    if (data.video && data.video.length > 0) {
-      formData.append("video", data.video[0]);
-    }
-
-    if (data.existingMedia && data.existingMedia.length > 0) {
-      data.existingMedia.forEach((url: string) => {
-        formData.append("existingMedia", url);
-      });
-    }
-
-    // 6. DELETED Images - FIXED FOR JSON ARRAY ERROR
-    if (data.deletedImages && data.deletedImages.length > 0) {
-      formData.append("deleteImages", JSON.stringify(data.deletedImages));
-    }
-
-    // 7. API Call & Cache Invalidation
-    await EditListing(formData);
-
-    await queryClient.invalidateQueries({
-      queryKey: ["listing"],
-      exact: false,
-    });
-  } catch (error) {
-    console.error("Error updating listing:", error);
-  }
-};
+  };
 
   return (
     <section className="py-10">
       <Container>
-        <button
+        {/* <button
           onClick={() => window.history.back()}
           className="flex items-center gap-2 text-2xl font-medium text-[#0085FF] mb-12 hover:underline"
         >
           <IoIosArrowBack /> Back
-        </button>
+        </button> */}
 
         <div className="flex gap-6 mb-12">
           {steps.map(step => (
@@ -232,13 +236,13 @@ const onSubmit = async (data: ListingFormData) => {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
-                  className="px-8 py-3 bg-gray-100 rounded-lg cursor-pointer"
+                  className="lg:px-8 px-4 py-3 bg-gray-100 rounded-lg cursor-pointer"
                 >
                   Previous
                 </button>
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-[#0085FF] text-white rounded-lg min-w-[160px] cursor-pointer"
+                  className="lg:px-8 px-4 py-3 bg-[#0085FF] text-white rounded-lg min-w-[160px] cursor-pointer"
                 >
                   {isPending ? (
                     <PiSpinnerBold className="animate-spin mx-auto" />
