@@ -15,7 +15,7 @@ type apiProps = {
   params?: any;
   headers?: any;
   enabled?: boolean;
-  trigger?: boolean; // New: force mutation behavior
+  trigger?: boolean; 
 };
 
 export default function useClientApi({
