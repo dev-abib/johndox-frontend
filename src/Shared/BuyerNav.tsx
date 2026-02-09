@@ -153,7 +153,7 @@ const BuyerNav = () => {
                     width={300}
                     height={300}
                     className="rounded-full object-cover h-8 w-8"
-                  />
+                  /> 
                 ) : (
                   <CgProfile className="size-7" />
                 )}

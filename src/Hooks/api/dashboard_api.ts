@@ -1,5 +1,4 @@
 // All Dashboard API
-"use client";
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 import { useRouter } from "next/navigation";
