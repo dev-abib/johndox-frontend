@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
-import { useRouter } from "next/router";
 
 // Request Tour
 export const RequestTour = (token?: string) => {
@@ -60,6 +59,7 @@ export const useContact = () => {
     },
   });
 };
+
 // SaveSearch Post
 export const UseSearchSave = () => {
   const token =
@@ -98,6 +98,7 @@ export const useCurrencyConverter = () => {
     },
   });
 };
+
 // Loan Converter
 export const LoanConverter = () => {
   const token =
@@ -113,6 +114,7 @@ export const LoanConverter = () => {
   });
 };
 
+// Property View Api
 export const usePropertyView = () => {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
