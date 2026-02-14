@@ -27,7 +27,7 @@ const ListPropertyCTA = ({ Listproperty }: ListPropertyprops) => {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-          <Link href={`${isBuyerLayout ? "/buyerlayout/browse" : "/browse"}`}>
+          <Link href={`${isBuyerLayout ? "/buyerlayout/pricing" : "/pricing"}`}>
             <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
               {Listproperty?.data?.btnTxt?.[0] ?? "Start Selling Today"}
             </button>

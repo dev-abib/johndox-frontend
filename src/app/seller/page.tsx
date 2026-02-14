@@ -10,6 +10,7 @@ export default function Page() {
   const { data: hero } = forSellerBanner();
   const { data: whyitworks } = whyitWorks();
   const { data, isLoading } = useWhyChoose();
+  
 
   if (isLoading) {
     return <Forsellerskeleton />;

@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { PiSpinnerBold } from "react-icons/pi";
@@ -30,7 +29,7 @@ export default function VerifyAccount() {
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("verify_email");
 
-    if (!storedEmail) {
+    if (!storedEmail) {    
       setEmail(null);
     } else {
       setEmail(storedEmail);

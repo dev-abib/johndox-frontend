@@ -1,6 +1,10 @@
+"use client"
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const ReadytoSell = () => {
+  const pathname = usePathname();
+  const isSellerLayout = pathname.startsWith("/seller");
   return (
     <section
       className="relative w-full  py-16 xl:py-24 px-6 flex items-center justify-center text-center"
@@ -20,7 +24,7 @@ const ReadytoSell = () => {
           List your property today and start connecting with buyers.
         </p>
 
-        <Link href={"auth/login"}>
+        <Link href={`${isSellerLayout ? "/seller/pricing" : "/pricing"}`}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
             <button className="px-8 xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition cursor-pointer">
               Create Free Account
