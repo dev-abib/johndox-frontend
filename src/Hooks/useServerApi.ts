@@ -23,3 +23,6 @@ export async function useServerApi<T = any>({
 
   return res.json();
 }
+
+
+

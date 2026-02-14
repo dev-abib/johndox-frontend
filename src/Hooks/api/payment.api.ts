@@ -1,5 +1,3 @@
-// payment.api.ts (or wherever it lives)
-
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 import { useQueryClient } from "@tanstack/react-query";
