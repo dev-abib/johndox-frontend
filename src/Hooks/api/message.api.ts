@@ -7,7 +7,6 @@ export const sendMessage = (
   userId: string,
   enabled: boolean,
 ) => {
-  const queryClient = useQueryClient();
 
   return useClientApi({
     method: "post",
@@ -34,8 +33,6 @@ export const rateUser = (
   reciverId: string | undefined,
   enabled: boolean,
 ) => {
-  const queryClient = useQueryClient();
-
   return useClientApi({
     method: "post",
     key: ["rate-user"],

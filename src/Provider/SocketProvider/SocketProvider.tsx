@@ -1,11 +1,10 @@
 "use client";
-
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { getItem } from "@/lib/localStorage";
-import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "@/Hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { getItem } from "@/lib/localStorage";
+import { io, Socket } from "socket.io-client";
+import { useQueryClient } from "@tanstack/react-query";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 let socketInstance: Socket | null = null;
 

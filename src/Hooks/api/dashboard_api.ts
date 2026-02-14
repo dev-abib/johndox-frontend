@@ -1,5 +1,4 @@
 // All Dashboard API
-"use client";
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
 import { useRouter } from "next/navigation";
@@ -69,6 +68,7 @@ export const useCategory = (token: any) => {
     },
   });
 };
+
 // Get Seller Analytics
 export const GetAnalytics = (token: any) => {
   return useClientApi({
@@ -82,6 +82,7 @@ export const GetAnalytics = (token: any) => {
     },
   });
 };
+
 // Get Seller Statistics
 export const GetStatistics = (token: any) => {
   return useClientApi({
@@ -95,6 +96,7 @@ export const GetStatistics = (token: any) => {
     },
   });
 };
+
 // Get All Amenities
 export const GetAllamenities = (token: any) => {
   return useClientApi({
@@ -122,6 +124,7 @@ export const useAlllisting = (token: any) => {
     },
   });
 };
+
 // Get All Listing
 export const GetAllFavourite = (token: any) => {
   return useClientApi({

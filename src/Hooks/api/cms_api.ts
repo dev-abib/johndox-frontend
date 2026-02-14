@@ -92,6 +92,7 @@ export const PricingPage = () => {
     },
   });
 };
+
 // Pricing Plan
 export const PricingPlan = () => {
   return useClientApi({
@@ -106,6 +107,7 @@ export const PricingPlan = () => {
     },
   });
 };
+
 // All Faq
 export const AllFaw = () => {
   return useClientApi({
@@ -120,6 +122,7 @@ export const AllFaw = () => {
     },
   });
 };
+
 // About Banner
 export const AboutBanner = () => {
   return useClientApi({
@@ -134,6 +137,7 @@ export const AboutBanner = () => {
     },
   });
 };
+
 // Our Mission
 export const Ourmission = () => {
   return useClientApi({
@@ -148,6 +152,7 @@ export const Ourmission = () => {
     },
   });
 };
+
 // Buyer &Seller Community
 export const CommunityData = () => {
   return useClientApi({
@@ -177,6 +182,7 @@ export const Corevalues = () => {
     },
   });
 };
+
 // Contact Us
 export const ConatctUs = () => {
   return useClientApi({
@@ -206,6 +212,7 @@ export const SiteSettings = () => {
     },
   });
 };
+
 // Terms & Conditions
 export const TermsCondition = () => {
   return useClientApi({
@@ -222,7 +229,6 @@ export const TermsCondition = () => {
 };
 
 //  SSR (Server Side Rendering)
-
 export async function getFeaturedListings() {
   return useServerApi({
     mode: "SSR",
@@ -262,9 +268,7 @@ export async function ListProperty() {
   });
 }
 
-// =======================================================
 // Site Settings — NO CACHE
-
 export async function getSiteSettings() {
   return useServerApi({
     mode: "SSR",

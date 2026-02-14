@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { axiosSecure } from "@/Hooks/useAxiosSecure";
 import { axiosPublic } from "@/Hooks/useAxiosPublic";
+import { axiosSecure } from "@/Hooks/useAxiosSecure";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 type apiProps = {
   key?: any[];
@@ -15,7 +15,7 @@ type apiProps = {
   params?: any;
   headers?: any;
   enabled?: boolean;
-  trigger?: boolean; // New: force mutation behavior
+  trigger?: boolean; 
 };
 
 export default function useClientApi({
