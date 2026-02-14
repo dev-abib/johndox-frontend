@@ -254,7 +254,7 @@ export const useLogout = () => {
       if (data?.status || data?.success) {
         toast.success(data?.message);
         localStorage.removeItem("token");
-        window.location.href = "/auth/login";
+        window.location.href = "/";
       }
     },
     onError: (err: any) => {

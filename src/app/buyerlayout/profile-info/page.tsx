@@ -2,19 +2,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FaRegEdit } from "react-icons/fa";
+import { getItem } from "@/lib/localStorage";
 import { PiSpinnerBold } from "react-icons/pi";
 import { IoIosArrowBack } from "react-icons/io";
+import Profilepic from "../../../Assets/dummy.jpg";
 import React, { useEffect, useState } from "react";
 import { Mail } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
-import Profilepic from "../../../Assets/dummy.jpg";
 import {
   useGetUserData,
   useLogout,
   useUpdateUserBuyer,
 } from "@/Hooks/api/auth_api";
 import { useGetConversations } from "@/Hooks/api/message.api";
-import { getItem } from "@/lib/localStorage";
 
 const AccountSettingsPage = () => {
   const [token, setToken] = useState<string | undefined>(undefined);
@@ -34,8 +34,6 @@ const AccountSettingsPage = () => {
 
   const { data } = useGetUserData(token);
   const { data: msgData } = useGetConversations(token);
-
-  console.log(token);
 
   useEffect(() => {
     if (data?.data) {
