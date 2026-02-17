@@ -32,6 +32,7 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
+import { useMediaQuery } from "react-responsive";
 
 const page = () => {
   const { mutate } = AddFavourite();
@@ -53,9 +54,21 @@ const page = () => {
   const [selectedSort, setSelectedSort] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
   const { mutate: saveSearch } = UseSearchSave();
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useMediaQuery({ maxWidth: 1023 });
 
   const router = useRouter();
   const propertyViewMutation = usePropertyView();
+
+  const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
+    if (!isMobile || !ref.current) return;
+
+    ref.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const handleContact = async (id: string) => {
     if (!id) return;
@@ -330,6 +343,22 @@ const page = () => {
                 <h2 className="text-xl font-semibold">Filters</h2>
               </div>
 
+              <ul className="flex justify-between pb-5 text-sm font-medium">
+                <li
+                  onClick={() => scrollTo(listRef)}
+                  className="cursor-pointer text-primary-blue"
+                >
+                  List View
+                </li>
+
+                <li
+                  onClick={() => scrollTo(mapRef)}
+                  className="cursor-pointer text-primary-blue"
+                >
+                  Map View
+                </li>
+              </ul>
+
               {/* PROPERTY TYPE */}
               <div className="mb-6">
                 <div
@@ -494,7 +523,10 @@ const page = () => {
               </button>
             </div>
           </div>
-          <div className="w-full lg:flex-grow lg:w-[60%] order-2 lg:order-2">
+          <div
+            ref={listRef}
+            className="w-full lg:flex-grow lg:w-[60%] order-2 lg:order-2"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 xl:gap-11">
               {displayedProperties?.map((item: any) => (
                 <div
@@ -590,7 +622,10 @@ const page = () => {
             </div>
           </div>
 
-          <div className="w-full lg:w-[40%] h-[400px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative">
+          <div
+            ref={mapRef}
+            className="w-full lg:w-[40%] h-[400px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative"
+          >
             <APIProvider
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
             >
