@@ -448,13 +448,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBedrooms(num)}
-                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm ${
+                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm cursor-pointer ${
                           bedrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
@@ -465,13 +465,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBathrooms(num)}
-                        className={`h-9 w-9 rounded-lg border text-sm ${
+                        className={`h-9 w-9 rounded-lg border text-sm cursor-pointer ${
                           bathrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
@@ -556,7 +556,7 @@ const page = () => {
                       <div className="flex items-center gap-2.5">
                         <Acceleration className="shrink-0" />
                         <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
-                          {item.areaInSqMeter} sqft
+                          {item.areaInSqMeter} m²
                         </span>
                       </div>
                     </div>
@@ -733,13 +733,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBedrooms(num)}
-                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm ${
+                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm cursor-pointer ${
                           bedrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
@@ -750,13 +750,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBathrooms(num)}
-                        className={`h-9 w-9 rounded-lg border text-sm ${
+                        className={`h-9 w-9 rounded-lg border text-sm cursor-pointer ${
                           bathrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>

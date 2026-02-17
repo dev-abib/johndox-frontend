@@ -164,7 +164,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   <div className="flex items-center gap-2.5">
                     <Acceleration className="shrink-0" />
                     <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
-                      {item.areaInSqMeter} sqft
+                      {item.areaInSqMeter} m²
                     </span>
                   </div>
                 </div>
