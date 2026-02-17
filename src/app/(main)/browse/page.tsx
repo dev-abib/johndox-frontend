@@ -168,7 +168,6 @@ const page = () => {
     return <BrowseDetailsSkeleton />;
   }
 
-  // detect mobile
 
   const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
     if (!isMobile || !ref.current) return;
