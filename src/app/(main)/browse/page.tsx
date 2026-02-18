@@ -53,7 +53,8 @@ const page = () => {
   const propertyViewMutation = usePropertyView();
   const listRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
-    const isMobile = useMediaQuery({ maxWidth: 1023 });
+  const isMobile = useMediaQuery({ maxWidth: 1023 });
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const handleContact = async (id: string) => {
     if (!id) return;
@@ -167,7 +168,6 @@ const page = () => {
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
   }
-
 
   const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
     if (!isMobile || !ref.current) return;
@@ -337,21 +337,22 @@ const page = () => {
                 <h2 className="text-xl font-semibold">Filters</h2>
               </div>
 
-              <ul className="flex justify-between pb-5 text-sm font-medium">
-                <li
-                  onClick={() => scrollTo(listRef)}
-                  className="cursor-pointer text-primary-blue"
-                >
-                  List View
-                </li>
-
-                <li
-                  onClick={() => scrollTo(mapRef)}
-                  className="cursor-pointer text-primary-blue"
-                >
-                  Map View
-                </li>
-              </ul>
+              <div className="block lg:hidden order-1 my-6">
+                <div className="flex bg-[#F3F3F4] p-1 rounded-xl">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${viewMode === "list" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500"}`}
+                  >
+                    List View
+                  </button>
+                  <button
+                    onClick={() => setViewMode("map")}
+                    className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${viewMode === "map" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500"}`}
+                  >
+                    Map View
+                  </button>
+                </div>
+              </div>
 
               {/* PROPERTY TYPE */}
               <div className="mb-6">
@@ -519,7 +520,9 @@ const page = () => {
           </div>
           <div
             ref={listRef}
-            className="w-full lg:flex-grow lg:w-[60%] order-2 lg:order-2"
+            className={`w-full lg:flex-grow lg:w-[60%] order-2 lg:order-2 ${
+              isMobile && viewMode !== "list" ? "hidden" : "block"
+            }`}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 xl:gap-11">
               {displayedProperties?.map((item: any) => (
@@ -618,7 +621,9 @@ const page = () => {
 
           <div
             ref={mapRef}
-            className="w-full lg:w-[40%] h-[400px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative"
+            className={`w-full lg:w-[40%] h-[500px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative ${
+              isMobile && viewMode !== "map" ? "hidden" : "block"
+            }`}
           >
             <APIProvider
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
