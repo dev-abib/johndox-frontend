@@ -84,7 +84,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
   }
 
   return (
-    <section className="py-16 md:py-24 xl:py-[150px]">
+    <section className="py-16 md:py-24 xl:py-[150px] px-5">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
