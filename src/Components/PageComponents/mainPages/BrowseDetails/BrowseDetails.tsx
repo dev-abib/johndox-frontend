@@ -194,7 +194,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   <div className="flex items-center gap-2.5">
                     <Acceleration className="w-4 h-4" />
                     <span className="text-sm font-normal text-[#404040]">
-                      {data?.areaInSqMeter} m
+                      {data?.areaInSqMeter} m²
                     </span>
                   </div>
                 </div>

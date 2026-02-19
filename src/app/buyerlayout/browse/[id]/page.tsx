@@ -29,7 +29,7 @@ const page = () => {
       <BrowseDetails data={singleProductDetails} />
       <BrowseDescription data={singleProductDetails} />
       <Maps item={singleProductDetails} />
-      <LoanCalculatorForm />
+      <LoanCalculatorForm data={singleProductDetails} />
       <CurrencyConverter />
       <ListPropertyCTA Listproperty={Listproperty} />
     </>

@@ -44,7 +44,7 @@ const BuyerNav = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out xl:px-5 px-0 ${
         scrolled ? "bg-white shadow-md" : "bg-transparent"
       }`}
     >

@@ -11,13 +11,10 @@ import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
 
 const propertyTypes = [
-  "Apartment",
   "House",
-  "Villa",
-  "Condo",
-  "Townhouse",
-  "Studio",
-  "Land",
+  "Apartment",
+  "land",
+  "commercial",
 ];
 
 const USD_TO_HNL_RATE = 24.8;

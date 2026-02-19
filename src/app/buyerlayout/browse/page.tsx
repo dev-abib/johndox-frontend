@@ -32,6 +32,7 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
+import { useMediaQuery } from "react-responsive";
 
 const page = () => {
   const { mutate } = AddFavourite();
@@ -53,9 +54,22 @@ const page = () => {
   const [selectedSort, setSelectedSort] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
   const { mutate: saveSearch } = UseSearchSave();
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useMediaQuery({ maxWidth: 1023 });
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const router = useRouter();
   const propertyViewMutation = usePropertyView();
+
+  const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
+    if (!isMobile || !ref.current) return;
+
+    ref.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const handleContact = async (id: string) => {
     if (!id) return;
@@ -330,6 +344,23 @@ const page = () => {
                 <h2 className="text-xl font-semibold">Filters</h2>
               </div>
 
+              <div className="block lg:hidden order-1 my-6">
+                <div className="flex bg-[#F3F3F4] p-1 rounded-xl">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${viewMode === "list" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500"}`}
+                  >
+                    List View
+                  </button>
+                  <button
+                    onClick={() => setViewMode("map")}
+                    className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${viewMode === "map" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500"}`}
+                  >
+                    Map View
+                  </button>
+                </div>
+              </div>
+
               {/* PROPERTY TYPE */}
               <div className="mb-6">
                 <div
@@ -455,13 +486,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBedrooms(num)}
-                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm ${
+                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm cursor-pointer ${
                           bedrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
@@ -472,13 +503,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBathrooms(num)}
-                        className={`h-9 w-9 rounded-lg border text-sm ${
+                        className={`h-9 w-9 rounded-lg border text-sm cursor-pointer ${
                           bathrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
@@ -494,7 +525,12 @@ const page = () => {
               </button>
             </div>
           </div>
-          <div className="w-full lg:flex-grow lg:w-[60%] order-2 lg:order-2">
+          <div
+            ref={listRef}
+            className={`w-full lg:flex-grow lg:w-[60%] order-2 lg:order-2 ${
+              isMobile && viewMode !== "list" ? "hidden" : "block"
+            }`}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 xl:gap-11">
               {displayedProperties?.map((item: any) => (
                 <div
@@ -563,7 +599,7 @@ const page = () => {
                       <div className="flex items-center gap-2.5">
                         <Acceleration className="shrink-0" />
                         <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
-                          {item.areaInSqMeter} sqft
+                          {item.areaInSqMeter} m²
                         </span>
                       </div>
                     </div>
@@ -590,7 +626,12 @@ const page = () => {
             </div>
           </div>
 
-          <div className="w-full lg:w-[40%] h-[400px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative">
+          <div
+            ref={mapRef}
+            className={`w-full lg:w-[40%] h-[500px] lg:h-[calc(100vh-150px)] lg:sticky lg:top-[20px] order-2 lg:order-1 relative ${
+              isMobile && viewMode !== "map" ? "hidden" : "block"
+            }`}
+          >
             <APIProvider
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
             >
@@ -740,13 +781,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBedrooms(num)}
-                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm ${
+                        className={`h-9 w-9 rounded-lg border border-[#C4CDD5] text-sm cursor-pointer ${
                           bedrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
@@ -757,13 +798,13 @@ const page = () => {
                       <button
                         key={num}
                         onClick={() => setBathrooms(num)}
-                        className={`h-9 w-9 rounded-lg border text-sm ${
+                        className={`h-9 w-9 rounded-lg border text-sm cursor-pointer ${
                           bathrooms === num
                             ? "bg-primary-blue text-white border-[#C4CDD5]"
                             : "hover:bg-gray-100 border-[#C4CDD5]"
                         }`}
                       >
-                        {num}
+                        {num === 5 ? "5+" : num}
                       </button>
                     ))}
                   </div>
