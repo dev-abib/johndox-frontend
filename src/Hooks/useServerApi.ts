@@ -6,23 +6,22 @@ interface FetchOptions {
 
 export async function useServerApi<T = any>({
   endpoint,
-  mode = "SSR", 
+  mode = "SSR",
   revalidate = 0,
 }: FetchOptions): Promise<T> {
-  const url = `${process.env.NEXT_PUBLIC_SITE_URL}${endpoint}`;
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, ""); 
 
-  const fetchOptions: RequestInit & { next?: { revalidate?: number } } = {
-    cache: "no-store", 
-  };
+  const url = `${baseUrl}${endpoint}`;
 
-  const res = await fetch(url, fetchOptions);
+  console.log("[useServerApi] Fetching:", url);
+
+  const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch ${endpoint}`);
+    throw new Error(`Failed to fetch ${endpoint} — status: ${res.status}`);
   }
 
   return res.json();
 }
-
 
 

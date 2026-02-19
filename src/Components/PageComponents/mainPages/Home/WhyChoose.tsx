@@ -7,7 +7,7 @@ interface whychooseusProps {
 
 const WhyChoose = ({ WhyChooseUs }: whychooseusProps) => {
   return (
-    <section className="py-20 lg:py-[150px]">
+    <section className="py-20 lg:py-[150px] xl:px-5 px-0">
       <Container>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="font-medium text-black text-2xl sm:text-4xl xl:text-[38px]">

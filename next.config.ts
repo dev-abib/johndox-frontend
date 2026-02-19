@@ -1,4 +1,4 @@
-let domain = "example.com"; // fallback
+let domain = "example.com";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 if (siteUrl) {
@@ -14,7 +14,6 @@ if (siteUrl) {
 const nextConfig = {
   images: {
     remotePatterns: [
-      // Your own site (dynamic)
       {
         protocol: "https",
         hostname: domain,
@@ -24,7 +23,6 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
-      // iBB image hosting (logo)
       {
         protocol: "https",
         hostname: "i.ibb.co.com",
@@ -33,6 +31,11 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
     ],

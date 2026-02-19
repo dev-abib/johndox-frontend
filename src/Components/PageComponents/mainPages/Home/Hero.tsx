@@ -37,7 +37,7 @@ const Hero: React.FC<heroProps> = ({ hero }) => {
           ? `url(${hero.bgImg})`
           : "url('/Assets/mainhero.png')",
       }}
-      className="mainhero pt-8 pb-20 md:pt-16 md:pb-32 lg:pt-21 lg:pb-[280px] bg-cover bg-center"
+      className="mainhero pt-8 pb-20 md:pt-16 md:pb-32 lg:pt-21 lg:pb-[280px] bg-cover bg-center xl:px-5 px-0"
     >
       <Container>
         <div className="flex flex-col lg:flex-row lg:justify-between gap-12 lg:gap-20">
