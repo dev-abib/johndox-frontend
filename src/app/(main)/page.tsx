@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 import Hero from "@/Components/PageComponents/mainPages/Home/Hero";
 import Browser from "@/Components/PageComponents/mainPages/Home/Browser";
 import Featured from "@/Components/PageComponents/mainPages/Home/Featured";
