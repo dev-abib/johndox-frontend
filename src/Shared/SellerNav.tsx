@@ -14,6 +14,9 @@ const SellerNav = () => {
   const languages = ["English", "Spanish"];
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [activeLang, setActiveLang] = useState("English");
+
   const token = localStorage.getItem("token");
   const { data } = useGetUserData(token);
 
@@ -21,23 +24,42 @@ const SellerNav = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const [langOpen, setLangOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState("English");
-
+  // ✅ Fixed changeLanguage with retry logic
   const changeLanguage = (lang: "en" | "es") => {
-    const select = document.querySelector(
-      ".goog-te-combo",
-    ) as HTMLSelectElement;
+    const tryChange = (attempts = 0) => {
+      const select = document.querySelector(
+        ".goog-te-combo",
+      ) as HTMLSelectElement | null;
 
-    if (!select) return;
+      if (!select) {
+        if (attempts < 5) setTimeout(() => tryChange(attempts + 1), 200);
+        return;
+      }
 
-    select.value = lang;
-    select.dispatchEvent(new Event("change"));
+      select.value = lang;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+      select.dispatchEvent(new Event("input", { bubbles: true }));
+
+      setTimeout(() => {
+        if (select.value !== lang && attempts < 5) {
+          tryChange(attempts + 1);
+        }
+      }, 300);
+    };
+
+    tryChange();
+  };
+
+  // ✅ Shared handler for both desktop and mobile
+  const handleLangSelect = (lang: string, closeDrawer = false) => {
+    setActiveLang(lang);
+    setLangOpen(false);
+    changeLanguage(lang === "Spanish" ? "es" : "en");
+    if (closeDrawer) setIsOpen(false);
   };
 
   return (
@@ -59,6 +81,8 @@ const SellerNav = () => {
                 className="w-[150px] 2xl:w-[220px]"
               />
             </Link>
+
+            {/* Desktop Menu */}
             <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
               <li>
                 <Link
@@ -73,7 +97,6 @@ const SellerNav = () => {
                   Subscription Plans
                 </li>
               </Link>
-
               <li>
                 <Link
                   href="/seller/about"
@@ -82,7 +105,6 @@ const SellerNav = () => {
                   About
                 </Link>
               </li>
-
               <li>
                 <Link
                   href="/seller/contact-us"
@@ -92,22 +114,24 @@ const SellerNav = () => {
                 </Link>
               </li>
 
+              {/* ✅ Desktop Language Selector */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1 cursor-pointer hover:text-black transition"
+                  className="flex items-center gap-1 cursor-pointer hover:text-black transition notranslate"
+                  translate="no"
                 >
-                  <PlanetSvg /> {activeLang}
+                  <PlanetSvg />
+                  <span translate="no" className="notranslate">
+                    {activeLang}
+                  </span>
                   <span
-                    className={`text-xs ml-3 transition-transform ${
-                      langOpen ? "rotate-180" : ""
-                    }`}
+                    className={`text-xs ml-3 transition-transform ${langOpen ? "rotate-180" : ""}`}
                   >
                     <AngleBottomSvg />
                   </span>
                 </button>
 
-                {/* Dropdown */}
                 <div
                   className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
                     langOpen
@@ -118,12 +142,9 @@ const SellerNav = () => {
                   {languages.map(lang => (
                     <button
                       key={lang}
-                      onClick={() => {
-                        setActiveLang(lang);
-                        setLangOpen(false);
-                        changeLanguage(lang === "English" ? "en" : "es");
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
+                      onClick={() => handleLangSelect(lang)}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition notranslate"
+                      translate="no"
                     >
                       {lang}
                     </button>
@@ -131,18 +152,18 @@ const SellerNav = () => {
                 </div>
               </li>
             </ul>
+
             <div className="hidden xl:flex items-center gap-4">
               <Link
                 href="/seller/my-listing"
-                className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
+                className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3 2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
               >
                 <GoListUnordered className="size-7" />
                 My Listings
               </Link>
-
               <Link
                 href="/seller/profile"
-                className="rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue flex gap-x-2 items-center"
+                className="rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3 2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue flex gap-x-2 items-center"
               >
                 {data?.data?.profilePicture ? (
                   <Image
@@ -158,6 +179,7 @@ const SellerNav = () => {
                 Profile
               </Link>
             </div>
+
             <button
               onClick={() => setIsOpen(true)}
               className="xl:hidden text-2xl"
@@ -165,6 +187,8 @@ const SellerNav = () => {
               <FaBars />
             </button>
           </div>
+
+          {/* Mobile Drawer */}
           <div
             className={`fixed top-0 left-0 z-50 h-full w-[260px] bg-white shadow-xl transform transition-transform duration-300 ${
               isOpen ? "translate-x-0" : "-translate-x-full"
@@ -181,7 +205,8 @@ const SellerNav = () => {
                 <FaTimes />
               </button>
             </div>
-            <ul className="flex flex-col gap-3 px-6 py-5 ">
+
+            <ul className="flex flex-col gap-3 px-6 py-5">
               <li>
                 <Link href="/seller/forseller" onClick={() => setIsOpen(false)}>
                   For Sellers
@@ -192,13 +217,11 @@ const SellerNav = () => {
                   Subscription Plans
                 </li>
               </Link>
-
               <li>
                 <Link href="/seller/about" onClick={() => setIsOpen(false)}>
                   About
                 </Link>
               </li>
-
               <li>
                 <Link
                   href="/seller/contact-us"
@@ -207,24 +230,27 @@ const SellerNav = () => {
                   Contract Us
                 </Link>
               </li>
+
+              {/* ✅ Mobile Language Selector */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1 cursor-pointer hover:text-black transition"
+                  className="flex items-center gap-1 cursor-pointer hover:text-black transition notranslate"
+                  translate="no"
                 >
-                  <PlanetSvg /> {activeLang}
+                  <PlanetSvg />
+                  <span translate="no" className="notranslate">
+                    {activeLang}
+                  </span>
                   <span
-                    className={`text-xs ml-3 transition-transform ${
-                      langOpen ? "rotate-180" : ""
-                    }`}
+                    className={`text-xs ml-3 transition-transform ${langOpen ? "rotate-180" : ""}`}
                   >
                     <AngleBottomSvg />
                   </span>
                 </button>
 
-                {/* Dropdown */}
                 <div
-                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark  transition-all duration-200 ${
+                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
                     langOpen
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-2 pointer-events-none"
@@ -233,12 +259,9 @@ const SellerNav = () => {
                   {languages.map(lang => (
                     <button
                       key={lang}
-                      onClick={() => {
-                        setActiveLang(lang);
-                        setLangOpen(false);
-                        changeLanguage(lang === "English" ? "en" : "es");
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => handleLangSelect(lang, true)}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition notranslate"
+                      translate="no"
                     >
                       {lang}
                     </button>
@@ -246,6 +269,7 @@ const SellerNav = () => {
                 </div>
               </li>
             </ul>
+
             <div className="px-6 flex flex-col gap-4">
               <Link
                 href="/seller/my-listing"
@@ -255,7 +279,6 @@ const SellerNav = () => {
                 <GoListUnordered className="size-7" />
                 My Listings
               </Link>
-
               <Link
                 href="/seller/profile"
                 onClick={() => setIsOpen(false)}
@@ -276,6 +299,7 @@ const SellerNav = () => {
               </Link>
             </div>
           </div>
+
           {isOpen && (
             <div
               className="fixed inset-0 bg-black/40 z-40 xl:hidden"

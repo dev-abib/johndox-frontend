@@ -23,14 +23,6 @@ const Footer = () => {
     <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15">
       <Container>
         <div>
-          <div className="mt-16">
-            <img
-              src={data?.data?.footerLogo}      
-              alt=""
-              className="mx-auto xl:mx-0"
-            />
-          </div>
-
           {/* Main Content */}
           <div className="xl:px-0 px-5 py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
             {/* Left Text */}
@@ -106,17 +98,17 @@ const Footer = () => {
           </div>
 
           {/* Help Menu Image */}
-          <div className="w-full my-5 xl:my-10 px-5 xl:px-0">
+          <div className="mt-16">
             <img
-              className="w-full"
-              src="https://i.ibb.co.com/Mwgw8jr/HELP-MENU.png"
+              src={data?.data?.footerLogo}
               alt=""
+              className="mx-auto xl:mx-0"
             />
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="relative z-10 border-t border-[#454F5B]">
+        <div className="relative z-10 border-t border-[#454F5B] mt-10">
           <div className="px-5 xl:px-0 pt-6 pb-10 flex flex-col-reverse md:flex-row items-center justify-between gap-6">
             <p className="text-sm xl:text-[16px] md:text-[18px] font-normal leading-[28px] text-[#FFF] text-center md:text-left">
               {data?.data?.copyrightTxt ||

@@ -31,6 +31,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AddFavourite, usePropertyView } from "@/Hooks/api/post_api";
 
 const page = () => {
+  const router = useRouter();
   const { mutate } = AddFavourite();
   const [open, setOpen] = useState(false);
   const { data: cta } = ListPropertyBrowse();
@@ -49,7 +50,6 @@ const page = () => {
   const [bathrooms, setBathrooms] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
-  const router = useRouter();
   const propertyViewMutation = usePropertyView();
   const listRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
