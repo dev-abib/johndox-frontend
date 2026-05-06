@@ -24,17 +24,18 @@ const Featured = ({ data = [] }: PropertyProps) => {
   const { mutate } = AddFavourite();
   const [showAll, setShowAll] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const [loadingFavorites, setLoadingFavorites] = useState< Record<string, boolean>>({});
+  const [loadingFavorites, setLoadingFavorites] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
   }, []);
 
-
-    const pathname = usePathname();
-    const isBuyerLayout = pathname.startsWith("/buyerlayout");
-    const displayedProperties = showAll ? data : data.slice(0, 6);
+  const pathname = usePathname();
+  const isBuyerLayout = pathname.startsWith("/buyerlayout");
+  const displayedProperties = showAll ? data : data.slice(0, 6);
 
   const [favoriteStates, setFavoriteStates] = useState<{
     [key: string]: boolean;
@@ -76,8 +77,6 @@ const Featured = ({ data = [] }: PropertyProps) => {
       },
     );
   };
-
-  
 
   if (!displayedProperties || displayedProperties.length === 0) {
     return <FeaturedSkeleton />;
@@ -137,8 +136,10 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   </span>
                 </h3>
 
-                <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
-                  {item.propertyName}
+                <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3">
+                  {item.propertyName?.length > 25
+                    ? item.propertyName.substring(0, 25) + "..."
+                    : item.propertyName}
                 </h4>
 
                 <div className="flex items-center gap-2.5 mt-4">

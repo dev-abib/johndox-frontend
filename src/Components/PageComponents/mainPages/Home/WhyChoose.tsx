@@ -6,6 +6,7 @@ interface whychooseusProps {
 }
 
 const WhyChoose = ({ WhyChooseUs }: whychooseusProps) => {
+  
   return (
     <section className="py-20 lg:py-[150px] xl:px-5 px-0">
       <Container>

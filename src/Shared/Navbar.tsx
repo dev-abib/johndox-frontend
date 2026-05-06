@@ -39,14 +39,29 @@ const Navbar = () => {
   };
 
   const changeLanguage = (lang: "en" | "es") => {
-    const select = document.querySelector(
-      ".goog-te-combo",
-    ) as HTMLSelectElement | null;
+    const tryChange = (attempts = 0) => {
+      const select = document.querySelector(
+        ".goog-te-combo",
+      ) as HTMLSelectElement | null;
 
-    if (!select) return;
+      if (!select) {
+        if (attempts < 5) setTimeout(() => tryChange(attempts + 1), 200);
+        return;
+      }
 
-    select.value = lang;
-    select.dispatchEvent(new Event("change"));
+      select.value = lang;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+      select.dispatchEvent(new Event("input", { bubbles: true }));
+
+      // Verify it actually changed; if not, retry
+      setTimeout(() => {
+        if (select.value !== lang && attempts < 5) {
+          tryChange(attempts + 1);
+        }
+      }, 300);
+    };
+
+    tryChange();
   };
 
   const config = {
@@ -199,10 +214,12 @@ const Navbar = () => {
             <ul className="hidden xl:flex items-center gap-4">
               {config.desktopLinks.map(renderDesktopLink)}
 
+              {/* Desktop language button */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 notranslate cursor-pointer"
+                  translate="no"
                 >
                   <PlanetSvg /> {activeLang} <AngleBottomSvg />
                 </button>
@@ -213,7 +230,8 @@ const Navbar = () => {
                       <button
                         key={lang}
                         onClick={() => handleLangSelect(lang)}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 notranslate"
+                        translate="no"
                       >
                         {lang}
                       </button>
@@ -261,7 +279,43 @@ const Navbar = () => {
               {config.mobileLinks.map(renderMobileLink)}
             </ul>
 
-            <div className="px-6 flex flex-col gap-4">
+            <div className="px-6 mt-4">
+              {/* Mobile language button */}
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center justify-between w-full border rounded-lg px-4 py-2 notranslate"
+                translate="no"
+              >
+                <span
+                  className="flex items-center gap-2 notranslate"
+                  translate="no"
+                >
+                  <PlanetSvg />
+                  {activeLang}
+                </span>
+                <AngleBottomSvg />
+              </button>
+
+              {langOpen && (
+                <div className="rounded-xl bg-white shadow border">
+                  {languages.map(lang => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        handleLangSelect(lang);
+                        setIsOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 notranslate"
+                      translate="no"
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 flex flex-col gap-4 pt-5">
               {config.mobileButtons.map(btn => (
                 <Link
                   key={btn.href}
