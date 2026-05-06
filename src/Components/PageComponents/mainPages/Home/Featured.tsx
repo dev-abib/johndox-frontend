@@ -136,8 +136,10 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   </span>
                 </h3>
 
-                <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1">
-                  {item.propertyName}
+                <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3">
+                  {item.propertyName?.length > 25
+                    ? item.propertyName.substring(0, 25) + "..."
+                    : item.propertyName}
                 </h4>
 
                 <div className="flex items-center gap-2.5 mt-4">

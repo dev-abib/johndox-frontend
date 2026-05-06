@@ -24,7 +24,7 @@ const Footer = () => {
       <Container>
         <div>
           {/* Main Content */}
-          <div className="xl:px-0 px-5 py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
+          <div className="px-5 py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
             {/* Left Text */}
             <div className="xl:w-[37%] w-full">
               <p className="footer_text xl:w-[80%] w-full text-center xl:text-left">
