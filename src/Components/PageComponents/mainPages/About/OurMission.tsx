@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import Mission from "../../../../Assets/mission.png";
 import { Mark } from "@/Components/Svg/SvgContainer";
 import Container from "@/Components/Common/Container";
 
@@ -13,7 +12,6 @@ const OurMission = ({ mission }: MissionProps) => {
     <section className="py-[80px] lg:py-[150px]">
       <Container>
         <div className="flex flex-col xl:flex-row items-start lg:items-end gap-y-14 lg:gap-x-12">
-          {/* Content */}
           <div className="w-full xl:w-1/2">
             <h2 className="text-[28px] lg:text-[38px] font-medium text-black">
               {mission?.data?.title}
@@ -23,7 +21,6 @@ const OurMission = ({ mission }: MissionProps) => {
               {mission?.data?.description}
             </p>
 
-            {/* Features */}
             <div className="flex xl:flex-col md:flex-row flex-col gap-6 mt-8 lg:mt-10">
               {mission?.data?.featureItems?.map((item: any) => (
                 <div key={item?._id} className="flex items-center gap-x-4">
