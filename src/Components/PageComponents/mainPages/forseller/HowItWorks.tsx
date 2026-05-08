@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Container from "@/Components/Common/Container";
 
 interface whyitworksprops {
@@ -25,7 +24,6 @@ const HowItWorks = ({ whyitworks }: whyitworksprops) => {
                 key={feature?._id}
                 className="bg-[rgba(230,243,255,0.4)] rounded-[18px] shadow-[0_0_8px_rgba(145,158,171,0.4)] py-10 px-8 hover:shadow-lg transition-shadow duration-300"
               >
-                {/* Number Circle */}
                 <div className="flex items-center justify-center w-15 h-15 mx-auto rounded-full bg-blue-600 text-white text-3xl font-bold">
                   {index + 1}
                 </div>

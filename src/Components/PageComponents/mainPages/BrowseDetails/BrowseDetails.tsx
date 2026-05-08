@@ -41,14 +41,12 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     rate: number;
   } | null>(null);
 
-  // 1. Initialize Currency Hook
   const { mutate: convertCurrency, isLoading: isConverting } =
     useCurrencyConverter();
 
-  // 2. Initialize Form
   const { register, handleSubmit, reset } = useForm<ConverterForm>({
     defaultValues: {
-      amount: "100", // Default from your JSON example
+      amount: "100",
     },
   });
 
@@ -96,13 +94,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const openMessageModal = () => setIsMessageModalOpen(true);
   const closeMessageModal = () => setIsMessageModalOpen(false);
 
-  // 3. Handle API Conversion
   const onConvert = (formData: ConverterForm) => {
     convertCurrency(
       { lempira: formData.amount },
       {
         onSuccess: (res: any) => {
-          // res.data contains { lempira, usd, rate, convertedAt }
           setConvertedData({
             usd: res.data.usd,
             rate: res.data.rate,
@@ -170,7 +166,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </div>
               </div>
 
-              {/* Property Details */}
               <div className="pt-2.5 2xl:pt-5 pb-4 2xl:pb-8 border-b border-gray-100">
                 <div className="flex items-center gap-2.5 ">
                   <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
@@ -200,7 +195,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </div>
               </div>
 
-              {/* Agent Information */}
               <div className="mt-6">
                 <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium uppercase">
                   Agent Information
@@ -279,7 +273,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </h3>
 
                 <form onSubmit={handleSubmit(onConvert)} className="space-y-4">
-                  {/* From Lempira */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-gray-500 uppercase ml-1">
                       Honduran Lempira (HNL)
@@ -304,7 +297,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     </div>
                   </div>
 
-                  {/* To Dollar */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-gray-500 uppercase ml-1">
                       US Dollar (USD)

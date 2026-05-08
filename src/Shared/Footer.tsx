@@ -10,7 +10,7 @@ const socialIcons: Record<string, any> = {
   facebook: LiaFacebookSquare,
   instagram: FaInstagram,
   linkedin: CiLinkedin,
-  x: RiTwitterXFill,
+  x: RiTwitterXFill, 
   whatsapp: FaWhatsapp,
   telegram: FaTelegram,
   youtube: FaYoutube,
@@ -23,7 +23,6 @@ const Footer = () => {
     <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15">
       <Container>
         <div>
-          {/* Main Content */}
           <div className="px-5 py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
             {/* Left Text */}
             <div className="xl:w-[37%] w-full">
@@ -97,7 +96,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Help Menu Image */}
           <div className="mt-16">
             <img
               src={data?.data?.footerLogo}
@@ -107,7 +105,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="relative z-10 border-t border-[#454F5B] mt-10">
           <div className="px-5 xl:px-0 pt-6 pb-10 flex flex-col-reverse md:flex-row items-center justify-between gap-6">
             <p className="text-sm xl:text-[16px] md:text-[18px] font-normal leading-[28px] text-[#FFF] text-center md:text-left">

@@ -14,7 +14,6 @@ const ReadytoSell = () => {
         backgroundPosition: "center center",
       }}
     >
-      {/* Content */}
       <div className="relative z-10 ">
         <h2 className=" text-2xl 2xl:text-[32px] font-semibold leading-8 xl:leading-[48px] text-[#0085FF] mb-4">
           Ready to Sell?
