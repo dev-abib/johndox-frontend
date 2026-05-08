@@ -12,7 +12,6 @@ const Skeleton: React.FC<SkeletonProps> = ({ className = "" }) => {
 const AboutSkeleton = () => {
   return (
     <div className="w-full overflow-hidden">
-      {/* ================= HERO / BANNER ================= */}
       <div className="relative h-[320px] md:h-[420px] w-full bg-gray-300 animate-pulse">
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-4">
           <Skeleton className="h-8 w-64" />
@@ -21,9 +20,7 @@ const AboutSkeleton = () => {
         </div>
       </div>
 
-      {/* ================= OUR MISSION ================= */}
       <div className="container mx-auto px-4 py-16 grid md:grid-cols-2 gap-10">
-        {/* Left Content */}
         <div className="space-y-6">
           <Skeleton className="h-6 w-44" />
 
@@ -41,11 +38,9 @@ const AboutSkeleton = () => {
           </div>
         </div>
 
-        {/* Right Image */}
         <Skeleton className="h-72 w-full rounded-xl" />
       </div>
 
-      {/* ================= COMMUNITY STATS ================= */}
       <div className="container mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map(i => (
           <div
@@ -58,7 +53,6 @@ const AboutSkeleton = () => {
         ))}
       </div>
 
-      {/* ================= CORE VALUES ================= */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12 space-y-3">
           <Skeleton className="h-6 w-48 mx-auto" />
@@ -77,7 +71,6 @@ const AboutSkeleton = () => {
         </div>
       </div>
 
-      {/* ================= CTA ================= */}
       <div className="bg-gradient-to-r from-blue-100 to-blue-200 py-16">
         <div className="container mx-auto px-4 text-center space-y-6">
           <Skeleton className="h-6 w-64 mx-auto" />

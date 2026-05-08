@@ -51,10 +51,8 @@ const Featured = ({ data = [] }: PropertyProps) => {
       return;
     }
 
-    // start loader for this item
     setLoadingFavorites(prev => ({ ...prev, [id]: true }));
 
-    // optimistic UI
     setFavoriteStates(prev => ({
       ...prev,
       [id]: !prev[id],

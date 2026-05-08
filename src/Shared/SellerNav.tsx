@@ -28,7 +28,6 @@ const SellerNav = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ✅ Fixed changeLanguage with retry logic
   const changeLanguage = (lang: "en" | "es") => {
     const tryChange = (attempts = 0) => {
       const select = document.querySelector(
@@ -54,7 +53,6 @@ const SellerNav = () => {
     tryChange();
   };
 
-  // ✅ Shared handler for both desktop and mobile
   const handleLangSelect = (lang: string, closeDrawer = false) => {
     setActiveLang(lang);
     setLangOpen(false);
@@ -82,7 +80,6 @@ const SellerNav = () => {
               />
             </Link>
 
-            {/* Desktop Menu */}
             <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
               <li>
                 <Link
@@ -114,7 +111,6 @@ const SellerNav = () => {
                 </Link>
               </li>
 
-              {/* ✅ Desktop Language Selector */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
@@ -188,7 +184,6 @@ const SellerNav = () => {
             </button>
           </div>
 
-          {/* Mobile Drawer */}
           <div
             className={`fixed top-0 left-0 z-50 h-full w-[260px] bg-white shadow-xl transform transition-transform duration-300 ${
               isOpen ? "translate-x-0" : "-translate-x-full"

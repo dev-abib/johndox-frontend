@@ -1,18 +1,15 @@
 const PricingSkeleton = () => {
   return (
     <div className="container mx-auto px-4 py-16 animate-pulse">
-      {/* Title */}
       <div className="text-center mb-10">
         <div className="h-6 w-64 bg-gray-200 rounded mx-auto mb-3" />
         <div className="h-4 w-96 bg-gray-200 rounded mx-auto" />
       </div>
 
-      {/* Toggle */}
       <div className="flex justify-center mb-12">
         <div className="h-10 w-48 bg-gray-200 rounded-full" />
       </div>
 
-      {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
         {[1, 2, 3].map((_, i) => (
           <div key={i} className="border rounded-xl p-6 shadow-sm bg-white">
@@ -33,7 +30,6 @@ const PricingSkeleton = () => {
         ))}
       </div>
 
-      {/* FAQ Section */}
       <div className="max-w-2xl mx-auto">
         <div className="h-6 w-72 bg-gray-200 rounded mx-auto mb-8" />
 

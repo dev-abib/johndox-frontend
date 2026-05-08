@@ -24,9 +24,7 @@ const Navbar = () => {
 
   const languages: Lang[] = ["English", "Spanish"];
 
-  /* ===============================
-     MANUAL AUTH LABEL CONTROL
-     =============================== */
+
   const authLabels = {
     English: {
       login: "Log In",
@@ -53,7 +51,6 @@ const Navbar = () => {
       select.dispatchEvent(new Event("change", { bubbles: true }));
       select.dispatchEvent(new Event("input", { bubbles: true }));
 
-      // Verify it actually changed; if not, retry
       setTimeout(() => {
         if (select.value !== lang && attempts < 5) {
           tryChange(attempts + 1);
@@ -214,7 +211,6 @@ const Navbar = () => {
             <ul className="hidden xl:flex items-center gap-4">
               {config.desktopLinks.map(renderDesktopLink)}
 
-              {/* Desktop language button */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
@@ -257,7 +253,6 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* MOBILE DRAWER */}
           <div
             className={`fixed top-0 left-0 h-full w-[260px] bg-white shadow-xl transform transition-transform ${
               isOpen ? "translate-x-0" : "-translate-x-full"
@@ -280,7 +275,6 @@ const Navbar = () => {
             </ul>
 
             <div className="px-6 mt-4">
-              {/* Mobile language button */}
               <button
                 onClick={() => setLangOpen(!langOpen)}
                 className="flex items-center justify-between w-full border rounded-lg px-4 py-2 notranslate"

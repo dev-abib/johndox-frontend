@@ -26,7 +26,6 @@ const BuyerNav = () => {
 
   const languages = ["English", "Spanish"];
 
-  // ✅ Fixed changeLanguage with retry logic
   const changeLanguage = (lang: "en" | "es") => {
     const tryChange = (attempts = 0) => {
       const select = document.querySelector(
@@ -81,7 +80,6 @@ const BuyerNav = () => {
               />
             </Link>
 
-            {/* Desktop Menu */}
             <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
               <li>
                 <Link
@@ -113,7 +111,6 @@ const BuyerNav = () => {
                 </Link>
               </li>
 
-              {/* ✅ Desktop Language Selector */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
@@ -187,7 +184,6 @@ const BuyerNav = () => {
             </button>
           </div>
 
-          {/* Mobile Drawer */}
           <div
             className={`fixed top-0 left-0 z-50 h-full w-[260px] bg-white shadow-xl transform transition-transform duration-300 ${
               isOpen ? "translate-x-0" : "-translate-x-full"
@@ -233,7 +229,6 @@ const BuyerNav = () => {
                 </Link>
               </li>
 
-              {/* ✅ Mobile Language Selector */}
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
