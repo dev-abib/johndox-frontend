@@ -47,7 +47,6 @@ const ContactForm = () => {
     <section className="lg:pt-[150px] pt-15">
       <Container>
         <div className="lg:flex gap-x-22">
-          {/* Form */}
           <div className="w-full">
             <h3 className="xl:text-[24px] md:text-[20px] text-lg font-semibold text-[#404040]">
               Send Us a Message
@@ -163,7 +162,6 @@ const ContactForm = () => {
             </form>
           </div>
 
-          {/* Contact Info */}
           <div className="w-full lg:mt-0 mt-10">
             <h3 className="xl:text-[24px] md:text-[20px] text-lg font-semibold text-[#404040]">
               We're Here to Help
@@ -212,7 +210,6 @@ const ContactForm = () => {
               </div>
             </div>
 
-            {/* Social Links */}
             <div className="mt-7 xl:p-10 p-5 border border-[#E7E7E7] rounded-[28px]">
               <h3 className="text-[24px] font-semibold text-[#404040]">
                 Follow Us

@@ -39,7 +39,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token, userData, loadingUserData]);
 
-  // values to pass:
   const contextValue: AuthContextValue = {
     loading,
     user,
