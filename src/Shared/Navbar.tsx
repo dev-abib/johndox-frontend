@@ -8,80 +8,101 @@ import Container from "@/Components/Common/Container";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 
+type Lang = "English" | "Spanish";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [activeLang, setActiveLang] = useState<Lang>("English");
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const languages = ["English", "Spanish"];
-  const [langOpen, setLangOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState("English");
+  const languages: Lang[] = ["English", "Spanish"];
 
-  // ✅ Guest-only static config
+  /* ===============================
+     MANUAL AUTH LABEL CONTROL
+     =============================== */
+  const authLabels = {
+    English: {
+      login: "Log In",
+      register: "Sign Up",
+    },
+    Spanish: {
+      login: "Acceso",
+      register: "Inscribirse",
+    },
+  };
+
+  const changeLanguage = (lang: "en" | "es") => {
+    const select = document.querySelector(
+      ".goog-te-combo",
+    ) as HTMLSelectElement | null;
+
+    if (!select) return;
+
+    select.value = lang;
+    select.dispatchEvent(new Event("change"));
+  };
+
   const config = {
     logoHref: "/",
+
     desktopLinks: [
       {
         type: "li-link",
         label: "Home",
         href: "/",
-        linkClassName: "hover:text-black transition",
+        linkClassName: "hover:text-black transition text-lg",
       },
       {
         type: "link-li",
         label: "Browse Properties",
         href: "/browse",
         liClassName:
-          "flex items-center gap-1 cursor-pointer hover:text-black transition",
+          "flex items-center gap-1 cursor-pointer hover:text-black transition text-lg",
       },
       {
         type: "li-link",
         label: "For Sellers",
-        href: "/forseller",   
-        linkClassName: "hover:text-black transition",
+        href: "/forseller",
+        linkClassName: "hover:text-black transition text-lg",
       },
       {
         type: "li-link",
         label: "About",
         href: "/about",
-        linkClassName: "hover:text-black transition",
+        linkClassName: "hover:text-black transition text-lg",
       },
       {
         type: "li-link",
         label: "Contact Us",
         href: "/contact-us",
-        linkClassName: "hover:text-black transition",
+        linkClassName: "hover:text-black transition text-lg",
       },
     ],
+
     desktopButtons: [
       {
-        label: "Log In",
+        label: authLabels[activeLang].login,
         href: "/auth/login",
         className:
-          "rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3  2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition",
+          "notranslate rounded-xl border-2 border-primary-blue px-4 py-2 2xl:py-3 2xl:text-lg leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition",
       },
       {
-        label: "Sign Up",
+        label: authLabels[activeLang].register,
         href: "/auth/register",
         className:
-          "rounded-xl bg-primary-blue px-[18px] py-1.5 2xl:py-3  2xl:text-xl leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue",
+          "notranslate rounded-xl bg-primary-blue px-4 py-1.5 2xl:py-3 2xl:text-lg leading-[30px] text-white hover:opacity-90 hover:bg-white hover:border-2 border-2 border-primary-blue transition hover:text-primary-blue",
       },
     ],
+
     mobileLinks: [
-      {
-        type: "li-link",
-        label: "Home",
-        href: "/",
-        closeOnClick: true,
-      },
+      { type: "li-link", label: "Home", href: "/", closeOnClick: true },
       {
         type: "link-li",
         label: "Browse Properties",
@@ -95,12 +116,7 @@ const Navbar = () => {
         href: "/forseller",
         closeOnClick: true,
       },
-      {
-        type: "li-link",
-        label: "About",
-        href: "/about",
-        closeOnClick: true,
-      },
+      { type: "li-link", label: "About", href: "/about", closeOnClick: true },
       {
         type: "li-link",
         label: "Contact Us",
@@ -108,50 +124,42 @@ const Navbar = () => {
         closeOnClick: true,
       },
     ],
+
     mobileButtons: [
       {
-        label: "Log In",
+        label: authLabels[activeLang].login,
         href: "/auth/login",
         className:
-          "rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue",
+          "notranslate rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue",
       },
       {
-        label: "Sign Up",
+        label: authLabels[activeLang].register,
         href: "/auth/register",
         className:
-          "rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white",
+          "notranslate rounded-xl bg-primary-blue px-[18px] py-3 text-center text-white",
       },
     ],
   };
 
-  const renderDesktopLink = (item: any) => {
-    if (item.type === "link-li") {
-      return (
-        <Link key={item.label} href={item.href}>
-          <li className={item.liClassName}>{item.label}</li>
-        </Link>
-      );
-    }
-
-    return (
+  const renderDesktopLink = (item: any) =>
+    item.type === "link-li" ? (
+      <Link key={item.label} href={item.href}>
+        <li className={item.liClassName}>{item.label}</li>
+      </Link>
+    ) : (
       <li key={item.label}>
         <Link href={item.href} className={item.linkClassName}>
           {item.label}
         </Link>
       </li>
     );
-  };
 
-  const renderMobileLink = (item: any) => {
-    if (item.type === "link-li") {
-      return (
-        <Link key={item.label} href={item.href}>
-          <li className={item.liClassName}>{item.label}</li>
-        </Link>
-      );
-    }
-
-    return (
+  const renderMobileLink = (item: any) =>
+    item.type === "link-li" ? (
+      <Link key={item.label} href={item.href}>
+        <li className={item.liClassName}>{item.label}</li>
+      </Link>
+    ) : (
       <li key={item.label}>
         <Link
           href={item.href}
@@ -161,32 +169,23 @@ const Navbar = () => {
         </Link>
       </li>
     );
-  };
 
-  const changeLanguage = (lang: "en" | "es") => {
-    const select = document.querySelector(
-      ".goog-te-combo",
-    ) as HTMLSelectElement;
-
-    if (!select) return;
-
-    select.value = lang;
-    select.dispatchEvent(new Event("change"));
+  const handleLangSelect = (lang: Lang) => {
+    setActiveLang(lang);
+    setLangOpen(false);
+    changeLanguage(lang === "Spanish" ? "es" : "en");
   };
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 xl:px-5 px-0 ${
         scrolled ? "bg-white shadow-md" : "bg-transparent"
       }`}
     >
       <Container>
         <header className="w-full text-black">
-          {/* =======================
-              TOP BAR (DESKTOP)
-              ======================= */}
           <div className="flex items-center justify-between py-[26px]">
-            <Link href={config.logoHref} className="flex items-center">
+            <Link href={config.logoHref}>
               <Image
                 src="https://i.ibb.co.com/2YMddrBt/Group-1321314777.png"
                 alt="Terralink Logo"
@@ -197,52 +196,37 @@ const Navbar = () => {
               />
             </Link>
 
-            <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
+            <ul className="hidden xl:flex items-center gap-4">
               {config.desktopLinks.map(renderDesktopLink)}
 
               <li className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1 cursor-pointer hover:text-black transition"
+                  className="flex items-center gap-1"
                 >
-                  <PlanetSvg /> {activeLang}
-                  <span
-                    className={`text-xs ml-3 transition-transform ${
-                      langOpen ? "rotate-180" : ""
-                    }`}
-                  >
-                    <AngleBottomSvg />
-                  </span>
+                  <PlanetSvg /> {activeLang} <AngleBottomSvg />
                 </button>
 
-                <div
-                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
-                    langOpen
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-2 pointer-events-none"
-                  }`}
-                >
-                  {languages.map(lang => (
-                    <button
-                      key={lang}
-                      onClick={() => {
-                        setActiveLang(lang);
-                        setLangOpen(false);
-                        changeLanguage(lang === "Spanish" ? "es" : "en");
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-xl transition"
-                    >
-                      {lang}
-                    </button>
-                  ))}
-                </div>
+                {langOpen && (
+                  <div className="absolute right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border">
+                    {languages.map(lang => (
+                      <button
+                        key={lang}
+                        onClick={() => handleLangSelect(lang)}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                      >
+                        {lang}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </li>
             </ul>
 
-            <div className="hidden xl:flex items-center gap-4">
+            <div className="hidden xl:flex gap-4">
               {config.desktopButtons.map(btn => (
-                <Link key={btn.label} href={btn.href} className={btn.className}>
-                  {btn.label}
+                <Link key={btn.href} href={btn.href} className={btn.className}>
+                  <span translate="no">{btn.label}</span>
                 </Link>
               ))}
             </div>
@@ -255,88 +239,41 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* =======================
-              DRAWER (MOBILE)
-              ======================= */}
+          {/* MOBILE DRAWER */}
           <div
-            className={`fixed top-0 left-0 z-50 h-full w-[260px] bg-white shadow-xl transform transition-transform duration-300 ${
+            className={`fixed top-0 left-0 h-full w-[260px] bg-white shadow-xl transform transition-transform ${
               isOpen ? "translate-x-0" : "-translate-x-full"
             } xl:hidden`}
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b">
+            <div className="flex justify-between px-6 py-5 border-b">
               <Image
                 src="https://i.ibb.co.com/2YMddrBt/Group-1321314777.png"
                 alt="Terralink Logo"
                 width={160}
                 height={40}
               />
-              <button onClick={() => setIsOpen(false)} className="text-xl">
+              <button onClick={() => setIsOpen(false)}>
                 <FaTimes />
               </button>
             </div>
 
-            <ul className="flex flex-col gap-3 px-6 py-5 ">
+            <ul className="px-6 py-5 flex flex-col gap-3">
               {config.mobileLinks.map(renderMobileLink)}
-
-              <li className="relative">
-                <button
-                  onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1 cursor-pointer hover:text-black transition"
-                >
-                  <PlanetSvg /> {activeLang}
-                  <span
-                    className={`text-xs ml-3 transition-transform ${
-                      langOpen ? "rotate-180" : ""
-                    }`}
-                  >
-                    <AngleBottomSvg />
-                  </span>
-                </button>
-
-                <div
-                  className={`absolute top-full right-0 mt-3 w-[160px] rounded-xl bg-white shadow-lg border border-text-dark transition-all duration-200 ${
-                    langOpen
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-2 pointer-events-none"
-                  }`}
-                >
-                  {languages.map(lang => (
-                    <button
-                      key={lang}
-                      onClick={() => {
-                        setActiveLang(lang);
-                        setLangOpen(false);
-                        changeLanguage(lang === "English" ? "en" : "es");
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
-                    >
-                      {lang}
-                    </button>
-                  ))}
-                </div>
-              </li>
             </ul>
 
             <div className="px-6 flex flex-col gap-4">
               {config.mobileButtons.map(btn => (
                 <Link
-                  key={btn.label}
+                  key={btn.href}
                   href={btn.href}
                   onClick={() => setIsOpen(false)}
                   className={btn.className}
                 >
-                  {btn.label}
+                  <span translate="no">{btn.label}</span>
                 </Link>
               ))}
             </div>
           </div>
-
-          {isOpen && (
-            <div
-              className="fixed inset-0 bg-black/40 z-40 xl:hidden"
-              onClick={() => setIsOpen(false)}
-            />
-          )}
         </header>
       </Container>
     </nav>

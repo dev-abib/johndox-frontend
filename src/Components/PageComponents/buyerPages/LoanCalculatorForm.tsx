@@ -12,7 +12,11 @@ type LoanFormInput = {
   interestRate: string;
 };
 
-const LoanCalculatorForm = () => {
+interface BrowswProps {
+  data: any;
+}
+
+const LoanCalculatorForm: React.FC<BrowswProps> = ({ data }) => {
   const [result, setResult] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState<LoanFormInput | null>(
@@ -21,10 +25,10 @@ const LoanCalculatorForm = () => {
 
   const { control, handleSubmit } = useForm<LoanFormInput>({
     defaultValues: {
-      assetsPrice: "00",
-      downPayment: "00",
-      loanTerms: "00",
-      interestRate: "00",
+      assetsPrice: data?.price,
+      downPayment: "0",
+      loanTerms: "0",
+      interestRate: "0",
     },
   });
 
