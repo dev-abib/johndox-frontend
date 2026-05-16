@@ -35,7 +35,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
         <GoogleTranslateLoader />
-        <GoogleOAuthProvider clientId="841975640697-u4amnqfefa6ndr8rvijlbfpu3qovsgur.apps.googleusercontent.com">
+        <GoogleOAuthProvider clientId="121983602661-qbkvthsu98io905c79d4sneacagq12rd.apps.googleusercontent.com">
           <QueryProvider>
             <AuthProvider>
               <AosProvider>
