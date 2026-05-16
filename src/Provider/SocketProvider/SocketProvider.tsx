@@ -44,7 +44,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }
      const socket = io(SOCKET_URL, {
       query: { token },
-      transports: ["websocket"],
+      transports: ["polling", "websocket"],
     });
 
     socketInstance = socket;
