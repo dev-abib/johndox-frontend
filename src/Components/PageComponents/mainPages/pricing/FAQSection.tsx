@@ -1,27 +1,6 @@
 "use client";
 
-const faqs = [
-  {
-    question: "Can I change my plan anytime?",
-    answer:
-      "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.",
-  },
-  {
-    question: "Is there a free trial?",
-    answer:
-      "Yes, all plans come with a 14-day free trial. No credit card required.",
-  },
-  {
-    question: "What payment methods do you accept?",
-    answer:
-      "We accept all major credit cards, bank transfers, and digital wallets.",
-  },
-  {
-    question: "Do you offer refunds?",
-    answer:
-      "Yes, we offer a 30-day money-back guarantee if you're not satisfied.",
-  },
-];
+
 
 interface faqprops {
   data?: any;
@@ -31,12 +10,10 @@ interface faqprops {
 const FAQSection = ({ data, faq }: faqprops) => {
   return (
     <section className="px-6 lg:pt-[150px] pt-15">
-      {/* Heading */}
       <h2 className="text-center text-[#101010] lg:text-[38px] md:text-[32px] text-[24px] font-semibold mb-10">
         {data?.data?.faqTitle}
       </h2>
 
-      {/* FAQ Cards */}
       <div className="max-w-3xl mx-auto space-y-4">
         {faq?.data?.map((faq: any) => (
           <div

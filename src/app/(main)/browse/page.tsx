@@ -31,6 +31,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AddFavourite, usePropertyView } from "@/Hooks/api/post_api";
 
 const page = () => {
+  const router = useRouter();
   const { mutate } = AddFavourite();
   const [open, setOpen] = useState(false);
   const { data: cta } = ListPropertyBrowse();
@@ -49,7 +50,6 @@ const page = () => {
   const [bathrooms, setBathrooms] = useState<number | null>(null);
   const [selectedSort, setSelectedSort] = useState("Newest First");
   const { data, isLoading } = useGetProperties(activeFilters);
-  const router = useRouter();
   const propertyViewMutation = usePropertyView();
   const listRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -250,7 +250,7 @@ const page = () => {
                         ${new Intl.NumberFormat().format(item.price)}
                       </p>
                       <p className="text-[10px] text-gray-500 truncate w-[120px]">
-                        {item.propertyName}
+                        {/* {item.propertyName} */}
                       </p>
                     </div>
                   </div>
@@ -565,13 +565,13 @@ const page = () => {
                       </span>
                     </h3>
 
-                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-2">
+                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1">
                       {item.propertyName}
                     </h4>
 
                     <div className="flex items-center gap-2.5 mt-4">
                       <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
+                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1">
                         {item.city}, {item.state}
                       </p>
                     </div>

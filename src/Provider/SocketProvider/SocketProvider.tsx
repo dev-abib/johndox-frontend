@@ -42,8 +42,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       setIsConnected(true);
       return;
     }
-
-    const socket = io(SOCKET_URL, {
+     const socket = io(SOCKET_URL, {
       query: { token },
       transports: ["websocket"],
     });

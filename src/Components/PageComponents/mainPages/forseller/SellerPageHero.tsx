@@ -21,7 +21,6 @@ const SellerPageHero = ({ hero }: heroprops) => {
           : "url('/Assets/mainhero.png')",
       }}
     >
-      {/* Overlay */}
       <div className="w-full h-full bg-black/50 px-6 py-20 sm:py-24 lg:py-28 flex items-center justify-center">
         <div className="max-w-3xl text-center text-white">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight">
