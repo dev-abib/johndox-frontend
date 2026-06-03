@@ -124,9 +124,22 @@ const Hero: React.FC<heroProps> = ({ hero }) => {
                     className="border border-[#DAE6E9] rounded-2xl lg:rounded-[18px] pl-12 pr-4 py-3.5 w-full appearance-none bg-white focus:outline-none focus:border-[#0085FF]"
                   >
                     <option value="">Select a Location</option>
-                    <option value="tegucigalpa">Tegucigalpa</option>
-                    <option value="san-pedro-sula">San Pedro Sula</option>
-                    <option value="roatan">Roatán</option>
+                    <option value="atlantida">Atlantida</option>
+                    <option value="choluteca">Choluteca</option>
+                    <option value="coldn">Coldn</option>
+                    <option value="comayagua">Comayagua</option>
+                    <option value="copan">Copán</option>
+                    <option value="franciscomorazan">Francisco Morazán</option>
+                    <option value="graciasadios">Gracias a Dios</option>
+                    <option value="intibuca">Intibuca</option>
+                    <option value="islasdobahala">istas do la bahla</option>
+                    <option value="lapaz">Lapaz</option>
+                    <option value="lempira">Lempira</option>
+                    <option value="ocotepeque">Ocotepeque</option>
+                    <option value="olanco">Olanco</option>
+                    <option value="santabarbara">Santa Barbara</option>
+                    <option value="valle">Valle</option>
+                    <option value="yoro">Yoro</option>
                   </select>
                   <div className="absolute top-11 lg:top-12 left-4 pointer-events-none">
                     <Location />
