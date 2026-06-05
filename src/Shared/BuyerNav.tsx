@@ -14,7 +14,7 @@ const BuyerNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState("English");
+  const [activeLang, setActiveLang] = useState("Spanish");
 
   useEffect(() => {
     const handleScroll = () => {

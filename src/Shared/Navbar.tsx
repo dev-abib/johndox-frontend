@@ -14,7 +14,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState<Lang>("English");
+  const [activeLang, setActiveLang] = useState<Lang>("Spanish");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -23,7 +23,6 @@ const Navbar = () => {
   }, []);
 
   const languages: Lang[] = ["English", "Spanish"];
-
 
   const authLabels = {
     English: {
