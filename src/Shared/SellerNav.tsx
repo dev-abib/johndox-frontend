@@ -15,7 +15,7 @@ const SellerNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [activeLang, setActiveLang] = useState("English");
+  const [activeLang, setActiveLang] = useState("Spanish");
 
   const token = localStorage.getItem("token");
   const { data } = useGetUserData(token);
