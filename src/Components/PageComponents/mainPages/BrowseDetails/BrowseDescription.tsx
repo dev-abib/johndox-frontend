@@ -8,7 +8,13 @@ interface BrowswProps {
 
 const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const [showMoreImages, setShowMoreImages] = useState<boolean>(false);
-  const apiImages = data?.media?.filter((m: any) => m.fileType === "image").map((m: any) => m.url) || [];
+  // State for managing the currently expanded lightbox image
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  const apiImages =
+    data?.media
+      ?.filter((m: any) => m.fileType === "image")
+      .map((m: any) => m.url) || [];
 
   const allImages = [...apiImages];
   const visibleImages = allImages.slice(0, 4);
@@ -23,7 +29,8 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
               {visibleImages.map((url, index) => (
                 <div
                   key={index}
-                  className="relative aspect-square rounded-lg overflow-hidden bg-gray-200"
+                  className="relative aspect-square rounded-lg overflow-hidden bg-gray-200 cursor-pointer"
+                  onClick={() => setLightboxImage(url)}
                 >
                   <img
                     src={url}
@@ -34,7 +41,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     hiddenImages.length > 0 &&
                     !showMoreImages && (
                       <div
-                        onClick={() => setShowMoreImages(true)}
+                        onClick={e => {
+                          e.stopPropagation(); // Prevents opening the lightbox immediately when clicking the "+" overlay
+                          setShowMoreImages(true);
+                        }}
                         className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer"
                       >
                         <span className="text-white text-4xl font-bold">
@@ -51,7 +61,8 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                 {hiddenImages.map((url, index) => (
                   <div
                     key={index}
-                    className="aspect-square rounded-lg overflow-hidden bg-gray-200"
+                    className="aspect-square rounded-lg overflow-hidden bg-gray-200 cursor-pointer"
+                    onClick={() => setLightboxImage(url)}
                   >
                     <img
                       src={url}
@@ -194,6 +205,31 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
           </div>
         </div>
       </Container>
+
+      {/* Lightbox Modal UI Element */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            className="absolute top-6 right-6 text-white text-3xl font-light hover:text-gray-300 transition-colors cursor-pointer"
+            onClick={() => setLightboxImage(null)}
+          >
+            ✕
+          </button>
+          <div
+            className="relative w-full max-w-5xl h-[80vh] flex items-center justify-center"
+            onClick={e => e.stopPropagation()}
+          >
+            <img
+              src={lightboxImage}
+              alt="Expanded property view"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };

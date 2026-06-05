@@ -44,7 +44,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="lg:pt-[150px] pt-15">
+    <section className="lg:pt-[150px] pt-15 px-4">
       <Container>
         <div className="lg:flex gap-x-22">
           <div className="w-full">

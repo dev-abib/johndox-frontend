@@ -41,6 +41,9 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     rate: number;
   } | null>(null);
 
+  // Lightbox modal state for expanding property images
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
   const { mutate: convertCurrency, isLoading: isConverting } =
     useCurrencyConverter();
 
@@ -112,31 +115,41 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     data?.media?.find((item: any) => item.fileType === "video")?.url ||
     "/property.mp4";
 
+  // Safely extract images array from your media payload
+  const propertyImages =
+    data?.media?.filter((item: any) => item.fileType === "image") || [];
+
   return (
     <>
       <section className="lg:pt-10 pt-5">
         <Container>
           <div className="flex flex-col lg:flex-row gap-y-4.5 lg:gap-x-4.5 2xl:gap-x-8.5">
-            <div className="w-full flex-1 rounded-lg overflow-hidden relative h-[440px] cursor-pointer">
-              <video
-                ref={videoRef}
-                preload="metadata"
-                className="w-full h-full object-cover"
-                onClick={handlePause}
-                playsInline
-              >
-                <source src={videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-
-              {!isPlaying && (
-                <div
-                  onClick={handlePlay}
-                  className="absolute inset-0 flex items-center justify-center bg-black/30"
+            {/* Media Presentation Container */}
+            <div className="w-full flex-1 flex flex-col gap-3">
+              {/* Main Player Display */}
+              <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-black">
+                <video
+                  ref={videoRef}
+                  preload="metadata"
+                  className="w-full h-full object-cover"
+                  onClick={handlePause}
+                  playsInline
                 >
-                  <Video className="cursor-pointer animate-spin [animation-duration:3s]" />
-                </div>
-              )}
+                  <source src={videoUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+
+                {!isPlaying && (
+                  <div
+                    onClick={handlePlay}
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
+                  >
+                    <Video className="animate-spin [animation-duration:3s]" />
+                  </div>
+                )}
+              </div>
+
+         
             </div>
 
             <div className="flex-1 rounded-lg p-3">
@@ -156,12 +169,31 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0">
                     ${data?.price?.toLocaleString()}
                   </h4>
+
+                  {/* Action Icons Section (Fixed client tooltip request via structured HTML title and clean Tailwind tooltips) */}
                   <div className="flex flex-row md:flex-col gap-3 md:gap-6">
-                    <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer" />
-                    <Converter
-                      onClick={() => setOpenConverter(true)}
-                      className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer"
-                    />
+                    <div
+                      className="group relative h-fit w-fit"
+                      title="Save Listing"
+                    >
+                      <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer hover:text-blue-600 transition-colors" />
+                      <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:inline-block bg-neutral-800 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow-md z-10">
+                        Save Listing
+                      </span>
+                    </div>
+
+                    <div
+                      className="group relative h-fit w-fit"
+                      title="Currency Converter"
+                    >
+                      <Converter
+                        onClick={() => setOpenConverter(true)}
+                        className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer hover:text-blue-600 transition-colors"
+                      />
+                      <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:inline-block bg-neutral-800 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow-md z-10">
+                        Currency Converter
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -335,6 +367,8 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
           )}
         </Container>
       </section>
+
+
 
       <TourRequestModal
         isOpen={isModalOpen}
