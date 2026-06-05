@@ -21,8 +21,8 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
   }
 
   const position = {
-    lat: item.location.lat,
-    lng: item.location.lng,
+    lat: Number(item.location.lat),
+    lng: Number(item.location.lng),
   };
 
   return (
@@ -34,10 +34,13 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
           <APIProvider
             apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
           >
+
             <Map
+              key={item?._id || "property-map"}
               style={{ width: "100%", height: "100%" }}
               defaultCenter={position}
-              defaultZoom={15}
+              center={position} 
+              defaultZoom={16} 
               gestureHandling="greedy"
               disableDefaultUI
             >
@@ -57,14 +60,14 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
                     <div className="relative w-[130px] h-[90px] mb-1">
                       <Image
                         src={item.media?.[0]?.url || "/placeholder.jpg"}
-                        alt={item.propertyName}
+                        alt={item.propertyName || "Property Image"}
                         fill
                         className="object-cover rounded-md"
                       />
                     </div>
                     <div className="flex flex-col">
                       <p className="text-[#0085FF] font-bold text-sm">
-                        ${new Intl.NumberFormat().format(item.price)}
+                        ${new Intl.NumberFormat().format(item.price || 0)}
                       </p>
                       <p className="text-[10px] text-gray-500 truncate w-[120px]">
                         {item.propertyName}

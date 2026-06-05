@@ -10,16 +10,31 @@ import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
 
-const propertyTypes = [
-  "House",
-  "Apartment",
-  "land",
-  "commercial",
-];
+const propertyTypes = ["House", "Apartment", "land", "commercial"];
 
 const USD_TO_HNL_RATE = 24.8;
 
 const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
+const departments = [
+  "Atlántida",
+  "Choluteca",
+  "Colón",
+  "Comayagua",
+  "Copán",
+  "Cortés",
+  "El Paraíso",
+  "Francisco Morazán",
+  "Gracias a Dios",
+  "Intibucá",
+  "Islas de la Bahía",
+  "La Paz",
+  "Lempira",
+  "Ocotepeque",
+  "Olancho",
+  "Santa Bárbara",
+  "Valle",
+  "Yoro",
+];
 
 export type BasicInfoStepProps = {
   register: UseFormRegister<ListingFormData>;
@@ -38,7 +53,6 @@ export default function BasicInfoStep({
   const price = watch("price");
   const token = localStorage.getItem("token");
   const { data } = useCategory(token);
-  console.log(data?.data?.categories);
 
   useEffect(() => {
     if (priceUSD && !isNaN(Number(priceUSD))) {
@@ -127,7 +141,7 @@ export default function BasicInfoStep({
               {errors.propertyType.message}
             </p>
           )}
-        </div> 
+        </div>
 
         <div>
           <label className="block text-sm font-medium mb-2">
@@ -189,16 +203,21 @@ export default function BasicInfoStep({
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">
-            State <span className="text-red-500">*</span>
+            Department <span className="text-red-500">*</span>
           </label>
-          <input
-            {...register("state", { required: "State is required" })}
+          <select
+            {...register("state", {
+              required: "Department is required",
+            })}
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="e.g. Quintana Roo"
-          />
-          {errors.state && (
-            <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>
-          )}
+          >
+            <option value="">Select a Department</option>
+            {departments.map(department => (
+              <option key={department} value={department}>
+                {department}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="grid md:grid-cols-2 grid-cols-1 gap-16 w-full">
