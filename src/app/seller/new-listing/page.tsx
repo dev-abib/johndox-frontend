@@ -254,7 +254,7 @@ export default function CreateListingPage() {
           )}
 
           {currentStep < 3 && (
-            <div className="flex justify-end gap-10 mt-12">
+            <div className="flex justify-end gap-5 mt-12">
               <button
                 type="button"
                 onClick={onPrev}

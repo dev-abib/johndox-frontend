@@ -10,7 +10,7 @@ const socialIcons: Record<string, any> = {
   facebook: LiaFacebookSquare,
   instagram: FaInstagram,
   linkedin: CiLinkedin,
-  x: RiTwitterXFill, 
+  x: RiTwitterXFill,
   whatsapp: FaWhatsapp,
   telegram: FaTelegram,
   youtube: FaYoutube,
@@ -108,8 +108,8 @@ const Footer = () => {
         <div className="relative z-10 border-t border-[#454F5B] mt-10">
           <div className="px-5 xl:px-0 pt-6 pb-10 flex flex-col-reverse md:flex-row items-center justify-between gap-6">
             <p className="text-sm xl:text-[16px] md:text-[18px] font-normal leading-[28px] text-[#FFF] text-center md:text-left">
-              {data?.data?.copyrightTxt ||
-                "© 2025 Terralink. All rights reserved."}
+              {/* {data?.data?.copyrightTxt ||
+                "© 2025 Terralink. All rights reserved."} */}
             </p>
 
             <div className="flex items-center gap-5">

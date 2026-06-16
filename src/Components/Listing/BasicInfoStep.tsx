@@ -10,7 +10,7 @@ import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
 
-const propertyTypes = ["House", "Apartment", "land", "commercial"];
+const propertyTypes = ["House", "Apartment", "Land", "Commercial"];
 
 const USD_TO_HNL_RATE = 24.8;
 
@@ -35,6 +35,18 @@ const departments = [
   "Valle",
   "Yoro",
 ];
+
+// Helper function to format numbers with proper thousands separators
+const formatPrice = (value: string | number): string => {
+  if (!value || isNaN(Number(value))) return "";
+  const numValue = parseInt(String(value).replace(/,/g, ""));
+  return numValue.toLocaleString("en-US");
+};
+
+// Helper function to capitalize first letter
+const capitalizeFirst = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 
 export type BasicInfoStepProps = {
   register: UseFormRegister<ListingFormData>;
@@ -132,7 +144,7 @@ export default function BasicInfoStep({
             <option value="">Select type</option>
             {propertyTypes.map(type => (
               <option key={type} value={type}>
-                {type}
+                {capitalizeFirst(type)}
               </option>
             ))}
           </select>
@@ -156,7 +168,7 @@ export default function BasicInfoStep({
             <option value="">Select type</option>
             {listingTypes.map(type => (
               <option key={type} value={type}>
-                {type}
+                {capitalizeFirst(type)}
               </option>
             ))}
           </select>
@@ -235,7 +247,7 @@ export default function BasicInfoStep({
             <option value="">Select type</option>
             {data?.data?.categories?.map((cat: any) => (
               <option key={cat._id} value={cat.name}>
-                {cat.name}
+                {capitalizeFirst(cat.name)}
               </option>
             ))}
           </select>
@@ -261,6 +273,11 @@ export default function BasicInfoStep({
                 })}
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="100 $ Dollar"
+                value={formatPrice(priceUSD)}
+                onChange={e => {
+                  const value = e.target.value.replace(/,/g, "");
+                  setValue("priceUSD", value, { shouldValidate: true });
+                }}
               />
               {errors.priceUSD && (
                 <p className="text-red-500 text-sm mt-1">
@@ -279,6 +296,11 @@ export default function BasicInfoStep({
                 })}
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="L 1000"
+                value={formatPrice(price)}
+                onChange={e => {
+                  const value = e.target.value.replace(/,/g, "");
+                  setValue("price", value, { shouldValidate: true });
+                }}
               />
               {errors.price && (
                 <p className="text-red-500 text-sm mt-1">
