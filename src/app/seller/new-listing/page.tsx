@@ -28,6 +28,7 @@ export type ListingFormData = {
   amenities?: Record<string, boolean>;
   photos?: FileList | null;
   video?: FileList | null;
+  view360?: FileList | null;
 };
 
 const steps = [
