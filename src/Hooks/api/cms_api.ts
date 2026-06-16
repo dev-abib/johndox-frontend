@@ -248,7 +248,7 @@ export async function Category() {
 export async function Whychooseus() {
   return useServerApi({
     mode: "SSR",
-    endpoint: "/get-why-sell-with-us-section",
+    endpoint: "/get-why-choose-us-section",
   });
 }
 

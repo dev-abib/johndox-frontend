@@ -76,3 +76,23 @@ body {
 .VIpgJd-ZVi9od-ORHb-OEVmcd {
   display: none;
 }
+
+/* Hide default Google Translate UI */
+.skiptranslate iframe, 
+.goog-te-banner-frame.skiptranslate, 
+.goog-te-gadget-icon, 
+.goog-te-gadget-simple,
+#goog-gt-tt,
+.goog-te-spinner-pos,
+.goog-te-spinner-animation,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-OiiCO {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+body {
+  top: 0px !important; 
+}

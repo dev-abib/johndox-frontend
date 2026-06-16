@@ -175,14 +175,14 @@ const ContactForm = () => {
                 Contact Information
               </h3>
               <div className="mt-10 flex flex-col gap-7">
-                <div>
+                {/* <div>
                   <h4 className="xl:text-[24px] md:text-[20px] text-lg font-semibold text-[#339DFF]">
                     Office Address:
                   </h4>
                   <h5 className="xl:text-[20px] md:text-base text-sm font-normal text-[#5F5F5F] pt-3">
                     {data?.data?.address}
                   </h5>
-                </div>
+                </div> */}
                 <div>
                   <h4 className="xl:text-[24px] md:text-[20px] text-lg font-semibold text-[#339DFF]">
                     Email:
