@@ -21,6 +21,7 @@ const Page = async () => {
   const response = await getFeaturedListings();
   const AllProperty = response?.data?.items;
   const Listproperty = await ListProperty();
+ 
 
   return (
     <>

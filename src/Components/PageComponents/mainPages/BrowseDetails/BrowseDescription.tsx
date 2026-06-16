@@ -8,7 +8,6 @@ interface BrowswProps {
 
 const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const [showMoreImages, setShowMoreImages] = useState<boolean>(false);
-  // State for managing the currently expanded lightbox image
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const apiImages =
@@ -42,7 +41,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     !showMoreImages && (
                       <div
                         onClick={e => {
-                          e.stopPropagation(); // Prevents opening the lightbox immediately when clicking the "+" overlay
+                          e.stopPropagation(); 
                           setShowMoreImages(true);
                         }}
                         className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer"

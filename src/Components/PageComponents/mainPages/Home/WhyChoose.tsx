@@ -6,7 +6,6 @@ interface whychooseusProps {
 }
 
 const WhyChoose = ({ WhyChooseUs }: whychooseusProps) => {
-  
   return (
     <section className="py-20 lg:py-[150px] xl:px-5 px-0">
       <Container>
@@ -30,8 +29,8 @@ const WhyChoose = ({ WhyChooseUs }: whychooseusProps) => {
                   <Image
                     src={feature?.iconImg}
                     alt="iconimg"
-                    width={150}
-                    height={150}
+                    width={60}
+                    height={60}
                   />
                 </div>
 
