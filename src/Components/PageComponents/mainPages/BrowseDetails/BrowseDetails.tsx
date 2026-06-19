@@ -111,13 +111,14 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     );
   };
 
-  const videoUrl =
-    data?.media?.find((item: any) => item.fileType === "video")?.url ||
-    "/property.mp4";
+  const videoUrl = data?.media?.find(
+    (item: any) => item.fileType === "video",
+  )?.url;
 
-  // Safely extract images array from your media payload
-  const propertyImages =
-    data?.media?.filter((item: any) => item.fileType === "image") || [];
+  const imageUrls =
+    data?.media
+      ?.filter((item: any) => item.fileType === "image")
+      .map((item: any) => item.url) || [];
 
   return (
     <>
@@ -127,29 +128,116 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
             {/* Media Presentation Container */}
             <div className="w-full flex-1 flex flex-col gap-3">
               {/* Main Player Display */}
-              <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-black">
-                <video
-                  ref={videoRef}
-                  preload="metadata"
-                  className="w-full h-full object-cover"
-                  onClick={handlePause}
-                  playsInline
-                >
-                  <source src={videoUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-
-                {!isPlaying && (
-                  <div
-                    onClick={handlePlay}
-                    className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
+              {videoUrl ? (
+                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-black">
+                  <video
+                    ref={videoRef}
+                    preload="metadata"
+                    className="w-full h-full object-cover"
+                    onClick={handlePause}
+                    playsInline
                   >
-                    <Video className="animate-spin [animation-duration:3s]" />
-                  </div>
-                )}
-              </div>
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
 
-         
+                  {!isPlaying && (
+                    <div
+                      onClick={handlePlay}
+                      className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
+                    >
+                      <Video className="animate-spin [animation-duration:3s]" />
+                    </div>
+                  )}
+                </div>
+              ) : imageUrls.length > 0 ? (
+                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-gray-100">
+                  {/* Main Image Display */}
+                  <div className="w-full h-[360px] bg-gray-100 overflow-hidden rounded-t-lg">
+                    <Image
+                      src={imageUrls[0]}
+                      alt="Property main image"
+                      width={800}
+                      height={360}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                      onClick={() => setLightboxImage(imageUrls[0])}
+                    />
+                  </div>
+
+                  {/* Image Thumbnails Grid */}
+                  {imageUrls.length > 1 && (
+                    <div className="flex gap-2 p-3 bg-white h-20 overflow-x-auto">
+                      {imageUrls.map((url: string, idx: number) => (
+                        <div
+                          key={idx}
+                          className="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#0085FF] transition-all duration-200"
+                          onClick={() => setLightboxImage(url)}
+                        >
+                          <Image
+                            src={url}
+                            alt={`Property thumbnail ${idx + 1}`}
+                            width={64}
+                            height={64}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                      {imageUrls.length > 5 && (
+                        <div className="flex-shrink-0 h-16 w-16 rounded-lg bg-blue-50 border-2 border-[#0085FF] flex items-center justify-center text-[#0085FF] font-bold text-sm">
+                          +{imageUrls.length - 5}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Image Count Badge */}
+                  <div className="absolute top-4 right-4 bg-black/60 text-white px-3 py-2 rounded-lg text-sm font-medium">
+                    📷 {imageUrls.length}{" "}
+                    {imageUrls.length === 1 ? "Photo" : "Photos"}
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center p-8">
+                  {/* No Media State - Professional Design */}
+                  <div className="flex flex-col items-center gap-4">
+                    {/* Icon */}
+                    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center border-2 border-[#0085FF]">
+                      <svg
+                        className="w-12 h-12 text-[#0085FF]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Text Content */}
+                    <div className="text-center gap-1 flex flex-col">
+                      <h3 className="text-2xl font-bold text-gray-800">
+                        No Media Available
+                      </h3>
+                      <p className="text-gray-500 text-sm max-w-xs">
+                        Photos and videos for this property will be added soon.
+                        Contact the agent for more details.
+                      </p>
+                    </div>
+
+                    {/* CTA Button */}
+                    <button
+                      onClick={openMessageModal}
+                      className="mt-6 px-6 py-2.5 bg-[#0085FF] text-white rounded-lg font-medium hover:bg-blue-600 transition-all duration-300 text-sm"
+                    >
+                      Message Agent
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex-1 rounded-lg p-3">
@@ -365,10 +453,35 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
               </div>
             </div>
           )}
+
+          {/* Lightbox Modal for Images */}
+          {lightboxImage && (
+            <div
+              className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+              onClick={() => setLightboxImage(null)}
+            >
+              <div
+                className="relative max-w-4xl max-h-[90vh]"
+                onClick={e => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setLightboxImage(null)}
+                  className="absolute -top-10 right-0 text-white hover:text-gray-300 text-3xl font-bold"
+                >
+                  ✕
+                </button>
+                <Image
+                  src={lightboxImage}
+                  alt="Property full view"
+                  width={1000}
+                  height={800}
+                  className="w-full h-auto rounded-lg"
+                />
+              </div>
+            </div>
+          )}
         </Container>
       </section>
-
-
 
       <TourRequestModal
         isOpen={isModalOpen}

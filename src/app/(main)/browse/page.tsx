@@ -537,7 +537,7 @@ const page = () => {
 
                   <div className="mt-5">
                     <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
-                      {new Intl.NumberFormat().format(item.price)}
+                      ${item?.price?.toLocaleString()}
                       <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>

@@ -191,15 +191,8 @@ export default function EditListingPage() {
   };
 
   return (
-    <section className="py-10">
+    <section className="py-10 lg:px-5">
       <Container>
-        {/* <button
-          onClick={() => window.history.back()}
-          className="flex items-center gap-2 text-2xl font-medium text-[#0085FF] mb-12 hover:underline"
-        >
-          <IoIosArrowBack /> Back
-        </button> */}
-
         <div className="flex gap-6 mb-12">
           {steps.map(step => (
             <div key={step.id} className="flex-1">
