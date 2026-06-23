@@ -659,11 +659,11 @@ export function Premium() {
     </svg>
   );
 }
-export function Save({ className }: { className?: string }) {
+export function Save({ className, fill }: { className?: string; fill?: string }) {
   return (
     <svg
       viewBox="0 0 38 38"
-      fill="none"
+      fill={fill || "none"}
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >

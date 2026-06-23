@@ -83,7 +83,7 @@ export default function EditBasicinfo({
     if (!isInitializing && priceUSD && !isNaN(Number(priceUSD))) {
       const usd = Number(priceUSD);
       const local = parseFloat((usd * USD_TO_HNL_RATE).toFixed(2));
-      setValue("price", local, { shouldValidate: true });
+      setValue("price", local.toString(), { shouldValidate: true });
     } else if (
       !isInitializing &&
       (priceUSD === "" || priceUSD === null || priceUSD === undefined)
@@ -97,7 +97,7 @@ export default function EditBasicinfo({
     if (!isInitializing && price && !isNaN(Number(price))) {
       const local = Number(price);
       const usd = parseFloat((local / USD_TO_HNL_RATE).toFixed(2));
-      setValue("priceUSD", usd, { shouldValidate: true });
+      setValue("priceUSD", usd.toString(), { shouldValidate: true });
     } else if (
       !isInitializing &&
       (price === "" || price === null || price === undefined)
