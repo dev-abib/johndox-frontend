@@ -232,9 +232,8 @@ export default function BasicInfoStep({
           </select>
         </div>
       </div>
-      <div className="grid md:grid-cols-2 grid-cols-1 gap-16 w-full">
-        {/* Listing Type */}
-        <div>
+      <div className="grid  grid-cols-1 gap-16 w-full">
+        {/* <div>
           <label className="block text-sm font-medium mb-2">
             Category <span className="text-red-500">*</span>
           </label>
@@ -256,7 +255,7 @@ export default function BasicInfoStep({
               {errors.category.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         {/* Price */}
         <div>

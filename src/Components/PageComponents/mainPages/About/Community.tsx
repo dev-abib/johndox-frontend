@@ -18,16 +18,16 @@ const Community = ({ community }: CommunityProps) => {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-9">
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-5 gap-6 lg:gap-9">
           {community?.data?.featureItems?.map((item: any) => (
             <div
               key={item?._id}
               className="rounded-[16px] bg-[rgba(230,243,255,0.20)] shadow-[0_0_6px_0_rgba(145,158,171,0.40)] py-8 lg:py-10 px-6 lg:px-10 text-center"
             >
-              <h3 className="text-3xl lg:text-[38px] text-[#0085FF] font-semibold">
+              <h3 className="text-3xl lg:text-[38px] text-[#0085FF] font-semibold ">
                 {item.title}
               </h3>
-              <h4 className="text-[#404040] text-base lg:text-[20px] font-medium mt-2">
+              <h4 className="text-[#404040] text-base lg:text-[20px] font-medium mt-2 text-nowrap capitalize">
                 {item.subTitle}
               </h4>
             </div>

@@ -23,6 +23,13 @@ const propertyTypes = [
 const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
 const USD_TO_HNL_RATE = 24.8;
 
+// Helper function to format numbers with proper thousands separators
+const formatPrice = (value: string | number): string => {
+  if (!value || isNaN(Number(value))) return "";
+  const numValue = parseInt(String(value).replace(/,/g, ""));
+  return numValue.toLocaleString("en-US");
+};
+
 export type BasicInfoStepProps = {
   register: UseFormRegister<ListingFormData>;
   errors: FieldErrors<ListingFormData>;
@@ -74,22 +81,28 @@ export default function EditBasicinfo({
   // 2. Conversion: USD to Local
   useEffect(() => {
     if (!isInitializing && priceUSD && !isNaN(Number(priceUSD))) {
-      const usd = parseFloat(priceUSD);
-      const local = (usd * USD_TO_HNL_RATE).toFixed(2);
-      setValue("price", local, { shouldValidate: true });
-    } else if (!isInitializing && priceUSD === "") {
-      setValue("price", "");
+      const usd = Number(priceUSD);
+      const local = parseFloat((usd * USD_TO_HNL_RATE).toFixed(2));
+      setValue("price", local.toString(), { shouldValidate: true });
+    } else if (
+      !isInitializing &&
+      (priceUSD === "" || priceUSD === null || priceUSD === undefined)
+    ) {
+      setValue("price", "", { shouldValidate: true });
     }
   }, [priceUSD, setValue, isInitializing]);
 
   // 3. Conversion: Local to USD
   useEffect(() => {
     if (!isInitializing && price && !isNaN(Number(price))) {
-      const local = parseFloat(price);
-      const usd = (local / USD_TO_HNL_RATE).toFixed(2);
-      setValue("priceUSD", usd, { shouldValidate: true });
-    } else if (!isInitializing && price === "") {
-      setValue("priceUSD", "");
+      const local = Number(price);
+      const usd = parseFloat((local / USD_TO_HNL_RATE).toFixed(2));
+      setValue("priceUSD", usd.toString(), { shouldValidate: true });
+    } else if (
+      !isInitializing &&
+      (price === "" || price === null || price === undefined)
+    ) {
+      setValue("priceUSD", "", { shouldValidate: true });
     }
   }, [price, setValue, isInitializing]);
 
@@ -232,9 +245,9 @@ export default function EditBasicinfo({
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 grid-cols-1 gap-16 w-full">
+      <div className="grid grid-cols-1 gap-16 w-full">
         {/* Category */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium mb-2">
             Category <span className="text-red-500">*</span>
           </label>
@@ -254,7 +267,7 @@ export default function EditBasicinfo({
               {errors.category.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         {/* Price */}
         <div>
@@ -262,11 +275,38 @@ export default function EditBasicinfo({
             Price <span className="text-red-500">*</span>
           </label>
           <div className="flex items-center gap-4">
+            {/* USD */}
             <div className="flex-1">
               <input
-                {...register("priceUSD", { required: "USD price is required" })}
+                {...register("priceUSD", {
+                  required: "USD price is required",
+                  valueAsNumber: true,
+                })}
+                type="text"
+                inputMode="decimal"
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="100 $ Dollar"
+                onBlur={e => {
+                  const value = e.target.value.replace(/,/g, "");
+                  const numValue = value ? parseFloat(value) : "";
+                  if (numValue) {
+                    e.target.value = formatPrice(numValue);
+                    setValue("priceUSD", numValue as any, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
+                onChange={e => {
+                  const value = e.target.value.replace(/,/g, "");
+                  const numValue = value ? parseFloat(value) : "";
+                  if (value === "") {
+                    setValue("priceUSD", "" as any, { shouldValidate: true });
+                  } else if (numValue) {
+                    setValue("priceUSD", numValue as any, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
               />
               {errors.priceUSD && (
                 <p className="text-red-500 text-sm mt-1">
@@ -277,11 +317,38 @@ export default function EditBasicinfo({
 
             <Convert />
 
+            {/* Local price */}
             <div className="flex-1">
               <input
-                {...register("price", { required: "Local price is required" })}
+                {...register("price", {
+                  required: "Local price is required",
+                  valueAsNumber: true,
+                })}
+                type="text"
+                inputMode="decimal"
                 className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="L 1000"
+                onBlur={e => {
+                  const value = e.target.value.replace(/,/g, "");
+                  const numValue = value ? parseFloat(value) : "";
+                  if (numValue) {
+                    e.target.value = formatPrice(numValue);
+                    setValue("price", numValue as any, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
+                onChange={e => {
+                  const value = e.target.value.replace(/,/g, "");
+                  const numValue = value ? parseFloat(value) : "";
+                  if (value === "") {
+                    setValue("price", "" as any, { shouldValidate: true });
+                  } else if (numValue) {
+                    setValue("price", numValue as any, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
               />
               {errors.price && (
                 <p className="text-red-500 text-sm mt-1">

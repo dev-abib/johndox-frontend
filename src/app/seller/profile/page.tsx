@@ -85,7 +85,7 @@ const page = () => {
           </div>
         )}
 
-        <div className="lg:my-15 my-8 xl:flex lg:flex-row flex flex-col 3xl:gap-x-11 gap-5 bg-[#ECECF0] rounded-[36px] p-3 lg:w-fit w-full">
+        <div className="lg:my-15 my-8 xl:flex lg:flex-row flex flex-col justify-between gap-5 bg-[#ECECF0] rounded-[36px] p-3  w-full">
           {tabs.map(item => {
             const isActive = pathname === item.route;
 

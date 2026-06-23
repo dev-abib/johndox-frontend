@@ -537,7 +537,7 @@ const page = () => {
 
                   <div className="mt-5">
                     <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
-                      {new Intl.NumberFormat().format(item.price)}
+                      ${item?.price?.toLocaleString()}
                       <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>
@@ -551,22 +551,22 @@ const page = () => {
                         {item.city}, {item.state}
                       </p>
                     </div>
-                    <div className="flex flex-wrap gap-5 mt-5">
-                      <div className="flex items-center gap-2.5">
+                    <div className="flex flex-nowrap items-center gap-5 mt-5 overflow-hidden line-clamp-1">
+                      <div className="flex items-center gap-2.5 shrink-0">
                         <Bed className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
                           {item.bedrooms} Bed
                         </span>
                       </div>
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 shrink-0">
                         <Bathtub className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
                           {item.bathrooms} Bath
                         </span>
                       </div>
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 shrink-0">
                         <Acceleration className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
                           {item.areaInSqMeter} m²
                         </span>
                       </div>
