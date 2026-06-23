@@ -64,27 +64,30 @@ const LoanCalculatorForm: React.FC<BrowswProps> = ({ data }) => {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Input fields remain the same */}
-            {["assetsPrice", "downPayment", "loanTerms", "interestRate"].map(
-              name => (
-                <div key={name}>
-                  <label className="text-sm font-medium text-[#5F5F5F] capitalize">
-                    {name.replace(/([A-Z])/g, " $1")}
-                  </label>
-                  <Controller
-                    name={name as keyof LoanFormInput}
-                    control={control}
-                    rules={{ required: "Required" }}
-                    render={({ field }) => (
-                      <input
-                        type="number"
-                        {...field}
-                        className="w-full p-3 border border-[#CFCFCF] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    )}
-                  />
-                </div>
-              ),
-            )}
+            {[
+              "assetsPrice",
+              "downPayment",
+              "Loan duration(Years)",
+              "interestRate",
+            ].map(name => (
+              <div key={name}>
+                <label className="text-sm font-medium text-[#5F5F5F] capitalize">
+                  {name.replace(/([A-Z])/g, " $1")}
+                </label>
+                <Controller
+                  name={name as keyof LoanFormInput}
+                  control={control}
+                  rules={{ required: "Required" }}
+                  render={({ field }) => (
+                    <input
+                      type="number"
+                      {...field}
+                      className="w-full p-3 border border-[#CFCFCF] bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  )}
+                />
+              </div>
+            ))}
           </div>
 
           <button

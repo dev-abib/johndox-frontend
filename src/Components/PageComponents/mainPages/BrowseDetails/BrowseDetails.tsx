@@ -5,6 +5,9 @@ import { getItem } from "@/lib/localStorage";
 import User from "../../../../Assets/dummy.jpg";
 import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
+import { FaWhatsapp, FaInstagram } from "react-icons/fa";
+import { MdOutlineEmail } from "react-icons/md";
+import { FiCopy } from "react-icons/fi";
 import { useForm } from "react-hook-form";
 import {
   Acceleration,
@@ -19,10 +22,12 @@ import {
   Video,
 } from "@/Components/Svg/SvgContainer";
 import { useGetUserData } from "@/Hooks/api/auth_api";
-import { useCurrencyConverter } from "@/Hooks/api/post_api";
+import { useCurrencyConverter, AddFavourite } from "@/Hooks/api/post_api";
 import MessageModal from "../../buyerPages/MessageModal";
 import React, { useEffect, useRef, useState } from "react";
 import TourRequestModal from "../../buyerPages/TourRequestModal";
+import toast from "react-hot-toast";
+import { MdVerified } from "react-icons/md";
 
 interface BrowswProps {
   data: any;
@@ -44,6 +49,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   // Lightbox modal state for expanding property images
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  // Favorite state and mutation
+  const { mutate: toggleFavoriteMutate } = AddFavourite();
+  const [isFavorite, setIsFavorite] = useState(data?.isFavorite || false);
+  const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
+
   const { mutate: convertCurrency, isLoading: isConverting } =
     useCurrencyConverter();
 
@@ -59,6 +69,13 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
       setToken(savedToken);
     }
   }, []);
+
+  // Update favorite state when data changes
+  useEffect(() => {
+    if (data?.isFavorite !== undefined) {
+      setIsFavorite(data.isFavorite);
+    }
+  }, [data?.isFavorite]);
 
   const { data: userdata } = useGetUserData(token);
   const isBuyer = userdata?.data?.role === "buyer";
@@ -97,6 +114,24 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const openMessageModal = () => setIsMessageModalOpen(true);
   const closeMessageModal = () => setIsMessageModalOpen(false);
 
+  // Handle Save Listing (Favorite Toggle)
+  const handleSaveListing = () => {
+    if (!token) {
+      toast.error("Please login to save listings");
+      return;
+    }
+
+    setIsLoadingFavorite(true);
+    setIsFavorite(!isFavorite);
+
+    toggleFavoriteMutate(
+      { endpoint: `/toggle-favourite-listing/${data?._id}` },
+      {
+        onSettled: () => setIsLoadingFavorite(false),
+      },
+    );
+  };
+
   const onConvert = (formData: ConverterForm) => {
     convertCurrency(
       { lempira: formData.amount },
@@ -111,13 +146,93 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     );
   };
 
-  const videoUrl =
-    data?.media?.find((item: any) => item.fileType === "video")?.url ||
-    "/property.mp4";
+  const videoUrl = data?.media?.find(
+    (item: any) => item.fileType === "video",
+  )?.url;
 
-  // Safely extract images array from your media payload
-  const propertyImages =
-    data?.media?.filter((item: any) => item.fileType === "image") || [];
+  const imageUrls =
+    data?.media
+      ?.filter((item: any) => item.fileType === "image")
+      .map((item: any) => item.url) || [];
+
+  // Format date for Member Since
+  const formatMemberSince = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+    });
+  };
+
+  // Share dropdown state
+  const [shareOpen, setShareOpen] = useState(false);
+  const shareRef = useRef<HTMLDivElement>(null);
+
+  // Close share dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (shareRef.current && !shareRef.current.contains(event.target as Node)) {
+        setShareOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const propertyUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareTitle = data?.propertyName || "Check out this property";
+
+  const shareOptions = [
+    {
+      name: "WhatsApp",
+      icon: FaWhatsapp,
+      color: "text-[#25D366]",
+      bgHover: "hover:bg-green-50",
+      action: () => {
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(shareTitle + " - " + propertyUrl)}`,
+          "_blank",
+        );
+        setShareOpen(false);
+      },
+    },
+    {
+      name: "Email",
+      icon: MdOutlineEmail,
+      color: "text-[#EA4335]",
+      bgHover: "hover:bg-red-50",
+      action: () => {
+        window.location.href = `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent("Check out this property: " + propertyUrl)}`;
+        setShareOpen(false);
+      },
+    },
+    {
+      name: "Instagram",
+      icon: FaInstagram,
+      color: "text-[#E4405F]",
+      bgHover: "hover:bg-pink-50",
+      action: () => {
+        window.open("https://www.instagram.com/", "_blank");
+        setShareOpen(false);
+      },
+    },
+    {
+      name: "Copy Link",
+      icon: FiCopy,
+      color: "text-[#0085FF]",
+      bgHover: "hover:bg-blue-50",
+      action: () => {
+        navigator.clipboard.writeText(propertyUrl).then(() => {
+          toast.success("Link copied to clipboard!");
+        });
+        setShareOpen(false);
+      },
+    },
+  ];
+
+  // Calculate listings count (for now, we'll show a placeholder)
+  const listingsCount = data?.author?.listingsCount || "—";
+  const isPremiumAgent = data?.author?.isPremium || false;
 
   return (
     <>
@@ -127,42 +242,154 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
             {/* Media Presentation Container */}
             <div className="w-full flex-1 flex flex-col gap-3">
               {/* Main Player Display */}
-              <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-black">
-                <video
-                  ref={videoRef}
-                  preload="metadata"
-                  className="w-full h-full object-cover"
-                  onClick={handlePause}
-                  playsInline
-                >
-                  <source src={videoUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-
-                {!isPlaying && (
-                  <div
-                    onClick={handlePlay}
-                    className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
+              {videoUrl ? (
+                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-black">
+                  <video
+                    ref={videoRef}
+                    preload="metadata"
+                    className="w-full h-full object-cover"
+                    onClick={handlePause}
+                    playsInline
                   >
-                    <Video className="animate-spin [animation-duration:3s]" />
-                  </div>
-                )}
-              </div>
+                    <source src={videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
 
-         
+                  {!isPlaying && (
+                    <div
+                      onClick={handlePlay}
+                      className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
+                    >
+                      <Video className="animate-spin [animation-duration:3s]" />
+                    </div>
+                  )}
+                </div>
+              ) : imageUrls.length > 0 ? (
+                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-gray-100">
+                  {/* Main Image Display */}
+                  <div className="w-full h-[360px] bg-gray-100 overflow-hidden rounded-t-lg">
+                    <Image
+                      src={imageUrls[0]}
+                      alt="Property main image"
+                      width={800}
+                      height={360}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                      onClick={() => setLightboxImage(imageUrls[0])}
+                    />
+                  </div>
+
+                  {/* Image Thumbnails Grid */}
+                  {imageUrls.length > 1 && (
+                    <div className="flex gap-2 p-3 bg-white h-20 overflow-x-auto">
+                      {imageUrls.map((url: string, idx: number) => (
+                        <div
+                          key={idx}
+                          className="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#0085FF] transition-all duration-200"
+                          onClick={() => setLightboxImage(url)}
+                        >
+                          <Image
+                            src={url}
+                            alt={`Property thumbnail ${idx + 1}`}
+                            width={64}
+                            height={64}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                      {imageUrls.length > 5 && (
+                        <div className="flex-shrink-0 h-16 w-16 rounded-lg bg-blue-50 border-2 border-[#0085FF] flex items-center justify-center text-[#0085FF] font-bold text-sm">
+                          +{imageUrls.length - 5}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Image Count Badge */}
+                  <div className="absolute top-4 right-4 bg-black/60 text-white px-3 py-2 rounded-lg text-sm font-medium">
+                    📷 {imageUrls.length}{" "}
+                    {imageUrls.length === 1 ? "Photo" : "Photos"}
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center p-8">
+                  {/* No Media State - Professional Design */}
+                  <div className="flex flex-col items-center gap-4">
+                    {/* Icon */}
+                    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center border-2 border-[#0085FF]">
+                      <svg
+                        className="w-12 h-12 text-[#0085FF]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Text Content */}
+                    <div className="text-center gap-1 flex flex-col">
+                      <h3 className="text-2xl font-bold text-gray-800">
+                        No Media Available
+                      </h3>
+                      <p className="text-gray-500 text-sm max-w-xs">
+                        Photos and videos for this property will be added soon.
+                        Contact the agent for more details.
+                      </p>
+                    </div>
+
+                    {/* CTA Button */}
+                    <button
+                      onClick={openMessageModal}
+                      className="mt-6 px-6 py-2.5 bg-[#0085FF] text-white rounded-lg font-medium hover:bg-blue-600 transition-all duration-300 text-sm"
+                    >
+                      Message Agent
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex-1 rounded-lg p-3">
               <div className="flex flex-col sm:flex-row gap-2.5 md:gap-5 2xl:gap-20 justify-end">
-                <div className="flex gap-x-4 2xl:gap-x-8 justify-between w-full">
-                  <h3 className="font-semibold text-[20px] 2xl:text-[28px]  text-[#0085FF] ">
+                <div className="flex gap-x-4 2xl:gap-x-8 justify-between w-full items-start">
+                  <h3 className="font-semibold text-[20px] 2xl:text-[28px] text-[#0085FF]">
                     {data?.propertyName}
                   </h3>
-                  <div className="flex gap-x-3 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer">
-                    <p className="font-medium text-[14px] 2xl:text-[18px] text-[#0085FF]">
-                      Share
-                    </p>
-                    <IoShareSocialOutline className="text-[#0085FF]" />
+
+                  {/* Share Button with Dropdown */}
+                  <div className="relative" ref={shareRef}>
+                    <button
+                      onClick={() => setShareOpen(!shareOpen)}
+                      className="flex gap-x-2 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      <p className="font-medium text-[14px] 2xl:text-[18px] text-[#0085FF]">
+                        Share
+                      </p>
+                      <IoShareSocialOutline className="text-[#0085FF]" />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {shareOpen && (
+                      <div className="absolute right-0 mt-2 w-[220px] bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 animate-in fade-in zoom-in duration-150 origin-top-right">
+                        <div className="py-1">
+                          {shareOptions.map(option => (
+                            <button
+                              key={option.name}
+                              onClick={option.action}
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 ${option.bgHover} transition-colors cursor-pointer`}
+                            >
+                              <option.icon className={`text-xl ${option.color}`} />
+                              <span className="font-medium">{option.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start">
@@ -170,28 +397,47 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     ${data?.price?.toLocaleString()}
                   </h4>
 
-                  {/* Action Icons Section (Fixed client tooltip request via structured HTML title and clean Tailwind tooltips) */}
+                  {/* Action Icons Section */}
                   <div className="flex flex-row md:flex-col gap-3 md:gap-6">
-                    <div
-                      className="group relative h-fit w-fit"
-                      title="Save Listing"
-                    >
-                      <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer hover:text-blue-600 transition-colors" />
+                    {/* Save Listing Button - Now with working favorite toggle */}
+                    <div className="group relative h-fit w-fit">
+                      <button
+                        onClick={handleSaveListing}
+                        disabled={isLoadingFavorite}
+                        className="cursor-pointer transition-all hover:text-blue-600 disabled:opacity-50"
+                        title={
+                          isFavorite
+                            ? "Remove from favorites"
+                            : "Add to favorites"
+                        }
+                      >
+                        {isLoadingFavorite ? (
+                          <span className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] border-2 border-blue-500 border-t-transparent rounded-full animate-spin inline-block" />
+                        ) : (
+                          <Save
+                            className={`w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] transition-colors ${
+                              isFavorite ? "text-blue-600" : ""
+                            }`}
+                            fill={isFavorite ? "currentColor" : "none"}
+                          />
+                        )}
+                      </button>
                       <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:inline-block bg-neutral-800 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow-md z-10">
-                        Save Listing
+                        {isFavorite ? "Remove from favorites" : "Save listing"}
                       </span>
                     </div>
 
-                    <div
-                      className="group relative h-fit w-fit"
-                      title="Currency Converter"
-                    >
-                      <Converter
+                    {/* Currency Converter */}
+                    <div className="group relative h-fit w-fit">
+                      <button
                         onClick={() => setOpenConverter(true)}
-                        className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer hover:text-blue-600 transition-colors"
-                      />
+                        className="cursor-pointer hover:text-blue-600 transition-colors"
+                        title="Open currency converter"
+                      >
+                        <Converter className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px]" />
+                      </button>
                       <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:inline-block bg-neutral-800 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow-md z-10">
-                        Currency Converter
+                        Convert currency
                       </span>
                     </div>
                   </div>
@@ -227,6 +473,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </div>
               </div>
 
+              {/* Updated Agent Information Section */}
               <div className="mt-6">
                 <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium uppercase">
                   Agent Information
@@ -244,27 +491,68 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                       !isBuyer ? "blur-sm pointer-events-none select-none" : ""
                     }
                   >
-                    <div className="flex flex-col md:flex-row gap-x-10">
-                      <ul>
-                        <li className="text-xl font-medium text-[#0085FF]">
-                          {data?.author?.firstName} {data?.author?.lastName}
-                        </li>
-                        <li className="text-sm text-[#5F5F5F]">
-                          Senior Real Estate Agent
-                        </li>
-                        <li className="flex gap-x-2 text-sm text-[#5F5F5F] mt-1">
-                          <Star /> {data?.author?.rating?.ratingCount || 0}{" "}
-                          reviews
-                        </li>
-                      </ul>
-                      <ul className="mt-3 md:mt-0">
-                        <li className="flex gap-x-2 text-sm text-[#5F5F5F]">
-                          <Mobile /> {data?.author?.phoneNumber || "N/A"}
-                        </li>
-                        <li className="flex gap-x-2 text-sm text-[#5F5F5F] mt-1">
-                          <Email /> {data?.author?.email || "N/A"}
-                        </li>
-                      </ul>
+                    {/* Agent Name and Premium Status */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-medium text-[#0085FF]">
+                        {data?.author?.firstName} {data?.author?.lastName}
+                      </h3>
+                      {isPremiumAgent && (
+                        <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
+                          <MdVerified className="w-4 h-4 text-[#0085FF]" />
+                          <span className="text-xs font-semibold text-[#0085FF]">
+                            Premium Agent
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Profile Stats Grid */}
+                    <div className="flex flex-wrap gap-5 mt-4">
+                      {/* Member Since */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Member Since
+                        </span>
+                        <p className="text-sm font-medium text-[#404040] mt-1">
+                          {data?.author?.createdAt
+                            ? formatMemberSince(data.author.createdAt)
+                            : "—"}
+                        </p>
+                      </div>
+
+                      {/* Rating */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Rating
+                        </span>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Star />
+                          <p className="text-sm font-medium text-[#404040]">
+                            {data?.author?.rating?.averageRating?.toFixed(1) ||
+                              "—"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Listings */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Active Listings
+                        </span>
+                        <p className="text-sm font-medium text-[#404040] mt-1">
+                          {listingsCount}
+                        </p>
+                      </div>
+
+                      {/* Reviews */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Reviews
+                        </span>
+                        <p className="text-sm font-medium text-[#404040] mt-1">
+                          {data?.author?.rating?.ratingCount || 0}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -300,9 +588,12 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   ✕
                 </button>
 
-                <h3 className="text-[#0085FF] text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-[#0085FF] text-xl font-bold mb-2 flex items-center gap-2">
                   <Converter className="w-6 h-6" /> Currency Converter
                 </h3>
+                <p className="text-sm text-gray-500 mb-6">
+                  Convert Honduran Lempira (HNL) to US Dollars (USD)
+                </p>
 
                 <form onSubmit={handleSubmit(onConvert)} className="space-y-4">
                   <div className="space-y-1">
@@ -365,10 +656,35 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
               </div>
             </div>
           )}
+
+          {/* Lightbox Modal for Images */}
+          {lightboxImage && (
+            <div
+              className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+              onClick={() => setLightboxImage(null)}
+            >
+              <div
+                className="relative max-w-4xl max-h-[90vh]"
+                onClick={e => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setLightboxImage(null)}
+                  className="absolute -top-10 right-0 text-white hover:text-gray-300 text-3xl font-bold"
+                >
+                  ✕
+                </button>
+                <Image
+                  src={lightboxImage}
+                  alt="Property full view"
+                  width={1000}
+                  height={800}
+                  className="w-full h-auto rounded-lg"
+                />
+              </div>
+            </div>
+          )}
         </Container>
       </section>
-
-
 
       <TourRequestModal
         isOpen={isModalOpen}

@@ -14,7 +14,7 @@ interface MessageModalProps {
 }
 
 const MessageModal = ({ isOpen, onClose, userId }: MessageModalProps) => {
-  const { id: propertyId } = useParams(); // property id from route
+  const { id: propertyId } = useParams();
   const [token, setToken] = useState<string | undefined>(undefined);
 
   const {
@@ -100,7 +100,7 @@ const MessageModal = ({ isOpen, onClose, userId }: MessageModalProps) => {
             <button
               type="submit"
               disabled={isPending}
-              className={`w-full font-medium py-3 rounded-2xl transition-all duration-300 ${
+              className={`w-full font-medium py-3 rounded-2xl transition-all duration-300 cursor-pointer ${
                 isPending
                   ? "bg-gray-300 text-gray-700 cursor-not-allowed"
                   : "bg-primary-blue text-white hover:bg-transparent hover:text-primary-blue border border-primary-blue"
