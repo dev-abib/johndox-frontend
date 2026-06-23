@@ -122,18 +122,6 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
     toggleFavoriteMutate(
       { endpoint: `/toggle-favourite-listing/${data?._id}` },
-      {
-        onSuccess: () => {
-          toast.success(
-            isFavorite ? "Removed from favorites" : "Added to favorites",
-          );
-        },
-        onError: () => {
-          setIsFavorite(!isFavorite); // Revert on error
-          toast.error("Failed to update favorite");
-        },
-        onSettled: () => setIsLoadingFavorite(false),
-      },
     );
   };
 
@@ -286,12 +274,12 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   <h3 className="font-semibold text-[20px] 2xl:text-[28px]  text-[#0085FF] ">
                     {data?.propertyName}
                   </h3>
-                  <div className="flex gap-x-3 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer">
+                  {/* <div className="flex gap-x-3 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer">
                     <p className="font-medium text-[14px] 2xl:text-[18px] text-[#0085FF]">
                       Share
                     </p>
                     <IoShareSocialOutline className="text-[#0085FF]" />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start">
                   <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0">
