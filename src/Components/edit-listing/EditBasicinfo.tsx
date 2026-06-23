@@ -245,9 +245,9 @@ export default function EditBasicinfo({
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 grid-cols-1 gap-16 w-full">
+      <div className="grid grid-cols-1 gap-16 w-full">
         {/* Category */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium mb-2">
             Category <span className="text-red-500">*</span>
           </label>
@@ -267,7 +267,7 @@ export default function EditBasicinfo({
               {errors.category.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         {/* Price */}
         <div>

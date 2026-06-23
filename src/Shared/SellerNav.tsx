@@ -5,9 +5,10 @@ import { CgProfile } from "react-icons/cg";
 import { useEffect, useState } from "react";
 import { GoListUnordered } from "react-icons/go";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { MdLogout, MdEdit, MdSettings } from "react-icons/md";
+import { MdLogout, MdEdit, MdSettings, MdOutlineMessage } from "react-icons/md";
 import Container from "@/Components/Common/Container";
 import { useGetUserData } from "@/Hooks/api/auth_api";
+import { useGetConversations } from "@/Hooks/api/message.api";
 import { PlanetSvg } from "@/Components/Svg/SvgContainer";
 import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,8 @@ const SellerNav = () => {
 
   const token = localStorage.getItem("token");
   const { data } = useGetUserData(token);
+  const { data: msgData } = useGetConversations(token ?? undefined);
+  const unreadCount = msgData?.data?.totalUnreadCount ?? 0;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -207,10 +210,22 @@ const SellerNav = () => {
 
             <div className="hidden xl:flex items-center gap-4">
               <Link
-                href="/seller/my-listing"
-                className="rounded-xl border-2 border-primary-blue px-[24px] py-2 2xl:py-3 2xl:text-xl leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
+                href="/seller/message"
+                className="rounded-xl border-2 border-primary-blue px-3 py-2 2xl:py-3 2xl:text-lg leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center relative"
               >
-                <GoListUnordered className="size-7" />
+                <MdOutlineMessage className="size-7" />
+
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[11px] font-bold min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full shadow-md">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/seller/my-listing"
+                className="rounded-xl border-2 border-primary-blue px-3 py-2 2xl:py-3 2xl:text-lg leading-[30px] text-primary-blue hover:bg-primary-blue hover:text-white transition flex gap-x-2 items-center"
+              >
+                <GoListUnordered className="size-5" />
                 My Listings
               </Link>
 
@@ -393,6 +408,19 @@ const SellerNav = () => {
               >
                 <GoListUnordered className="size-7" />
                 My Listings
+              </Link>
+              <Link
+                href="/seller/message"
+                onClick={() => setIsOpen(false)}
+                className="rounded-xl border-2 border-primary-blue px-[24px] py-3 text-center text-primary-blue flex gap-x-2 items-center relative"
+              >
+                <MdOutlineMessage className="size-7" />
+                Messages
+                {unreadCount > 0 && (
+                  <span className="bg-red-500 text-white text-[11px] font-bold min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full shadow-md ml-2">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
 
               {/* Mobile Profile Menu */}

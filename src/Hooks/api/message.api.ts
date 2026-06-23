@@ -7,7 +7,6 @@ export const sendMessage = (
   userId: string,
   enabled: boolean,
 ) => {
-
   return useClientApi({
     method: "post",
     key: ["send-msg", userId],
@@ -23,7 +22,7 @@ export const sendMessage = (
       }
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || "Failed to send message");
+      toast.error("You Must be Loged in for send message");
     },
   });
 };

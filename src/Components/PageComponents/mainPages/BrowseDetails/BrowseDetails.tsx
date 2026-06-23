@@ -5,6 +5,9 @@ import { getItem } from "@/lib/localStorage";
 import User from "../../../../Assets/dummy.jpg";
 import Container from "../../../Common/Container";
 import { IoShareSocialOutline } from "react-icons/io5";
+import { FaWhatsapp, FaInstagram } from "react-icons/fa";
+import { MdOutlineEmail } from "react-icons/md";
+import { FiCopy } from "react-icons/fi";
 import { useForm } from "react-hook-form";
 import {
   Acceleration,
@@ -24,6 +27,7 @@ import MessageModal from "../../buyerPages/MessageModal";
 import React, { useEffect, useRef, useState } from "react";
 import TourRequestModal from "../../buyerPages/TourRequestModal";
 import toast from "react-hot-toast";
+import { MdVerified } from "react-icons/md";
 
 interface BrowswProps {
   data: any;
@@ -122,6 +126,9 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
     toggleFavoriteMutate(
       { endpoint: `/toggle-favourite-listing/${data?._id}` },
+      {
+        onSettled: () => setIsLoadingFavorite(false),
+      },
     );
   };
 
@@ -147,6 +154,85 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
     data?.media
       ?.filter((item: any) => item.fileType === "image")
       .map((item: any) => item.url) || [];
+
+  // Format date for Member Since
+  const formatMemberSince = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+    });
+  };
+
+  // Share dropdown state
+  const [shareOpen, setShareOpen] = useState(false);
+  const shareRef = useRef<HTMLDivElement>(null);
+
+  // Close share dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (shareRef.current && !shareRef.current.contains(event.target as Node)) {
+        setShareOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const propertyUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareTitle = data?.propertyName || "Check out this property";
+
+  const shareOptions = [
+    {
+      name: "WhatsApp",
+      icon: FaWhatsapp,
+      color: "text-[#25D366]",
+      bgHover: "hover:bg-green-50",
+      action: () => {
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(shareTitle + " - " + propertyUrl)}`,
+          "_blank",
+        );
+        setShareOpen(false);
+      },
+    },
+    {
+      name: "Email",
+      icon: MdOutlineEmail,
+      color: "text-[#EA4335]",
+      bgHover: "hover:bg-red-50",
+      action: () => {
+        window.location.href = `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent("Check out this property: " + propertyUrl)}`;
+        setShareOpen(false);
+      },
+    },
+    {
+      name: "Instagram",
+      icon: FaInstagram,
+      color: "text-[#E4405F]",
+      bgHover: "hover:bg-pink-50",
+      action: () => {
+        window.open("https://www.instagram.com/", "_blank");
+        setShareOpen(false);
+      },
+    },
+    {
+      name: "Copy Link",
+      icon: FiCopy,
+      color: "text-[#0085FF]",
+      bgHover: "hover:bg-blue-50",
+      action: () => {
+        navigator.clipboard.writeText(propertyUrl).then(() => {
+          toast.success("Link copied to clipboard!");
+        });
+        setShareOpen(false);
+      },
+    },
+  ];
+
+  // Calculate listings count (for now, we'll show a placeholder)
+  const listingsCount = data?.author?.listingsCount || "—";
+  const isPremiumAgent = data?.author?.isPremium || false;
 
   return (
     <>
@@ -270,16 +356,41 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
             <div className="flex-1 rounded-lg p-3">
               <div className="flex flex-col sm:flex-row gap-2.5 md:gap-5 2xl:gap-20 justify-end">
-                <div className="flex gap-x-4 2xl:gap-x-8 justify-between w-full">
-                  <h3 className="font-semibold text-[20px] 2xl:text-[28px]  text-[#0085FF] ">
+                <div className="flex gap-x-4 2xl:gap-x-8 justify-between w-full items-start">
+                  <h3 className="font-semibold text-[20px] 2xl:text-[28px] text-[#0085FF]">
                     {data?.propertyName}
                   </h3>
-                  {/* <div className="flex gap-x-3 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer">
-                    <p className="font-medium text-[14px] 2xl:text-[18px] text-[#0085FF]">
-                      Share
-                    </p>
-                    <IoShareSocialOutline className="text-[#0085FF]" />
-                  </div> */}
+
+                  {/* Share Button with Dropdown */}
+                  <div className="relative" ref={shareRef}>
+                    <button
+                      onClick={() => setShareOpen(!shareOpen)}
+                      className="flex gap-x-2 bg-[#F9FAFB] p-2 items-center h-fit rounded-[5px] cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      <p className="font-medium text-[14px] 2xl:text-[18px] text-[#0085FF]">
+                        Share
+                      </p>
+                      <IoShareSocialOutline className="text-[#0085FF]" />
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {shareOpen && (
+                      <div className="absolute right-0 mt-2 w-[220px] bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 animate-in fade-in zoom-in duration-150 origin-top-right">
+                        <div className="py-1">
+                          {shareOptions.map(option => (
+                            <button
+                              key={option.name}
+                              onClick={option.action}
+                              className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 ${option.bgHover} transition-colors cursor-pointer`}
+                            >
+                              <option.icon className={`text-xl ${option.color}`} />
+                              <span className="font-medium">{option.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start">
                   <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0">
@@ -362,6 +473,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </div>
               </div>
 
+              {/* Updated Agent Information Section */}
               <div className="mt-6">
                 <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium uppercase">
                   Agent Information
@@ -379,27 +491,68 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                       !isBuyer ? "blur-sm pointer-events-none select-none" : ""
                     }
                   >
-                    <div className="flex flex-col md:flex-row gap-x-10">
-                      <ul>
-                        <li className="text-xl font-medium text-[#0085FF]">
-                          {data?.author?.firstName} {data?.author?.lastName}
-                        </li>
-                        <li className="text-sm text-[#5F5F5F]">
-                          Senior Real Estate Agent
-                        </li>
-                        <li className="flex gap-x-2 text-sm text-[#5F5F5F] mt-1">
-                          <Star /> {data?.author?.rating?.ratingCount || 0}{" "}
-                          reviews
-                        </li>
-                      </ul>
-                      <ul className="mt-3 md:mt-0">
-                        <li className="flex gap-x-2 text-sm text-[#5F5F5F]">
-                          <Mobile /> {data?.author?.phoneNumber || "N/A"}
-                        </li>
-                        <li className="flex gap-x-2 text-sm text-[#5F5F5F] mt-1">
-                          <Email /> {data?.author?.email || "N/A"}
-                        </li>
-                      </ul>
+                    {/* Agent Name and Premium Status */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-medium text-[#0085FF]">
+                        {data?.author?.firstName} {data?.author?.lastName}
+                      </h3>
+                      {isPremiumAgent && (
+                        <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
+                          <MdVerified className="w-4 h-4 text-[#0085FF]" />
+                          <span className="text-xs font-semibold text-[#0085FF]">
+                            Premium Agent
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Profile Stats Grid */}
+                    <div className="flex flex-wrap gap-5 mt-4">
+                      {/* Member Since */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Member Since
+                        </span>
+                        <p className="text-sm font-medium text-[#404040] mt-1">
+                          {data?.author?.createdAt
+                            ? formatMemberSince(data.author.createdAt)
+                            : "—"}
+                        </p>
+                      </div>
+
+                      {/* Rating */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Rating
+                        </span>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Star />
+                          <p className="text-sm font-medium text-[#404040]">
+                            {data?.author?.rating?.averageRating?.toFixed(1) ||
+                              "—"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Listings */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Active Listings
+                        </span>
+                        <p className="text-sm font-medium text-[#404040] mt-1">
+                          {listingsCount}
+                        </p>
+                      </div>
+
+                      {/* Reviews */}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                          Reviews
+                        </span>
+                        <p className="text-sm font-medium text-[#404040] mt-1">
+                          {data?.author?.rating?.ratingCount || 0}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
