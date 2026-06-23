@@ -19,10 +19,11 @@ import {
   Video,
 } from "@/Components/Svg/SvgContainer";
 import { useGetUserData } from "@/Hooks/api/auth_api";
-import { useCurrencyConverter } from "@/Hooks/api/post_api";
+import { useCurrencyConverter, AddFavourite } from "@/Hooks/api/post_api";
 import MessageModal from "../../buyerPages/MessageModal";
 import React, { useEffect, useRef, useState } from "react";
 import TourRequestModal from "../../buyerPages/TourRequestModal";
+import toast from "react-hot-toast";
 
 interface BrowswProps {
   data: any;
@@ -44,6 +45,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   // Lightbox modal state for expanding property images
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  // Favorite state and mutation
+  const { mutate: toggleFavoriteMutate } = AddFavourite();
+  const [isFavorite, setIsFavorite] = useState(data?.isFavorite || false);
+  const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
+
   const { mutate: convertCurrency, isLoading: isConverting } =
     useCurrencyConverter();
 
@@ -59,6 +65,13 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
       setToken(savedToken);
     }
   }, []);
+
+  // Update favorite state when data changes
+  useEffect(() => {
+    if (data?.isFavorite !== undefined) {
+      setIsFavorite(data.isFavorite);
+    }
+  }, [data?.isFavorite]);
 
   const { data: userdata } = useGetUserData(token);
   const isBuyer = userdata?.data?.role === "buyer";
@@ -96,6 +109,33 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const openMessageModal = () => setIsMessageModalOpen(true);
   const closeMessageModal = () => setIsMessageModalOpen(false);
+
+  // Handle Save Listing (Favorite Toggle)
+  const handleSaveListing = () => {
+    if (!token) {
+      toast.error("Please login to save listings");
+      return;
+    }
+
+    setIsLoadingFavorite(true);
+    setIsFavorite(!isFavorite);
+
+    toggleFavoriteMutate(
+      { endpoint: `/toggle-favourite-listing/${data?._id}` },
+      {
+        onSuccess: () => {
+          toast.success(
+            isFavorite ? "Removed from favorites" : "Added to favorites",
+          );
+        },
+        onError: () => {
+          setIsFavorite(!isFavorite); // Revert on error
+          toast.error("Failed to update favorite");
+        },
+        onSettled: () => setIsLoadingFavorite(false),
+      },
+    );
+  };
 
   const onConvert = (formData: ConverterForm) => {
     convertCurrency(
@@ -258,28 +298,47 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     ${data?.price?.toLocaleString()}
                   </h4>
 
-                  {/* Action Icons Section (Fixed client tooltip request via structured HTML title and clean Tailwind tooltips) */}
+                  {/* Action Icons Section */}
                   <div className="flex flex-row md:flex-col gap-3 md:gap-6">
-                    <div
-                      className="group relative h-fit w-fit"
-                      title="Save Listing"
-                    >
-                      <Save className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer hover:text-blue-600 transition-colors" />
+                    {/* Save Listing Button - Now with working favorite toggle */}
+                    <div className="group relative h-fit w-fit">
+                      <button
+                        onClick={handleSaveListing}
+                        disabled={isLoadingFavorite}
+                        className="cursor-pointer transition-all hover:text-blue-600 disabled:opacity-50"
+                        title={
+                          isFavorite
+                            ? "Remove from favorites"
+                            : "Add to favorites"
+                        }
+                      >
+                        {isLoadingFavorite ? (
+                          <span className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] border-2 border-blue-500 border-t-transparent rounded-full animate-spin inline-block" />
+                        ) : (
+                          <Save
+                            className={`w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] transition-colors ${
+                              isFavorite ? "text-blue-600" : ""
+                            }`}
+                            fill={isFavorite ? "currentColor" : "none"}
+                          />
+                        )}
+                      </button>
                       <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:inline-block bg-neutral-800 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow-md z-10">
-                        Save Listing
+                        {isFavorite ? "Remove from favorites" : "Save listing"}
                       </span>
                     </div>
 
-                    <div
-                      className="group relative h-fit w-fit"
-                      title="Currency Converter"
-                    >
-                      <Converter
+                    {/* Currency Converter */}
+                    <div className="group relative h-fit w-fit">
+                      <button
                         onClick={() => setOpenConverter(true)}
-                        className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px] cursor-pointer hover:text-blue-600 transition-colors"
-                      />
+                        className="cursor-pointer hover:text-blue-600 transition-colors"
+                        title="Open currency converter"
+                      >
+                        <Converter className="w-[25px] h-[25px] 2xl:w-[38px] 2xl:h-[38px]" />
+                      </button>
                       <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:inline-block bg-neutral-800 text-white text-xs whitespace-nowrap rounded px-2 py-1 shadow-md z-10">
-                        Currency Converter
+                        Convert currency
                       </span>
                     </div>
                   </div>
@@ -388,9 +447,12 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   ✕
                 </button>
 
-                <h3 className="text-[#0085FF] text-xl font-bold mb-6 flex items-center gap-2">
+                <h3 className="text-[#0085FF] text-xl font-bold mb-2 flex items-center gap-2">
                   <Converter className="w-6 h-6" /> Currency Converter
                 </h3>
+                <p className="text-sm text-gray-500 mb-6">
+                  Convert Honduran Lempira (HNL) to US Dollars (USD)
+                </p>
 
                 <form onSubmit={handleSubmit(onConvert)} className="space-y-4">
                   <div className="space-y-1">
