@@ -20,9 +20,10 @@ const TermsPage = () => {
                   {section.title}
                 </h3>
               </div>
-              <p className="mt-6 text-[#616161] text-base lg:text-[18px] font-medium">
-                {section.content}
-              </p>
+              <p
+                className="mt-6 text-[#616161] text-base lg:text-[18px] font-medium"
+                dangerouslySetInnerHTML={{ __html: section.content }}
+              />
             </div>
           ))}
         </div>
