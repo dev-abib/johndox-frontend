@@ -353,6 +353,7 @@ const page = () => {
         gestureHandling="greedy"
         defaultCenter={{ lat: 0, lng: 0 }}
         disableDefaultUI
+        mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || "DEMO_MAP_ID"}
       >
         {properties?.map(item => (
           <React.Fragment key={item._id}>
@@ -580,37 +581,37 @@ const page = () => {
                   </div>
 
                   <div className="mt-5">
-                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
+                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
                       ${item?.price?.toLocaleString()}
                       <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>
                     </h3>
-                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1">
+                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1" translate="no">
                       {item.propertyName}
                     </h4>
                     <div className="flex items-center gap-2.5 mt-4">
                       <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1">
+                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1" translate="no">
                         {item.city}, {item.state}
                       </p>
                     </div>
                     <div className="flex flex-nowrap items-center gap-5 mt-5 overflow-hidden line-clamp-1">
                       <div className="flex items-center gap-2.5 shrink-0">
                         <Bed className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.bedrooms} Bed
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5 shrink-0">
                         <Bathtub className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.bathrooms} Bath
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5 shrink-0">
                         <Acceleration className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.areaInSqMeter} m²
                         </span>
                       </div>
@@ -641,15 +642,17 @@ const page = () => {
           {/* ── Map — order-2 on desktop ── */}
           <div
             ref={mapRef}
-            className={`w-full xl:w-[35%] h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 ${
+            className={`w-full xl:w-[35%] h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 overflow-hidden ${
               isMobile && viewMode !== "map" ? "hidden" : "block"
             }`}
           >
-            <APIProvider
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
-            >
-              <MapContent properties={data?.data?.items || []} />
-            </APIProvider>
+            <div className="w-full h-full">
+              <APIProvider
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
+              >
+                <MapContent properties={data?.data?.items || []} />
+              </APIProvider>
+            </div>
           </div>
 
           {/* ── DESKTOP: Filter always visible — order-3 = RIGHT SIDE ── */}

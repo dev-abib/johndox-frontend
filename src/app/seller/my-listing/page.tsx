@@ -76,10 +76,10 @@ const MyListing = () => {
                   </figure>
 
                   <div className="flex-1 w-full">
-                    <h3 className="lg:text-[24px] text-[20px] font-medium text-[#404040]">
+                    <h3 className="lg:text-[24px] text-[20px] font-medium text-[#404040]" translate="no">
                       {item.propertyName}
                     </h3>
-                    <p className="lg:text-[20px] text-base font-medium text-[#919191] mt-1">
+                    <p className="lg:text-[20px] text-base font-medium text-[#919191] mt-1" translate="no">
                       {item.fullAddress}, {item.city}, {item.state}
                     </p>
 
@@ -119,7 +119,7 @@ const MyListing = () => {
                 </div>
 
                 <div className="text-center lg:text-right shrink-0 mt-6 lg:mt-0">
-                  <p className="text-[28px] font-bold text-[#0085FF]">
+                  <p className="text-[28px] font-bold text-[#0085FF]" translate="no">
                     ${item.price}
                     <span className="text-[#919191] text-[18px] font-normal ml-1">
                       {" "}

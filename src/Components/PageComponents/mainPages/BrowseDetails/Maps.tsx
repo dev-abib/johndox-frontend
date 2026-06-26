@@ -75,7 +75,7 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
                 position={position}
                 onClick={() => setIsOpen(prev => !prev)}
               >
-                <div className="bg-white text-black font-bold text-xs px-2.5 py-1.5 rounded-full shadow-md border border-gray-300 hover:scale-105 transition-transform cursor-pointer whitespace-nowrap">
+                <div className="bg-white text-black font-bold text-xs px-2.5 py-1.5 rounded-full shadow-md border border-gray-300 hover:scale-105 transition-transform cursor-pointer whitespace-nowrap" translate="no">
                   {formattedPrice}
                 </div>
               </AdvancedMarker>
@@ -99,10 +99,10 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
                       />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <p className="text-[#0085FF] font-bold text-sm leading-tight">
+                      <p className="text-[#0085FF] font-bold text-sm leading-tight" translate="no">
                         {formattedPrice}
                       </p>
-                      <p className="text-[10px] text-gray-500 truncate w-[120px]">
+                      <p className="text-[10px] text-gray-500 truncate w-[120px]" translate="no">
                         {propertyTitle}
                       </p>
 

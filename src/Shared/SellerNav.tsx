@@ -14,6 +14,8 @@ import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+const STORAGE_KEY = "preferred_language";
+
 const SellerNav = () => {
   const router = useRouter();
   const languages = ["English", "Spanish"];
@@ -22,6 +24,14 @@ const SellerNav = () => {
   const [langOpen, setLangOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("Spanish");
+
+  // Restore saved language preference on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "en") {
+      setActiveLang("English");
+    }
+  }, []);
 
   const token = localStorage.getItem("token");
   const { data } = useGetUserData(token);
@@ -80,7 +90,9 @@ const SellerNav = () => {
   const handleLangSelect = (lang: string, closeDrawer = false) => {
     setActiveLang(lang);
     setLangOpen(false);
-    changeLanguage(lang === "Spanish" ? "es" : "en");
+    const langCode = lang === "Spanish" ? "es" : "en";
+    localStorage.setItem(STORAGE_KEY, langCode);
+    changeLanguage(langCode);
     if (closeDrawer) setIsOpen(false);
   };
 
@@ -88,11 +100,13 @@ const SellerNav = () => {
     try {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      toast.success("Logged out successfully");
-      router.push("/auth/login");
+      toast.dismiss();
+      // Use hard redirect to avoid React/Google Translate DOM conflicts
+      setTimeout(() => {
+        window.location.href = "/auth/login";
+      }, 100);
       setProfileOpen(false);
     } catch (error) {
-      toast.error("Error logging out");
       console.error("Logout error:", error);
     }
   };

@@ -133,41 +133,38 @@ const MyFavorites = () => {
 
             {/* Content */}
             <div className="px-5 pb-5">
-              {/* Price */}
-              <h3 className="text-lg font-bold text-primary-blue">
-                {new Intl.NumberFormat().format(item.price)}{" "}
-                <span className="text-xs font-medium text-[#919191]">USD</span>
-              </h3>
+              {/* Price */}                <h3 className="text-lg font-bold text-primary-blue" translate="no">
+                  {new Intl.NumberFormat().format(item.price)}{" "}
+                  <span className="text-xs font-medium text-[#919191]">USD</span>
+                </h3>
 
               {/* Title */}
-              <p className="text-[15px] font-medium text-[#5F5F5F] mt-2 line-clamp-1">
+              <p className="text-[15px] font-medium text-[#5F5F5F] mt-2 line-clamp-1" translate="no">
                 {item.propertyName}
               </p>
 
               {/* Location */}
               <div className="flex items-center gap-2 mt-3">
-                <Location className="w-[14px] h-[14px]" />
-                <p className="text-xs text-[#919191]">
-                  {item.city}, {item.state}
-                </p>
+                <Location className="w-[14px] h-[14px]" />                  <p className="text-xs text-[#919191]" translate="no">
+                    {item.city}, {item.state}
+                  </p>
               </div>
 
               {/* Features */}
               <div className="flex items-center gap-4 mt-4 text-xs text-[#919191]">
                 <div className="flex items-center gap-1">
-                  <Bed />
-                  <span>{item.bedrooms} Bed</span>
-                </div>
+                  <Bed />                    <span translate="no">{item.bedrooms} Bed</span>
+                  </div>
 
-                <div className="flex items-center gap-1">
-                  <Bathtub />
-                  <span>{item.bathrooms} Bath</span>
-                </div>
+                  <div className="flex items-center gap-1">
+                    <Bathtub />
+                    <span translate="no">{item.bathrooms} Bath</span>
+                  </div>
 
-                <div className="flex items-center gap-1">
-                  <Acceleration />
-                  <span>{item.areaInSqMeter} sqft</span>
-                </div>
+                  <div className="flex items-center gap-1">
+                    <Acceleration />
+                    <span translate="no">{item.areaInSqMeter} sqft</span>
+                  </div>
               </div>
 
               {/* Button */}

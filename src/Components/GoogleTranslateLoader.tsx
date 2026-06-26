@@ -1,6 +1,8 @@
 "use client";
 import { useEffect } from "react";
 
+const STORAGE_KEY = "preferred_language";
+
 declare global {
   interface Window {
     google: any;
@@ -23,13 +25,16 @@ export default function GoogleTranslateLoader() {
         "google_translate_element",
       );
 
-      // Auto-switch to Spanish after widget initializes
+      // Apply saved language preference after widget initializes
+      const savedLang = localStorage.getItem(STORAGE_KEY);
+      const targetLang = savedLang === "en" ? "en" : "es";
+
       const interval = setInterval(() => {
         const select = document.querySelector(
           ".goog-te-combo",
         ) as HTMLSelectElement;
         if (select) {
-          select.value = "es";
+          select.value = targetLang;
           select.dispatchEvent(new Event("change"));
           clearInterval(interval);
         }

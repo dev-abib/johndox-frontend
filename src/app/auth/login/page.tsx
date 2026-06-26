@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiSpinnerBold } from "react-icons/pi";
+import Link from "next/link";
 import Container from "@/Components/Common/Container";
 import { useGoogleLogin, useLogin } from "@/Hooks/api/auth_api";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { IoEyeOffOutline, IoEyeOutline, IoHomeOutline } from "react-icons/io5";
 import { useGoogleLogin as useGoogleAuth } from "@react-oauth/google";
-
 type LoginFormData = {
   email: string;
   password: string;
@@ -61,7 +61,7 @@ const Login = () => {
   return (
     <Container>
       <div className="relative flex h-screen items-center justify-center gap-10 py-10">
-        {showRoleModal && (
+          {showRoleModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
               <h2 className="text-2xl font-bold mb-4">Join as a...</h2>
@@ -229,6 +229,17 @@ const Login = () => {
                   Register
                 </a>
               </p>
+
+              {/* Home Navigation */}
+              <div className="text-center mt-6">
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary-blue transition"
+                >
+                  <IoHomeOutline className="text-base" />
+                  Back to Home
+                </Link>
+              </div>
             </form>
           </div>
         </div>
