@@ -32,6 +32,8 @@ export type ListingFormData = {
   video?: FileList | null;
   existingMedia?: string[];
   deletedImages?: string[];
+  latitude?: number;
+  longitude?: number;
 };
 
 const steps = [
@@ -154,6 +156,12 @@ export default function EditListingPage() {
             formData.append("amenities", formattedKey);
           }
         });
+      }
+
+      // 3b. Location (lat/lng)
+      if (data.latitude !== undefined && data.longitude !== undefined && !isNaN(data.latitude) && !isNaN(data.longitude)) {
+        formData.append("latitude", data.latitude.toString());
+        formData.append("longitude", data.longitude.toString());
       }
 
       // 4. NEW Media (Files)

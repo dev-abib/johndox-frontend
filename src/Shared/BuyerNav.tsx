@@ -13,6 +13,8 @@ import { AngleBottomSvg, LoveSvg } from "@/Components/Svg/SvgContainer2";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+const STORAGE_KEY = "preferred_language";
+
 const BuyerNav = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +22,14 @@ const BuyerNav = () => {
   const [langOpen, setLangOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [activeLang, setActiveLang] = useState("Spanish");
+
+  // Restore saved language preference on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "en") {
+      setActiveLang("English");
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,18 +85,22 @@ const BuyerNav = () => {
   const handleLangSelect = (lang: string) => {
     setActiveLang(lang);
     setLangOpen(false);
-    changeLanguage(lang === "Spanish" ? "es" : "en");
+    const langCode = lang === "Spanish" ? "es" : "en";
+    localStorage.setItem(STORAGE_KEY, langCode);
+    changeLanguage(langCode);
   };
 
   const handleLogout = () => {
     try {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      toast.success("Logged out successfully");
-      router.push("/auth/login");
+      toast.dismiss();
+      // Use hard redirect to avoid React/Google Translate DOM conflicts
+      setTimeout(() => {
+        window.location.href = "/auth/login";
+      }, 100);
       setProfileOpen(false);
     } catch (error) {
-      toast.error("Error logging out");
       console.error("Logout error:", error);
     }
   };
@@ -163,7 +177,7 @@ const BuyerNav = () => {
                   href="/buyerlayout/contact-us"
                   className="hover:text-black transition"
                 >
-                  Contract Us
+                  Contact Us
                 </Link>
               </li>
 
@@ -345,7 +359,7 @@ const BuyerNav = () => {
                   href="/buyerlayout/contact-us"
                   onClick={() => setIsOpen(false)}
                 >
-                  Contract Us
+                  Contact Us
                 </Link>
               </li>
 

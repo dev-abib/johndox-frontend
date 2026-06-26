@@ -1,13 +1,13 @@
 "use client";
+import { useEffect, useState } from "react";
 import { CiLinkedin } from "react-icons/ci";
+import { getItem } from "@/lib/localStorage";
 import { RiTwitterXFill } from "react-icons/ri";
 import { SiteSettings } from "@/Hooks/api/cms_api";
 import { LiaFacebookSquare } from "react-icons/lia";
 import Container from "@/Components/Common/Container";
-import { FaInstagram, FaTelegram, FaWhatsapp, FaYoutube } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { getItem } from "@/lib/localStorage";
 import { useGetUserData } from "@/Hooks/api/auth_api";
+import { FaInstagram, FaTelegram, FaWhatsapp, FaYoutube } from "react-icons/fa";
 
 const socialIcons: Record<string, any> = {
   facebook: LiaFacebookSquare,
@@ -145,7 +145,7 @@ const Footer = () => {
           <div className="mt-16">
             <img
               src={siteData?.data?.footerLogo}
-              alt=""
+              alt="footerlogo"
               className="mx-auto xl:mx-0"
             />
           </div>
@@ -153,10 +153,10 @@ const Footer = () => {
 
         <div className="relative z-10 border-t border-[#454F5B] mt-10">
           <div className="px-5 xl:px-0 pt-6 pb-10 flex flex-col-reverse md:flex-row items-center justify-between gap-6">
-            <p className="text-sm xl:text-[16px] md:text-[18px] font-normal leading-[28px] text-[#FFF] text-center md:text-left">
-              {/* {data?.data?.copyrightTxt ||
-                "© 2025 Terralink. All rights reserved."} */}
-            </p>
+            {/* <p className="text-sm xl:text-[16px] md:text-[18px] font-normal leading-[28px] text-[#FFF] text-center md:text-left">
+              {data?.data?.copyrightTxt ||
+                "© 2025 Terralink. All rights reserved."}
+            </p> */}
 
             <div className="flex items-center gap-5">
               {Object.entries(socialLinks).map(([key, url]) => {

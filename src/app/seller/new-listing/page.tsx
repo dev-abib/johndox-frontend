@@ -29,6 +29,8 @@ export type ListingFormData = {
   photos?: FileList | null;
   video?: FileList | null;
   view360?: FileList | null;
+  latitude?: number;
+  longitude?: number;
 };
 
 const steps = [
@@ -64,6 +66,8 @@ export default function CreateListingPage() {
       amenities: {},
       photos: null,
       video: null,
+      latitude: undefined,
+      longitude: undefined,
     },
   });
 
@@ -158,6 +162,11 @@ export default function CreateListingPage() {
     }
 
     formData.append("category", data.category);
+
+    if (data.latitude !== undefined && data.longitude !== undefined && !isNaN(data.latitude) && !isNaN(data.longitude)) {
+      formData.append("latitude", data.latitude.toString());
+      formData.append("longitude", data.longitude.toString());
+    }
 
     if (data.photos && data.photos.length > 0) {
       Array.from(data.photos).forEach(file => {

@@ -9,6 +9,7 @@ import {
 import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
+import LocationPicker from "./LocationPicker";
 
 const propertyTypes = ["House", "Apartment", "Land", "Commercial"];
 
@@ -232,6 +233,25 @@ export default function BasicInfoStep({
           </select>
         </div>
       </div>
+
+      {/* Google Maps Location Picker */}
+      <div className="mt-6">
+        <LocationPicker
+          onLocationChange={(lat, lng) => {
+            setValue("latitude", lat);
+            setValue("longitude", lng);
+          }}
+          onAddressFound={(address) => {
+            setValue("streetAddress", address.fullAddress, { shouldValidate: true });
+            setValue("city", address.city, { shouldValidate: true });
+            // Only set state if it matches a department option
+            if (address.state && departments.includes(address.state)) {
+              setValue("state", address.state, { shouldValidate: true });
+            }
+          }}
+        />
+      </div>
+
       <div className="grid  grid-cols-1 gap-16 w-full">
         {/* <div>
           <label className="block text-sm font-medium mb-2">

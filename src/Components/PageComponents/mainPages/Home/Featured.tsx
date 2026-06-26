@@ -27,22 +27,50 @@ const Featured = ({ data = [] }: PropertyProps) => {
   const [loadingFavorites, setLoadingFavorites] = useState<
     Record<string, boolean>
   >({});
+  // State to manage which image is displayed in the popup
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  // Get token from localStorage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
   }, []);
 
+  // Handle Escape key and body scroll when modal is open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedImage(null);
+      }
+    };
+
+    if (selectedImage) {
+      document.addEventListener("keydown", handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImage]);
+
+  // Check if current page is buyer layout
   const pathname = usePathname();
   const isBuyerLayout = pathname.startsWith("/buyerlayout");
+
+  // Show only 6 properties initially, show all when "View All" is clicked
   const displayedProperties = showAll ? data : data.slice(0, 6);
 
+  // Initialize favorite states from data
   const [favoriteStates, setFavoriteStates] = useState<{
     [key: string]: boolean;
   }>(
     Object.fromEntries(data.map(item => [item._id, item.isFavorite || false])),
   );
 
+  // Handle toggle favorite
   const toggleFavorite = (id: string) => {
     const token = localStorage.getItem("token");
 
@@ -53,11 +81,13 @@ const Featured = ({ data = [] }: PropertyProps) => {
 
     setLoadingFavorites(prev => ({ ...prev, [id]: true }));
 
+    // Optimistically update UI
     setFavoriteStates(prev => ({
       ...prev,
       [id]: !prev[id],
     }));
 
+    // Make API call
     mutate(
       {
         endpoint: `/toggle-favourite-listing/${id}`,
@@ -67,6 +97,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
           setLoadingFavorites(prev => ({ ...prev, [id]: false }));
         },
         onError: () => {
+          // Revert on error
           setFavoriteStates(prev => ({
             ...prev,
             [id]: !prev[id],
@@ -76,122 +107,221 @@ const Featured = ({ data = [] }: PropertyProps) => {
     );
   };
 
+  // Show skeleton if no properties
   if (!displayedProperties || displayedProperties.length === 0) {
     return <FeaturedSkeleton />;
   }
 
   return (
-    <section className="py-16 md:py-24 xl:py-[150px] px-5">
-      <Container>
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
-            Featured Properties
-          </h2>
-          <p className="font-normal text-black text-base sm:text-lg lg:text-[18px] mt-4 max-w-3xl mx-auto">
-            Explore top-tier homes and land carefully curated for quality and
-            value.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
-          {displayedProperties?.map((item: any) => (
-            <div
-              key={item._id}
-              className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
-            >
-              <div className="relative overflow-hidden">
-                <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
-                  <Image
-                    src={item.media?.[0]?.url}
-                    alt={item.propertyName}
-                    width={500}
-                    height={300}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
-                  />
-                </figure>
-
-                <div
-                  onClick={() =>
-                    !loadingFavorites[item._id] && toggleFavorite(item._id)
-                  }
-                  className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
-                >
-                  {loadingFavorites[item._id] ? (
-                    <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-                  ) : favoriteStates[item._id] ? (
-                    <Favourites />
-                  ) : (
-                    <Favourite />
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-5">
-                <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
-                  {new Intl.NumberFormat().format(item.price)}
-                  <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
-                    USD
-                  </span>
-                </h3>
-
-                <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3">
-                  {item.propertyName?.length > 25
-                    ? item.propertyName.substring(0, 25) + "..."
-                    : item.propertyName}
-                </h4>
-
-                <div className="flex items-center gap-2.5 mt-4">
-                  <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                  <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]">
-                    {item.city}, {item.state}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-5 mt-5">
-                  <div className="flex items-center gap-2.5">
-                    <Bed className="shrink-0" />
-                    <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
-                      {item.bedrooms} Bed
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <Bathtub className="shrink-0" />
-                    <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
-                      {item.bathrooms} Bath
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <Acceleration className="shrink-0" />
-                    <span className="text-sm lg:text-[14px] font-normal text-[#919191]">
-                      {item.areaInSqMeter} m²
-                    </span>
-                  </div>
-                </div>
-
-                <Link
-                  href={`${isBuyerLayout ? `/buyerlayout/browse/${item._id}` : `/browse/${item._id}`}`}
-                >
-                  <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
-                    Contact
-                  </button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {!showAll && data.length > 6 && (
-          <div className="text-center mt-12 lg:mt-16">
-            <button
-              onClick={() => setShowAll(true)}
-              className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-lg px-10 xl:py-4 py-3 rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
-            >
-              View All Properties
-            </button>
+    <>
+      {/* Main Featured Section */}
+      <section className="py-16 md:py-24 xl:py-[150px] px-5">
+        <Container>
+          {/* Section Header */}
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
+              Featured Properties
+            </h2>
+            <p className="font-normal text-black text-base sm:text-lg lg:text-[18px] mt-4 max-w-3xl mx-auto">
+              Explore top-tier homes and land carefully curated for quality and
+              value.
+            </p>
           </div>
-        )}
-      </Container>
-    </section>
+
+          {/* Properties Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
+            {displayedProperties?.map((item: any) => (
+              <div
+                key={item._id}
+                className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
+              >
+                {/* Property Image with Clickable Overlay */}
+                <div className="relative overflow-hidden">
+                  <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden cursor-pointer rounded-lg relative group/image">
+                    {/* Property Image */}
+                    <Image
+                      src={item.media?.[0]?.url}
+                      alt={item.propertyName}
+                      width={500}
+                      height={300}
+                      onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 rounded-lg"
+                    />
+
+                    {/* Hover Overlay with Click Indicator */}
+                    <div
+                      className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center cursor-pointer"
+                      onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                    >
+                      {/* Magnifying Glass Icon & Text - Show on Hover */}
+                      <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                        {/* Icon Background */}
+                        <div className="bg-white/95 p-3 rounded-full">
+                          {/* Magnifying Glass SVG Icon */}
+                          <svg
+                            className="w-6 h-6 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+                            />
+                          </svg>
+                        </div>
+                        {/* Click to View Text */}
+                        <span className="text-white font-medium text-sm">
+                          Click to view
+                        </span>
+                      </div>
+                    </div>
+                  </figure>
+
+                  {/* Favorite Button */}
+                  <div
+                    onClick={() =>
+                      !loadingFavorites[item._id] && toggleFavorite(item._id)
+                    }
+                    className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors z-10"
+                  >
+                    {loadingFavorites[item._id] ? (
+                      // Loading spinner
+                      <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                    ) : favoriteStates[item._id] ? (
+                      // Filled heart (favorited)
+                      <Favourites />
+                    ) : (
+                      // Empty heart (not favorited)
+                      <Favourite />
+                    )}
+                  </div>
+                </div>
+
+                {/* Property Details */}
+                <div className="mt-5">
+                  {/* Price */}
+                  <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
+                    {new Intl.NumberFormat().format(item.price)}
+                    <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
+                      USD
+                    </span>
+                  </h3>
+
+                  {/* Property Name */}
+                  <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3" translate="no">
+                    {item.propertyName?.length > 25
+                      ? item.propertyName.substring(0, 25) + "..."
+                      : item.propertyName}
+                  </h4>
+
+                  {/* Location */}
+                  <div className="flex items-center gap-2.5 mt-4">
+                    <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
+                    <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]" translate="no">
+                      {item.city}, {item.state}
+                    </p>
+                  </div>
+
+                  {/* Property Features: Beds, Baths, Area */}
+                  <div className="flex flex-wrap gap-5 mt-5">
+                    {/* Bedrooms */}
+                    <div className="flex items-center gap-2.5">
+                      <Bed className="shrink-0" />
+                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                        {item.bedrooms} Bed
+                      </span>
+                    </div>
+                    {/* Bathrooms */}
+                    <div className="flex items-center gap-2.5">
+                      <Bathtub className="shrink-0" />
+                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                        {item.bathrooms} Bath
+                      </span>
+                    </div>
+                    {/* Area in Square Meters */}
+                    <div className="flex items-center gap-2.5">
+                      <Acceleration className="shrink-0" />
+                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                        {item.areaInSqMeter} m²
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Contact Button */}
+                  <Link
+                    href={`${isBuyerLayout ? `/buyerlayout/browse/${item._id}` : `/browse/${item._id}`}`}
+                  >
+                    <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
+                      Contact
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* View All Properties Button */}
+          {!showAll && data.length > 6 && (
+            <div className="text-center mt-12 lg:mt-16">
+              <button
+                onClick={() => setShowAll(true)}
+                className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-lg px-10 xl:py-4 py-3 rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
+              >
+                View All Properties
+              </button>
+            </div>
+          )}
+        </Container>
+      </section>
+
+      {/* Full-Screen Image Popup Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl h-[90vh] w-full"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close Button (X) */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors p-2 cursor-pointer"
+              aria-label="Close modal"
+            >
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            {/* Image Display Container */}
+            <div className="relative w-full h-full rounded-lg overflow-hidden">
+              <Image
+                src={selectedImage}
+                alt="Property full view"
+                fill
+                priority
+                className="rounded-lg object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

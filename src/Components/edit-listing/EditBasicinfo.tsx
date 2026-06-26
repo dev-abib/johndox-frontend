@@ -10,6 +10,7 @@ import {
 import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
+import LocationPicker from "../Listing/LocationPicker";
 
 const propertyTypes = [
   "Apartment",
@@ -243,6 +244,23 @@ export default function EditBasicinfo({
             <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>
           )}
         </div>
+      </div>
+
+      {/* Google Maps Location Picker */}
+      <div className="mt-6">
+        <LocationPicker
+          latitude={lisiting?.location?.lat}
+          longitude={lisiting?.location?.lng}
+          onLocationChange={(lat, lng) => {
+            setValue("latitude", lat);
+            setValue("longitude", lng);
+          }}
+          onAddressFound={(address) => {
+            setValue("streetAddress", address.fullAddress, { shouldValidate: true });
+            setValue("city", address.city, { shouldValidate: true });
+            setValue("state", address.state, { shouldValidate: true });
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-16 w-full">
