@@ -163,7 +163,7 @@ const BuyerNav = () => {
                   href="/buyerlayout/contact-us"
                   className="hover:text-black transition"
                 >
-                  Contract Us
+                  Contact Us
                 </Link>
               </li>
 
@@ -345,7 +345,7 @@ const BuyerNav = () => {
                   href="/buyerlayout/contact-us"
                   onClick={() => setIsOpen(false)}
                 >
-                  Contract Us
+                  Contact Us
                 </Link>
               </li>
 

@@ -198,8 +198,25 @@ const page = () => {
   const [loadingFavorites, setLoadingFavorites] = useState<
     Record<string, boolean>
   >({});
+  // State for full image modal
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [activeFilters, setActiveFilters] = useState<any>({});
+
+  // Handle Escape key and body scroll when modal is open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedImage(null);
+    };
+    if (selectedImage) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImage]);
 
   // Fix: Setup state hook for listing status selection ("buy" or "rent")
   const [listingType, setListingType] = useState("buy");
@@ -510,14 +527,41 @@ const page = () => {
                   className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
                 >
                   <div className="relative overflow-hidden">
-                    <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
+                    <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden rounded-lg relative group/image">
                       <Image
                         src={item.media?.[0]?.url}
                         alt={item.propertyName}
                         width={500}
                         height={300}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
+                        onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 rounded-lg"
                       />
+                      {/* Hover Overlay with Click Indicator */}
+                      <div
+                        className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center cursor-pointer"
+                        onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                      >
+                        <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                          <div className="bg-white/95 p-3 rounded-full">
+                            <svg
+                              className="w-6 h-6 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+                              />
+                            </svg>
+                          </div>
+                          <span className="text-white font-medium text-sm">
+                            Click to view
+                          </span>
+                        </div>
+                      </div>
                     </figure>
                     <div
                       onClick={() =>
@@ -616,6 +660,51 @@ const page = () => {
           </div>
         </div>
       </div>
+
+      {/* Full-Screen Image Popup Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl h-[90vh] w-full"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close Button (X) */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors p-2 z-10 cursor-pointer"
+              aria-label="Close modal"
+            >
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            {/* Image Display Container */}
+            <div className="relative w-full h-full rounded-lg overflow-hidden">
+              <Image
+                src={selectedImage}
+                alt="Property full view"
+                fill
+                priority
+                className="rounded-lg object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── CTA Section ── */}
       <section

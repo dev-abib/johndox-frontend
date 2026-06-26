@@ -357,7 +357,7 @@ const SellerNav = () => {
                   href="/seller/contact-us"
                   onClick={() => setIsOpen(false)}
                 >
-                  Contract Us
+                  Contact Us
                 </Link>
               </li>
 

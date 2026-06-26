@@ -14,6 +14,24 @@ import { GetAllFavourite } from "@/Hooks/api/dashboard_api";
 import { FeaturedSkeleton } from "@/Components/Skeleton/FeaturedSkeleton";
 
 const MyFavorites = () => {
+  // State for full image modal
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Handle Escape key and body scroll when modal is open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedImage(null);
+    };
+    if (selectedImage) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImage]);
+
   // 1. Get and Clean Token safely
   const rawToken =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -49,6 +67,7 @@ const MyFavorites = () => {
   if (isLoading) return <FeaturedSkeleton />;
 
   return (
+    <>
     <div className="px-4 sm:px-6 lg:px-10 py-10 bg-[#F9FAFB] rounded-3xl">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
@@ -78,15 +97,30 @@ const MyFavorites = () => {
           >
             {/* Image */}
             <div className="relative p-3">
-              <figure className="h-[300px] overflow-hidden rounded-[16px]">
-                <Image
-                  src={item.media?.[0]?.url || "/placeholder.jpg"}
-                  alt={item.propertyName}
-                  width={600}
-                  height={400}
-                  className="w-full h-full object-cover"
-                />
-              </figure>
+                <figure className="h-[300px] overflow-hidden rounded-[16px] relative group/image">
+                  <Image
+                    src={item.media?.[0]?.url || "/placeholder.jpg"}
+                    alt={item.propertyName}
+                    width={600}
+                    height={400}
+                    onClick={() => setSelectedImage(item.media?.[0]?.url || "/placeholder.jpg")}
+                    className="w-full h-full object-cover cursor-pointer"
+                  />
+                  {/* Hover Overlay with Click Indicator */}
+                  <div
+                    className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-[16px] flex items-center justify-center cursor-pointer"
+                    onClick={() => setSelectedImage(item.media?.[0]?.url || "/placeholder.jpg")}
+                  >
+                    <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                      <div className="bg-white/95 p-3 rounded-full">
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                        </svg>
+                      </div>
+                      <span className="text-white font-medium text-sm">Click to view</span>
+                    </div>
+                  </div>
+                </figure>
 
               {/* Heart Button (Remove) */}
               <button
@@ -153,6 +187,41 @@ const MyFavorites = () => {
         </div>
       )}
     </div>
+
+      {/* Full-Screen Image Popup Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl h-[90vh] w-full"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close Button (X) */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors p-2 z-10"
+              aria-label="Close modal"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
+              <Image
+                src={selectedImage}
+                alt="Property full view"
+                fill
+                priority
+                className="rounded-lg object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

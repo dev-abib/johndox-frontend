@@ -49,6 +49,21 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   // Lightbox modal state for expanding property images
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  // Handle Escape key and body scroll when lightbox is open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxImage(null);
+    };
+    if (lightboxImage) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [lightboxImage]);
+
   // Favorite state and mutation
   const { mutate: toggleFavoriteMutate } = AddFavourite();
   const [isFavorite, setIsFavorite] = useState(data?.isFavorite || false);
@@ -660,26 +675,31 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
           {/* Lightbox Modal for Images */}
           {lightboxImage && (
             <div
-              className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
               onClick={() => setLightboxImage(null)}
             >
               <div
-                className="relative max-w-4xl max-h-[90vh]"
+                className="relative max-w-4xl h-[90vh] w-full"
                 onClick={e => e.stopPropagation()}
               >
                 <button
                   onClick={() => setLightboxImage(null)}
-                  className="absolute -top-10 right-0 text-white hover:text-gray-300 text-3xl font-bold"
+                  className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors p-2 z-10"
+                  aria-label="Close modal"
                 >
-                  ✕
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
-                <Image
-                  src={lightboxImage}
-                  alt="Property full view"
-                  width={1000}
-                  height={800}
-                  className="w-full h-auto rounded-lg"
-                />
+                <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
+                  <Image
+                    src={lightboxImage}
+                    alt="Property full view"
+                    fill
+                    priority
+                    className="rounded-lg object-contain"
+                  />
+                </div>
               </div>
             </div>
           )}
