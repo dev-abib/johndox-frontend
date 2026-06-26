@@ -252,12 +252,13 @@ export const useLogout = () => {
     },
     onSuccess: (data: any) => {
       if (data?.status || data?.success) {
-        toast.success(data?.message);
+        toast.dismiss();
         localStorage.removeItem("token");
         window.location.href = "/";
       }
     },
     onError: (err: any) => {
+      toast.dismiss();
       toast.error(err?.response?.data?.message || "Logout failed");
     },
   });

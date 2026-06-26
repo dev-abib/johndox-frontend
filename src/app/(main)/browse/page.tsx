@@ -198,8 +198,25 @@ const page = () => {
   const [loadingFavorites, setLoadingFavorites] = useState<
     Record<string, boolean>
   >({});
+  // State for full image modal
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [activeFilters, setActiveFilters] = useState<any>({});
+
+  // Handle Escape key and body scroll when modal is open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedImage(null);
+    };
+    if (selectedImage) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedImage]);
 
   // Fix: Setup state hook for listing status selection ("buy" or "rent")
   const [listingType, setListingType] = useState("buy");
@@ -336,6 +353,7 @@ const page = () => {
         gestureHandling="greedy"
         defaultCenter={{ lat: 0, lng: 0 }}
         disableDefaultUI
+        mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || "DEMO_MAP_ID"}
       >
         {properties?.map(item => (
           <React.Fragment key={item._id}>
@@ -510,14 +528,41 @@ const page = () => {
                   className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
                 >
                   <div className="relative overflow-hidden">
-                    <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden">
+                    <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden rounded-lg relative group/image">
                       <Image
                         src={item.media?.[0]?.url}
                         alt={item.propertyName}
                         width={500}
                         height={300}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
+                        onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 rounded-lg"
                       />
+                      {/* Hover Overlay with Click Indicator */}
+                      <div
+                        className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center cursor-pointer"
+                        onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                      >
+                        <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                          <div className="bg-white/95 p-3 rounded-full">
+                            <svg
+                              className="w-6 h-6 text-blue-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+                              />
+                            </svg>
+                          </div>
+                          <span className="text-white font-medium text-sm">
+                            Click to view
+                          </span>
+                        </div>
+                      </div>
                     </figure>
                     <div
                       onClick={() =>
@@ -536,37 +581,37 @@ const page = () => {
                   </div>
 
                   <div className="mt-5">
-                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]">
+                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
                       ${item?.price?.toLocaleString()}
                       <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>
                     </h3>
-                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1">
+                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1" translate="no">
                       {item.propertyName}
                     </h4>
                     <div className="flex items-center gap-2.5 mt-4">
                       <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1">
+                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1" translate="no">
                         {item.city}, {item.state}
                       </p>
                     </div>
                     <div className="flex flex-nowrap items-center gap-5 mt-5 overflow-hidden line-clamp-1">
                       <div className="flex items-center gap-2.5 shrink-0">
                         <Bed className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.bedrooms} Bed
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5 shrink-0">
                         <Bathtub className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.bathrooms} Bath
                         </span>
                       </div>
                       <div className="flex items-center gap-2.5 shrink-0">
                         <Acceleration className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap">
+                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.areaInSqMeter} m²
                         </span>
                       </div>
@@ -597,15 +642,17 @@ const page = () => {
           {/* ── Map — order-2 on desktop ── */}
           <div
             ref={mapRef}
-            className={`w-full xl:w-[35%] h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 ${
+            className={`w-full xl:w-[35%] h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 overflow-hidden ${
               isMobile && viewMode !== "map" ? "hidden" : "block"
             }`}
           >
-            <APIProvider
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
-            >
-              <MapContent properties={data?.data?.items || []} />
-            </APIProvider>
+            <div className="w-full h-full">
+              <APIProvider
+                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
+              >
+                <MapContent properties={data?.data?.items || []} />
+              </APIProvider>
+            </div>
           </div>
 
           {/* ── DESKTOP: Filter always visible — order-3 = RIGHT SIDE ── */}
@@ -616,6 +663,51 @@ const page = () => {
           </div>
         </div>
       </div>
+
+      {/* Full-Screen Image Popup Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl h-[90vh] w-full"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close Button (X) */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors p-2 z-10 cursor-pointer"
+              aria-label="Close modal"
+            >
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            {/* Image Display Container */}
+            <div className="relative w-full h-full  rounded-lg overflow-hidden">
+              <Image
+                src={selectedImage}
+                alt="Property full view"
+                fill
+                priority
+                className="rounded-lg object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── CTA Section ── */}
       <section

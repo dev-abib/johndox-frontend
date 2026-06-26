@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -10,11 +9,21 @@ import { AngleBottomSvg } from "@/Components/Svg/SvgContainer2";
 
 type Lang = "English" | "Spanish";
 
+const STORAGE_KEY = "preferred_language";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [activeLang, setActiveLang] = useState<Lang>("Spanish");
+
+  // Restore saved language preference on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "en") {
+      setActiveLang("English");
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -184,7 +193,9 @@ const Navbar = () => {
   const handleLangSelect = (lang: Lang) => {
     setActiveLang(lang);
     setLangOpen(false);
-    changeLanguage(lang === "Spanish" ? "es" : "en");
+    const langCode = lang === "Spanish" ? "es" : "en";
+    localStorage.setItem(STORAGE_KEY, langCode);
+    changeLanguage(langCode);
   };
 
   return (

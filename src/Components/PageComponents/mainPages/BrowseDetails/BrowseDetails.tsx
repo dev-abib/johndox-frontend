@@ -49,6 +49,21 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   // Lightbox modal state for expanding property images
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  // Handle Escape key and body scroll when lightbox is open
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxImage(null);
+    };
+    if (lightboxImage) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [lightboxImage]);
+
   // Favorite state and mutation
   const { mutate: toggleFavoriteMutate } = AddFavourite();
   const [isFavorite, setIsFavorite] = useState(data?.isFavorite || false);
@@ -357,7 +372,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
             <div className="flex-1 rounded-lg p-3">
               <div className="flex flex-col sm:flex-row gap-2.5 md:gap-5 2xl:gap-20 justify-end">
                 <div className="flex gap-x-4 2xl:gap-x-8 justify-between w-full items-start">
-                  <h3 className="font-semibold text-[20px] 2xl:text-[28px] text-[#0085FF]">
+                  <h3 className="font-semibold text-[20px] 2xl:text-[28px] text-[#0085FF]" translate="no">
                     {data?.propertyName}
                   </h3>
 
@@ -393,7 +408,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   </div>
                 </div>
                 <div className="flex gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start">
-                  <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0">
+                  <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0" translate="no">
                     ${data?.price?.toLocaleString()}
                   </h4>
 
@@ -447,26 +462,26 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
               <div className="pt-2.5 2xl:pt-5 pb-4 2xl:pb-8 border-b border-gray-100">
                 <div className="flex items-center gap-2.5 ">
                   <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                  <p className="text-[13px] xl:text-[16px] font-medium text-[#404040]">
+                  <p className="text-[13px] xl:text-[16px] font-medium text-[#404040]" translate="no">
                     {data?.fullAddress}, {data?.city}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-5 mt-2.5">
                   <div className="flex items-center gap-2.5">
                     <Bed className="w-4 h-4" />
-                    <span className="text-sm font-normal text-[#404040]">
+                    <span className="text-sm font-normal text-[#404040]" translate="no">
                       {data?.bedrooms} Beds
                     </span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <Bathtub className="w-4 h-4" />
-                    <span className="text-sm font-normal text-[#404040]">
+                    <span className="text-sm font-normal text-[#404040]" translate="no">
                       {data?.bathrooms} Baths
                     </span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <Acceleration className="w-4 h-4" />
-                    <span className="text-sm font-normal text-[#404040]">
+                    <span className="text-sm font-normal text-[#404040]" translate="no">
                       {data?.areaInSqMeter} m²
                     </span>
                   </div>
@@ -660,26 +675,31 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
           {/* Lightbox Modal for Images */}
           {lightboxImage && (
             <div
-              className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
               onClick={() => setLightboxImage(null)}
             >
               <div
-                className="relative max-w-4xl max-h-[90vh]"
+                className="relative max-w-4xl h-[90vh] w-full"
                 onClick={e => e.stopPropagation()}
               >
                 <button
                   onClick={() => setLightboxImage(null)}
-                  className="absolute -top-10 right-0 text-white hover:text-gray-300 text-3xl font-bold"
+                  className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors p-2 z-10"
+                  aria-label="Close modal"
                 >
-                  ✕
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
-                <Image
-                  src={lightboxImage}
-                  alt="Property full view"
-                  width={1000}
-                  height={800}
-                  className="w-full h-auto rounded-lg"
-                />
+                <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
+                  <Image
+                    src={lightboxImage}
+                    alt="Property full view"
+                    fill
+                    priority
+                    className="rounded-lg object-contain"
+                  />
+                </div>
               </div>
             </div>
           )}

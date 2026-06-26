@@ -94,7 +94,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                   <p className="font-normal text-[12px] text-[#919EAB] mb-1">
                     Full Address
                   </p>
-                  <p className="font-normal text-[14px] text-[#404040]">
+                  <p className="font-normal text-[14px] text-[#404040]" translate="no">
                     {data?.fullAddress}
                   </p>
                 </div>
@@ -102,7 +102,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                   <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
                     City
                   </p>
-                  <p className="font-normal text-[14px] text-[#404040]">
+                  <p className="font-normal text-[14px] text-[#404040]" translate="no">
                     {data?.city}
                   </p>
                 </div>
@@ -110,7 +110,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                   <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
                     State
                   </p>
-                  <p className="font-normal text-[14px] text-[#404040]">
+                  <p className="font-normal text-[14px] text-[#404040]" translate="no">
                     {data?.state}
                   </p>
                 </div>
@@ -127,7 +127,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
                       Property Id
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040] truncate">
+                    <p className="font-normal text-[14px] text-[#404040] truncate" translate="no">
                       {data?._id?.slice(-6).toUpperCase()}
                     </p>
                   </div>
@@ -135,7 +135,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
                       Price
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
+                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
                       $ {new Intl.NumberFormat().format(data?.price)}
                     </p>
                   </div>
@@ -143,7 +143,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
                       Land Area
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
+                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
                       {data?.areaInMeter} m²
                     </p>
                   </div>
@@ -151,7 +151,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
                       Bedrooms
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
+                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
                       {data?.bedrooms} Rooms
                     </p>
                   </div>
@@ -159,7 +159,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
                       Bathrooms
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
+                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
                       {data?.bathrooms} Baths
                     </p>
                   </div>
@@ -186,7 +186,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
                       Year Built
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
+                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
                       {data?.yearBuilt}
                     </p>
                   </div>
