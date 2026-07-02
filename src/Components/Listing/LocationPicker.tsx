@@ -28,6 +28,25 @@ interface LocationPickerProps {
 const DEFAULT_CENTER = { lat: 15.199999, lng: -86.241905 };
 const DEFAULT_ZOOM = 7;
 
+// Sets the map to a specific position on initial mount (from localStorage/props)
+function MapInitializer({
+  initialPosition,
+}: {
+  initialPosition: { lat: number; lng: number } | null;
+}) {
+  const map = useMap();
+  const hasSet = useRef(false);
+
+  useEffect(() => {
+    if (!map || !initialPosition || hasSet.current) return;
+    map.setCenter(initialPosition);
+    map.setZoom(15);
+    hasSet.current = true;
+  }, [map, initialPosition]);
+
+  return null;
+}
+
 function MapClickHandler({
   onMapClick,
 }: {
@@ -39,7 +58,12 @@ function MapClickHandler({
     if (!map) return;
     const listener = map.addListener("click", (e: google.maps.MapMouseEvent) => {
       if (e.latLng) {
-        onMapClick(e.latLng.lat(), e.latLng.lng());
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        onMapClick(lat, lng);
+        // Programmatically center and zoom — doesn't block user zoom
+        map.setCenter({ lat, lng });
+        map.setZoom(15);
       }
     });
     return () => google.maps.event.removeListener(listener);
@@ -87,7 +111,9 @@ function SearchBox({
   useEffect(() => {
     if (!placesLib || !map) return;
 
-    const input = document.getElementById("location-search-input") as HTMLInputElement;
+    const input = document.getElementById(
+      "location-search-input"
+    ) as HTMLInputElement;
     if (!input) return;
 
     const sb = new placesLib.SearchBox(input);
@@ -130,7 +156,10 @@ export default function LocationPicker({
   onLocationChange,
   onAddressFound,
 }: LocationPickerProps) {
-  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
+  const [position, setPosition] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(
     latitude !== undefined && longitude !== undefined
       ? { lat: latitude, lng: longitude }
       : null
@@ -156,9 +185,6 @@ export default function LocationPicker({
       }
     }
   }, []);
-
-  const mapCenter = position || DEFAULT_CENTER;
-  const mapZoom = position ? 15 : DEFAULT_ZOOM;
 
   // Reverse geocode to get address from lat/lng (for map clicks and Places results)
   const reverseGeocode = useCallback(
@@ -247,13 +273,14 @@ export default function LocationPicker({
           <Map
             style={{ width: "100%", height: "100%" }}
             defaultCenter={DEFAULT_CENTER}
-            center={mapCenter}
             defaultZoom={DEFAULT_ZOOM}
-            zoom={mapZoom}
             gestureHandling="greedy"
             disableDefaultUI={false}
-            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || "DEMO_MAP_ID"}
+            mapId={
+              process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || "DEMO_MAP_ID"
+            }
           >
+            <MapInitializer initialPosition={position} />
             <MapClickHandler onMapClick={handleMapClick} />
             <SearchBox
               onPlaceSelected={handlePlaceSelected}
