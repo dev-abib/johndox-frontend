@@ -28,11 +28,11 @@ const page = () => {
     <>
       <BrowseDetails data={singleProductDetails} />
       <BrowseDescription data={singleProductDetails} />
-      <div className="lg:flex gap-5 container mx-auto items-start">
+      <div className="lg:flex gap-5 container mx-auto items-start px-3 sm:px-4 lg:px-0">
         <div className="w-full">
           <Maps item={singleProductDetails} />
         </div>
-        <div className="w-full mt-14">
+        <div className="w-full mt-8 sm:mt-10 lg:mt-14">
           <LoanCalculatorForm data={singleProductDetails} />
         </div>
       </div>

@@ -251,14 +251,14 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
   return (
     <>
-      <section className="lg:pt-10 pt-5">
+      <section className="lg:pt-10 pt-5 px-3 sm:px-0">
         <Container>
           <div className="flex flex-col lg:flex-row gap-y-4.5 lg:gap-x-4.5 2xl:gap-x-8.5">
             {/* Media Presentation Container */}
             <div className="w-full flex-1 flex flex-col gap-3">
               {/* Main Player Display */}
               {videoUrl ? (
-                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-black">
+                <div className="w-full rounded-lg overflow-hidden relative h-[250px] sm:h-[320px] md:h-[380px] lg:h-[440px] bg-black">
                   <video
                     ref={videoRef}
                     preload="metadata"
@@ -280,9 +280,9 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   )}
                 </div>
               ) : imageUrls.length > 0 ? (
-                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-gray-100">
+                <div className="w-full rounded-lg overflow-hidden relative h-[250px] sm:h-[320px] md:h-[380px] lg:h-[440px] bg-gray-100">
                   {/* Main Image Display */}
-                  <div className="w-full h-[360px] bg-gray-100 overflow-hidden rounded-t-lg">
+                  <div className="w-full h-[180px] sm:h-[240px] md:h-[300px] lg:h-[360px] bg-gray-100 overflow-hidden rounded-t-lg">
                     <Image
                       src={imageUrls[0]}
                       alt="Property main image"
@@ -295,11 +295,11 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
                   {/* Image Thumbnails Grid */}
                   {imageUrls.length > 1 && (
-                    <div className="flex gap-2 p-3 bg-white h-20 overflow-x-auto">
+                    <div className="flex gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white h-14 sm:h-16 md:h-20 overflow-x-auto">
                       {imageUrls.map((url: string, idx: number) => (
                         <div
                           key={idx}
-                          className="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#0085FF] transition-all duration-200"
+                          className="flex-shrink-0 h-10 w-10 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#0085FF] transition-all duration-200"
                           onClick={() => setLightboxImage(url)}
                         >
                           <Image
@@ -312,7 +312,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                         </div>
                       ))}
                       {imageUrls.length > 5 && (
-                        <div className="flex-shrink-0 h-16 w-16 rounded-lg bg-blue-50 border-2 border-[#0085FF] flex items-center justify-center text-[#0085FF] font-bold text-sm">
+                        <div className="flex-shrink-0 h-10 w-10 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-lg bg-blue-50 border-2 border-[#0085FF] flex items-center justify-center text-[#0085FF] font-bold text-xs sm:text-sm">
                           +{imageUrls.length - 5}
                         </div>
                       )}
@@ -326,7 +326,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   </div>
                 </div>
               ) : (
-                <div className="w-full rounded-lg overflow-hidden relative h-[440px] bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center p-8">
+                <div className="w-full rounded-lg overflow-hidden relative h-[250px] sm:h-[320px] md:h-[380px] lg:h-[440px] bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4 sm:p-8">
                   {/* No Media State - Professional Design */}
                   <div className="flex flex-col items-center gap-4">
                     {/* Icon */}
@@ -369,10 +369,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
               )}
             </div>
 
-            <div className="flex-1 rounded-lg p-3">
-              <div className="flex flex-col sm:flex-row gap-2.5 md:gap-5 2xl:gap-20 justify-end">
-                <div className="flex gap-x-4 2xl:gap-x-8 justify-between w-full items-start">
-                  <h3 className="font-semibold text-[20px] 2xl:text-[28px] text-[#0085FF]" translate="no">
+            <div className="flex-1 rounded-lg p-2 sm:p-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-2.5 md:gap-5 2xl:gap-20 justify-end">
+                <div className="flex gap-x-2 sm:gap-x-4 2xl:gap-x-8 justify-between w-full items-start">
+                  <h3 className="font-semibold text-base sm:text-lg md:text-[20px] 2xl:text-[28px] text-[#0085FF] line-clamp-2" translate="no">
                     {data?.propertyName}
                   </h3>
 
@@ -407,13 +407,13 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     )}
                   </div>
                 </div>
-                <div className="flex gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start">
-                  <h4 className="font-semibold text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0" translate="no">
+                <div className="flex gap-x-3 sm:gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start items-center">
+                  <h4 className="font-semibold text-sm sm:text-base md:text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0" translate="no">
                     ${data?.price?.toLocaleString()}
                   </h4>
 
                   {/* Action Icons Section */}
-                  <div className="flex flex-row md:flex-col gap-3 md:gap-6">
+                  <div className="flex flex-row md:flex-col gap-2 sm:gap-3 md:gap-6">
                     {/* Save Listing Button - Now with working favorite toggle */}
                     <div className="group relative h-fit w-fit">
                       <button
@@ -459,29 +459,29 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </div>
               </div>
 
-              <div className="pt-2.5 2xl:pt-5 pb-4 2xl:pb-8 border-b border-gray-100">
-                <div className="flex items-center gap-2.5 ">
-                  <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                  <p className="text-[13px] xl:text-[16px] font-medium text-[#404040]" translate="no">
+              <div className="pt-2 sm:pt-2.5 2xl:pt-5 pb-3 sm:pb-4 2xl:pb-8 border-b border-gray-100">
+                <div className="flex items-center gap-1.5 sm:gap-2.5">
+                  <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
+                  <p className="text-xs sm:text-[13px] xl:text-[16px] font-medium text-[#404040] line-clamp-1" translate="no">
                     {data?.fullAddress}, {data?.city}
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-5 mt-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <Bed className="w-4 h-4" />
-                    <span className="text-sm font-normal text-[#404040]" translate="no">
+                <div className="flex flex-wrap gap-3 sm:gap-5 mt-2 sm:mt-2.5">
+                  <div className="flex items-center gap-1.5 sm:gap-2.5">
+                    <Bed className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="text-xs sm:text-sm font-normal text-[#404040]" translate="no">
                       {data?.bedrooms} Beds
                     </span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <Bathtub className="w-4 h-4" />
-                    <span className="text-sm font-normal text-[#404040]" translate="no">
+                  <div className="flex items-center gap-1.5 sm:gap-2.5">
+                    <Bathtub className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="text-xs sm:text-sm font-normal text-[#404040]" translate="no">
                       {data?.bathrooms} Baths
                     </span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <Acceleration className="w-4 h-4" />
-                    <span className="text-sm font-normal text-[#404040]" translate="no">
+                  <div className="flex items-center gap-1.5 sm:gap-2.5">
+                    <Acceleration className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="text-xs sm:text-sm font-normal text-[#404040]" translate="no">
                       {data?.areaInSqMeter} m²
                     </span>
                   </div>
@@ -489,17 +489,17 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
               </div>
 
               {/* Updated Agent Information Section */}
-              <div className="mt-6">
-                <h5 className="text-[#101010] text-[14px] 2xl:text-[24px] font-medium uppercase">
+              <div className="mt-4 sm:mt-6">
+                <h5 className="text-[#101010] text-xs sm:text-sm md:text-[14px] 2xl:text-[24px] font-medium uppercase">
                   Agent Information
                 </h5>
-                <div className="flex flex-col sm:flex-row gap-x-5 mt-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-x-5 mt-3 sm:mt-4">
                   <Image
                     src={data?.author?.profilePicture || User}
                     alt="Agent"
                     width={80}
                     height={80}
-                    className="rounded-full h-20 w-20 object-cover border-2 border-primary-blue"
+                    className="rounded-full h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 object-cover border-2 border-primary-blue"
                   />
                   <div
                     className={
@@ -507,14 +507,14 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     }
                   >
                     {/* Agent Name and Premium Status */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-xl font-medium text-[#0085FF]">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <h3 className="text-base sm:text-lg md:text-xl font-medium text-[#0085FF]">
                         {data?.author?.firstName} {data?.author?.lastName}
                       </h3>
                       {isPremiumAgent && (
                         <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
-                          <MdVerified className="w-4 h-4 text-[#0085FF]" />
-                          <span className="text-xs font-semibold text-[#0085FF]">
+                          <MdVerified className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0085FF]" />
+                          <span className="text-[10px] sm:text-xs font-semibold text-[#0085FF]">
                             Premium Agent
                           </span>
                         </div>
@@ -522,13 +522,13 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     </div>
 
                     {/* Profile Stats Grid */}
-                    <div className="flex flex-wrap gap-5 mt-4">
+                    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-5 mt-3 sm:mt-4">
                       {/* Member Since */}
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                        <span className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase">
                           Member Since
                         </span>
-                        <p className="text-sm font-medium text-[#404040] mt-1">
+                        <p className="text-xs sm:text-sm font-medium text-[#404040] mt-0.5 sm:mt-1">
                           {data?.author?.createdAt
                             ? formatMemberSince(data.author.createdAt)
                             : "—"}
@@ -537,12 +537,12 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
                       {/* Rating */}
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                        <span className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase">
                           Rating
                         </span>
-                        <div className="flex items-center gap-1 mt-1">
+                        <div className="flex items-center gap-1 mt-0.5 sm:mt-1">
                           <Star />
-                          <p className="text-sm font-medium text-[#404040]">
+                          <p className="text-xs sm:text-sm font-medium text-[#404040]">
                             {data?.author?.rating?.averageRating?.toFixed(1) ||
                               "—"}
                           </p>
@@ -551,20 +551,20 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
                       {/* Listings */}
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                        <span className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase">
                           Active Listings
                         </span>
-                        <p className="text-sm font-medium text-[#404040] mt-1">
+                        <p className="text-xs sm:text-sm font-medium text-[#404040] mt-0.5 sm:mt-1">
                           {listingsCount}
                         </p>
                       </div>
 
                       {/* Reviews */}
                       <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">
+                        <span className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase">
                           Reviews
                         </span>
-                        <p className="text-sm font-medium text-[#404040] mt-1">
+                        <p className="text-xs sm:text-sm font-medium text-[#404040] mt-0.5 sm:mt-1">
                           {data?.author?.rating?.ratingCount || 0}
                         </p>
                       </div>
@@ -573,16 +573,16 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </div>
               </div>
 
-              <div className="flex gap-x-7 mt-8">
+              <div className="flex gap-3 sm:gap-x-7 mt-5 sm:mt-8">
                 <button
                   onClick={handleTourRequestClick}
-                  className="w-full bg-[#0085FF] text-white font-medium py-3 rounded-2xl hover:bg-white hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
+                  className="w-full bg-[#0085FF] text-white font-medium py-2.5 sm:py-3 rounded-xl sm:rounded-2xl hover:bg-white hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer text-sm sm:text-base"
                 >
                   Request a tour
                 </button>
                 <button
                   onClick={openMessageModal}
-                  className="w-full text-[#0085FF] font-medium py-3 rounded-2xl bg-white border border-[#0085FF] hover:bg-[#0085FF] hover:text-white transition-all duration-300 cursor-pointer"
+                  className="w-full text-[#0085FF] font-medium py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-white border border-[#0085FF] hover:bg-[#0085FF] hover:text-white transition-all duration-300 cursor-pointer text-sm sm:text-base"
                 >
                   Message
                 </button>
@@ -592,19 +592,19 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
           {openConverter && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-3">
-              <div className="bg-white w-full max-w-[500px] rounded-2xl p-6 relative shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="bg-white w-full max-w-[500px] rounded-2xl p-4 sm:p-6 relative shadow-2xl animate-in fade-in zoom-in duration-200 mx-3 sm:mx-0">
                 <button
                   onClick={() => {
                     setOpenConverter(false);
                     setConvertedData(null);
                   }}
-                  className="absolute right-4 top-4 text-gray-400 hover:text-black transition-colors cursor-pointer"
+                  className="absolute right-3 sm:right-4 top-3 sm:top-4 text-gray-400 hover:text-black transition-colors cursor-pointer"
                 >
                   ✕
                 </button>
 
-                <h3 className="text-[#0085FF] text-xl font-bold mb-2 flex items-center gap-2">
-                  <Converter className="w-6 h-6" /> Currency Converter
+                <h3 className="text-[#0085FF] text-base sm:text-lg md:text-xl font-bold mb-2 flex items-center gap-2">
+                  <Converter className="w-5 h-5 sm:w-6 sm:h-6" /> Currency Converter
                 </h3>
                 <p className="text-sm text-gray-500 mb-6">
                   Convert Honduran Lempira (HNL) to US Dollars (USD)
@@ -621,7 +621,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                         step="any"
                         {...register("amount", { required: true })}
                         placeholder="Enter Lempira"
-                        className="w-full px-4 py-3.5 outline-none font-medium text-gray-800"
+                        className="w-full px-3 sm:px-4 py-3 sm:py-3.5 outline-none font-medium text-gray-800 text-sm sm:text-base"
                       />
                       <div className="px-4 bg-gray-50 border-l text-sm text-gray-600 font-bold">
                         HNL
