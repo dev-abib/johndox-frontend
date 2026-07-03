@@ -233,6 +233,7 @@ const page = () => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 1023 });
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const handleContact = async (id: string) => {
     if (!id) return;
@@ -421,23 +422,23 @@ const page = () => {
 
   return (
     <>
-      <div className="px-4 sm:px-6 mb-[100px] sm:mb-[150px]">
+      <div className="px-3 sm:px-4 md:px-6 mb-12 sm:mb-16 md:mb-[100px]">
         {/* ── Header Row ── */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-4 lg:mb-6">
-          <div>
-            <h2 className="font-semibold text-[#212B36] lg:text-[28px] text-lg">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-3 sm:gap-4 mb-4 lg:mb-6">
+          <div className="space-y-1">
+            <h2 className="font-semibold text-[#212B36] lg:text-[28px] text-lg sm:text-xl">
               Browse Properties
             </h2>
-            <p className="font-normal text-[#212B36] lg:text-base text-sm">
+            <p className="font-normal text-[#212B36] lg:text-base text-xs sm:text-sm">
               Find your perfect property
             </p>
           </div>
 
-          <div>
-            <h2 className="font-semibold text-[#212B36] lg:text-[28px] text-lg">
+          <div className="space-y-1">
+            <h2 className="font-semibold text-[#212B36] lg:text-[28px] text-sm sm:text-lg">
               Real Estate & Homes For Rent
             </h2>
-            <p className="font-normal text-[#212B36] lg:text-base text-sm">
+            <p className="font-normal text-[#212B36] lg:text-base text-xs sm:text-sm">
               ( Showing {displayedProperties?.length} properties )
             </p>
           </div>
@@ -447,7 +448,7 @@ const page = () => {
             <div className="relative w-full lg:w-[220px]">
               <button
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center justify-between gap-2.5 rounded-lg border border-[#E7E7E7] bg-[#F3F3F4] px-3 py-3 shadow-sm hover:bg-gray-50 transition"
+                className="w-full flex items-center justify-between gap-2.5 rounded-lg border border-[#E7E7E7] bg-[#F3F3F4] px-3 py-2.5 sm:py-3 shadow-sm hover:bg-gray-50 transition text-sm sm:text-base"
               >
                 <span>{selected}</span>
                 <span
@@ -487,12 +488,12 @@ const page = () => {
 
         {/* ── Main Content ── */}
         <div className="flex flex-col xl:flex-row gap-4 lg:gap-6">
-          {/* ── MOBILE: List/Map toggle + Filter ── */}
-          <div className="block xl:hidden order-1 mt-6">
-            <div className="flex bg-[#F3F3F4] p-1 rounded-xl mb-4">
+          {/* ── MOBILE: List/Map toggle + Collapsible Filter ── */}
+          <div className="block xl:hidden order-1 mt-4 sm:mt-6">
+            <div className="flex bg-[#F3F3F4] p-1 rounded-xl mb-3">
               <button
                 onClick={() => setViewMode("list")}
-                className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   viewMode === "list"
                     ? "bg-white text-primary-blue shadow-sm"
                     : "text-gray-500"
@@ -502,7 +503,7 @@ const page = () => {
               </button>
               <button
                 onClick={() => setViewMode("map")}
-                className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all ${
+                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   viewMode === "map"
                     ? "bg-white text-primary-blue shadow-sm"
                     : "text-gray-500"
@@ -511,7 +512,16 @@ const page = () => {
                 Map View
               </button>
             </div>
-            <FilterPanel {...filterProps} />
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="w-full flex items-center justify-between bg-white border border-[#E7E7E7] rounded-xl px-4 py-3 mb-3 shadow-sm hover:bg-gray-50 transition"
+            >
+              <span className="text-sm font-medium text-gray-700">Filters & Search</span>
+              <span className={`transition-transform shrink-0 ${showMobileFilters ? "rotate-180" : ""}`}>
+                <AngleBottomSvg />
+              </span>
+            </button>
+            {showMobileFilters && <FilterPanel {...filterProps} />}
           </div>
 
           {/* ── Property List — order-1 on desktop ── */}
@@ -521,14 +531,14 @@ const page = () => {
               isMobile && viewMode !== "list" ? "hidden" : "block"
             }`}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
               {displayedProperties?.map((item: any) => (
                 <div
                   key={item._id}
-                  className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
+                  className="bg-white shadow-lg rounded-2xl sm:rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-3 sm:px-4 md:px-4.5 pt-3 sm:pt-4 md:pt-4.5 pb-4 sm:pb-5 md:pb-7.5"
                 >
                   <div className="relative overflow-hidden">
-                    <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden rounded-lg relative group/image">
+                    <figure className="h-[200px] sm:h-[240px] md:h-[280px] lg:h-[300px] overflow-hidden rounded-lg relative group/image">
                       <Image
                         src={item.media?.[0]?.url}
                         alt={item.propertyName}
@@ -537,15 +547,14 @@ const page = () => {
                         onClick={() => setSelectedImage(item.media?.[0]?.url)}
                         className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 rounded-lg"
                       />
-                      {/* Hover Overlay with Click Indicator */}
                       <div
                         className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center cursor-pointer"
                         onClick={() => setSelectedImage(item.media?.[0]?.url)}
                       >
                         <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
-                          <div className="bg-white/95 p-3 rounded-full">
+                          <div className="bg-white/95 p-2 sm:p-3 rounded-full">
                             <svg
-                              className="w-6 h-6 text-blue-600"
+                              className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -558,7 +567,7 @@ const page = () => {
                               />
                             </svg>
                           </div>
-                          <span className="text-white font-medium text-sm">
+                          <span className="text-white font-medium text-xs sm:text-sm">
                             Click to view
                           </span>
                         </div>
@@ -568,10 +577,10 @@ const page = () => {
                       onClick={() =>
                         !loadingFavorites[item._id] && toggleFavorite(item._id)
                       }
-                      className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
+                      className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/90 backdrop-blur-sm p-2 sm:p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
                     >
                       {loadingFavorites[item._id] ? (
-                        <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                        <span className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
                       ) : favoriteStates[item._id] ? (
                         <Favourites />
                       ) : (
@@ -580,45 +589,45 @@ const page = () => {
                     </div>
                   </div>
 
-                  <div className="mt-5">
-                    <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
+                  <div className="mt-3 sm:mt-4 md:mt-5">
+                    <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
                       ${item?.price?.toLocaleString()}
-                      <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
+                      <span className="text-xs sm:text-sm md:text-base lg:text-[18px] font-medium text-[#919191] pl-1">
                         USD
                       </span>
                     </h3>
-                    <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3 line-clamp-1" translate="no">
+                    <h4 className="text-sm sm:text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-2 sm:mt-3 line-clamp-1" translate="no">
                       {item.propertyName}
                     </h4>
-                    <div className="flex items-center gap-2.5 mt-4">
-                      <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                      <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1" translate="no">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5 mt-2 sm:mt-3 md:mt-4">
+                      <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
+                      <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1" translate="no">
                         {item.city}, {item.state}
                       </p>
                     </div>
-                    <div className="flex flex-nowrap items-center gap-5 mt-5 overflow-hidden line-clamp-1">
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <Bed className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
+                    <div className="flex flex-nowrap items-center gap-3 sm:gap-4 md:gap-5 mt-3 sm:mt-4 md:mt-5 overflow-hidden">
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                        <Bed className="shrink-0 scale-90 sm:scale-100" />
+                        <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.bedrooms} Bed
                         </span>
                       </div>
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <Bathtub className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                        <Bathtub className="shrink-0 scale-90 sm:scale-100" />
+                        <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.bathrooms} Bath
                         </span>
                       </div>
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <Acceleration className="shrink-0" />
-                        <span className="text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                        <Acceleration className="shrink-0 scale-90 sm:scale-100" />
+                        <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
                           {item.areaInSqMeter} m²
                         </span>
                       </div>
                     </div>
                     <button
                       onClick={() => handleContact(item._id)}
-                      className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
+                      className="mt-4 sm:mt-5 md:mt-8 w-full bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg py-2.5 sm:py-3 xl:py-4 rounded-xl sm:rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
                     >
                       Contact
                     </button>
@@ -630,7 +639,7 @@ const page = () => {
                 <div className="col-span-full text-center">
                   <button
                     onClick={() => setShowAll(true)}
-                    className="bg-[#0085FF] text-white font-medium text-lg px-10 py-4 rounded-2xl transition-all shadow-lg hover:bg-white hover:text-black border border-blue-600 cursor-pointer"
+                    className="bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-lg hover:bg-white hover:text-black border border-blue-600 cursor-pointer"
                   >
                     View All Properties
                   </button>
@@ -642,7 +651,7 @@ const page = () => {
           {/* ── Map — order-2 on desktop ── */}
           <div
             ref={mapRef}
-            className={`w-full xl:w-[35%] h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 overflow-hidden ${
+            className={`w-full xl:w-[35%] h-[350px] sm:h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 overflow-hidden ${
               isMobile && viewMode !== "map" ? "hidden" : "block"
             }`}
           >
@@ -711,7 +720,7 @@ const page = () => {
 
       {/* ── CTA Section ── */}
       <section
-        className="relative w-full py-16 xl:py-24 px-6 flex items-center justify-center text-center"
+        className="relative w-full py-12 sm:py-16 xl:py-24 px-4 sm:px-6 flex items-center justify-center text-center"
         style={{
           backgroundImage:
             "url('https://i.ibb.co.com/VW8vzVDx/Group-35-1.png')",
@@ -719,26 +728,26 @@ const page = () => {
           backgroundPosition: "center center",
         }}
       >
-        <div className="relative z-10">
-          <h2 className="text-2xl 2xl:text-[32px] font-semibold leading-8 xl:leading-[48px] text-[#212B36] mb-4">
+        <div className="relative z-10 px-2 sm:px-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl 2xl:text-[32px] font-semibold leading-7 sm:leading-8 xl:leading-[48px] text-[#212B36] mb-3 sm:mb-4">
             {cta?.data?.title}
           </h2>
-          <p className="2xl:text-[24px] font-semibold xl:leading-[36px] text-[#454F5B] mb-5 xl:mb-10">
+          <p className="text-sm sm:text-base md:text-lg 2xl:text-[24px] font-semibold xl:leading-[36px] text-[#454F5B] mb-4 sm:mb-5 xl:mb-10">
             {cta?.data?.subtitle}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <Link href={"/browse"}>
-              <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <Link href={"/browse"} className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-6 sm:px-8 cursor-pointer text-sm sm:text-base xl:text-xl py-3 sm:py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
                 {cta?.data?.btnTxt?.[0] ?? "Start Selling Today"}
               </button>
             </Link>
-            <Link href={"/pricing"}>
-              <button className="px-8 cursor-pointer xl:text-xl py-2.5 xl:py-[20px] rounded-xl border-2 border-primary-blue text-primary-blue font-medium hover:bg-blue-50 transition">
+            <Link href={"/pricing"} className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-6 sm:px-8 cursor-pointer text-sm sm:text-base xl:text-xl py-3 sm:py-2.5 xl:py-[20px] rounded-xl border-2 border-primary-blue text-primary-blue font-medium hover:bg-blue-50 transition">
                 {cta?.data?.btnTxt?.[1] ?? "View Pricing Plans"}
               </button>
             </Link>
           </div>
-          <p className="text-[#212B36] xl:text-lg">
+          <p className="text-sm sm:text-base text-[#212B36] xl:text-lg">
             No credit card required. Get started in minutes.
           </p>
         </div>

@@ -20,15 +20,15 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const hiddenImages = allImages.slice(4);
 
   return (
-    <section className="xxl:pt-0 lg:pt-10 pt-5 pb-10">
+    <section className="xxl:pt-0 lg:pt-10 pt-5 pb-10 px-3 sm:px-0">
       <Container>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               {visibleImages.map((url, index) => (
                 <div
                   key={index}
-                  className="relative aspect-square rounded-lg overflow-hidden bg-gray-200 cursor-pointer"
+                  className="relative aspect-[4/3] sm:aspect-square rounded-lg overflow-hidden bg-gray-200 cursor-pointer"
                   onClick={() => setLightboxImage(url)}
                 >
                   <img
@@ -56,7 +56,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
             </div>
 
             {showMoreImages && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 {hiddenImages.map((url, index) => (
                   <div
                     key={index}
@@ -74,43 +74,43 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
             )}
           </div>
 
-          <div className="space-y-8 lg:mt-0 mt-4">
+          <div className="space-y-6 sm:space-y-8 lg:mt-0 mt-4">
             <div>
-              <h2 className="text-[24px] font-medium text-[#000000] mb-4 uppercase">
+              <h2 className="text-lg sm:text-xl md:text-[24px] font-medium text-[#000000] mb-3 sm:mb-4 uppercase">
                 Description
               </h2>
-              <p className="lg:text-[18px] text-base text-[#404040] font-normal leading-relaxed">
+              <p className="text-sm sm:text-base lg:text-[18px] text-[#404040] font-normal leading-relaxed">
                 {data?.description ||
                   "No description available for this property."}
               </p>
             </div>
 
             <div>
-              <h2 className="text-[24px] font-medium text-[#000000] uppercase mb-4">
+              <h2 className="text-lg sm:text-xl md:text-[24px] font-medium text-[#000000] uppercase mb-3 sm:mb-4">
                 Address
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div>
-                  <p className="font-normal text-[12px] text-[#919EAB] mb-1">
+                  <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1">
                     Full Address
                   </p>
-                  <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                  <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                     {data?.fullAddress}
                   </p>
                 </div>
                 <div>
-                  <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
+                  <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                     City
                   </p>
-                  <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                  <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                     {data?.city}
                   </p>
                 </div>
                 <div>
-                  <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
+                  <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                     State
                   </p>
-                  <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                  <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                     {data?.state}
                   </p>
                 </div>
@@ -118,83 +118,83 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
             </div>
 
             <div>
-              <h2 className="text-[24px] font-medium text-[#000000] uppercase mb-4">
+              <h2 className="text-lg sm:text-xl md:text-[24px] font-medium text-[#000000] uppercase mb-3 sm:mb-4">
                 DETAILS
               </h2>
-              <div className="flex flex-col gap-8">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              <div className="flex flex-col gap-5 sm:gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                       Property Id
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040] truncate" translate="no">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040] truncate" translate="no">
                       {data?._id?.slice(-6).toUpperCase()}
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Price
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                       $ {new Intl.NumberFormat().format(data?.price)}
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Land Area
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                       {data?.areaInMeter} m²
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Bedrooms
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                       {data?.bedrooms} Rooms
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Bathrooms
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                       {data?.bathrooms} Baths
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 border-t pt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 border-t pt-4 sm:pt-6">
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] mb-1 underline">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                       Listing Type
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040] capitalize">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040] capitalize">
                       {data?.listingType}
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Structure
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040] capitalize">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040] capitalize">
                       {data?.propertyType}
                     </p>
                   </div>
                   <div>
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Year Built
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]" translate="no">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
                       {data?.yearBuilt}
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="font-normal text-[12px] text-[#919EAB] underline mb-1">
+                    <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Amenities
                     </p>
-                    <p className="font-normal text-[14px] text-[#404040]">
+                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]">
                       {data?.amenities?.join(" • ")}
                     </p>
                   </div>
