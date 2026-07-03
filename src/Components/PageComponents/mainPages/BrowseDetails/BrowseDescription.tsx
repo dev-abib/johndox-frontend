@@ -20,7 +20,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
   const hiddenImages = allImages.slice(4);
 
   return (
-    <section className="xxl:pt-0 lg:pt-10 pt-5 pb-10 px-3 sm:px-0">
+    <section className="xxl:pt-0 lg:pt-10 pt-5 pb-10 ">
       <Container>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
           <div className="space-y-4">
@@ -41,7 +41,7 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     !showMoreImages && (
                       <div
                         onClick={e => {
-                          e.stopPropagation(); 
+                          e.stopPropagation();
                           setShowMoreImages(true);
                         }}
                         className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer"
@@ -94,7 +94,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                   <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1">
                     Full Address
                   </p>
-                  <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                  <p
+                    className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                    translate="no"
+                  >
                     {data?.fullAddress}
                   </p>
                 </div>
@@ -102,7 +105,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                   <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                     City
                   </p>
-                  <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                  <p
+                    className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                    translate="no"
+                  >
                     {data?.city}
                   </p>
                 </div>
@@ -110,7 +116,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                   <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                     State
                   </p>
-                  <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                  <p
+                    className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                    translate="no"
+                  >
                     {data?.state}
                   </p>
                 </div>
@@ -127,7 +136,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] mb-1 underline">
                       Property Id
                     </p>
-                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040] truncate" translate="no">
+                    <p
+                      className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040] truncate"
+                      translate="no"
+                    >
                       {data?._id?.slice(-6).toUpperCase()}
                     </p>
                   </div>
@@ -135,7 +147,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Price
                     </p>
-                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                    <p
+                      className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                      translate="no"
+                    >
                       $ {new Intl.NumberFormat().format(data?.price)}
                     </p>
                   </div>
@@ -143,7 +158,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Land Area
                     </p>
-                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                    <p
+                      className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                      translate="no"
+                    >
                       {data?.areaInMeter} m²
                     </p>
                   </div>
@@ -151,7 +169,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Bedrooms
                     </p>
-                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                    <p
+                      className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                      translate="no"
+                    >
                       {data?.bedrooms} Rooms
                     </p>
                   </div>
@@ -159,7 +180,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Bathrooms
                     </p>
-                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                    <p
+                      className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                      translate="no"
+                    >
                       {data?.bathrooms} Baths
                     </p>
                   </div>
@@ -186,7 +210,10 @@ const BrowseDescription: React.FC<BrowswProps> = ({ data }) => {
                     <p className="font-normal text-[10px] sm:text-[12px] text-[#919EAB] underline mb-1">
                       Year Built
                     </p>
-                    <p className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]" translate="no">
+                    <p
+                      className="font-normal text-xs sm:text-sm md:text-[14px] text-[#404040]"
+                      translate="no"
+                    >
                       {data?.yearBuilt}
                     </p>
                   </div>

@@ -9,7 +9,7 @@ interface CategoryyProps {
 
 const Browser = ({ AllCategory }: CategoryyProps) => {
   return (
-    <section className="py-12 sm:py-16 md:py-20 xl:py-[100px] xl:px-5 px-0">
+    <section className="xl:px-5 px-0">
       <Container>
         <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16 px-3 sm:px-0">
           <h2 className="font-medium text-black text-2xl sm:text-3xl md:text-4xl lg:text-[38px]">

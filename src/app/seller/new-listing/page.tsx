@@ -142,7 +142,7 @@ export default function CreateListingPage() {
     formData.append("fullAddress", data.streetAddress);
     formData.append("city", data.city);
     formData.append("state", data.state);
-    formData.append("price", data.priceUSD);
+    formData.append("price", data.priceUSD.replace(/[^0-9.]/g, ""));
 
     if (data.bedrooms) formData.append("bedrooms", data.bedrooms);
     if (data.bathrooms) formData.append("bathrooms", data.bathrooms);
@@ -164,8 +164,8 @@ export default function CreateListingPage() {
     formData.append("category", data.category);
 
     if (data.latitude !== undefined && data.longitude !== undefined && !isNaN(data.latitude) && !isNaN(data.longitude)) {
-      formData.append("latitude", data.latitude.toString());
-      formData.append("longitude", data.longitude.toString());
+      formData.append("lat", data.latitude.toString());
+      formData.append("lng", data.longitude.toString());
     }
 
     if (data.photos && data.photos.length > 0) {

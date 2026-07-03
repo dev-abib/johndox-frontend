@@ -659,7 +659,13 @@ export function Premium() {
     </svg>
   );
 }
-export function Save({ className, fill }: { className?: string; fill?: string }) {
+export function Save({
+  className,
+  fill,
+}: {
+  className?: string;
+  fill?: string;
+}) {
   return (
     <svg
       viewBox="0 0 38 38"
@@ -751,8 +757,8 @@ export function Converter({ className, onClick }: SaveProps) {
 export function Video({ className }: { className?: string }) {
   return (
     <svg
-      width="100"
-      height="140"
+      width="70"
+      height="70"
       viewBox="0 0 240 240"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

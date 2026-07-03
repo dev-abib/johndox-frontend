@@ -49,7 +49,6 @@ export const useContact = () => {
     key: ["contact"],
     endpoint: "/send-user-query",
     onSuccess: (data: any) => {
-      console.log(data);
       if (data?.status || data?.success) {
         toast.success(data?.message);
       }
@@ -73,7 +72,6 @@ export const UseSearchSave = () => {
       Authorization: token ? `Bearer ${token}` : "",
     },
     onSuccess: (data: any) => {
-      console.log(data);
       if (data?.status || data?.success) {
         toast.success(data?.message);
       }

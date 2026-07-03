@@ -186,7 +186,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
   // Close share dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (shareRef.current && !shareRef.current.contains(event.target as Node)) {
+      if (
+        shareRef.current &&
+        !shareRef.current.contains(event.target as Node)
+      ) {
         setShareOpen(false);
       }
     };
@@ -251,7 +254,7 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
 
   return (
     <>
-      <section className="lg:pt-10 pt-5 px-3 sm:px-0">
+      <section className="lg:pt-10 ">
         <Container>
           <div className="flex flex-col lg:flex-row gap-y-4.5 lg:gap-x-4.5 2xl:gap-x-8.5">
             {/* Media Presentation Container */}
@@ -372,7 +375,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
             <div className="flex-1 rounded-lg p-2 sm:p-3">
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-2.5 md:gap-5 2xl:gap-20 justify-end">
                 <div className="flex gap-x-2 sm:gap-x-4 2xl:gap-x-8 justify-between w-full items-start">
-                  <h3 className="font-semibold text-base sm:text-lg md:text-[20px] 2xl:text-[28px] text-[#0085FF] line-clamp-2" translate="no">
+                  <h3
+                    className="font-semibold text-base sm:text-lg md:text-[20px] 2xl:text-[28px] text-[#0085FF] line-clamp-2"
+                    translate="no"
+                  >
                     {data?.propertyName}
                   </h3>
 
@@ -398,7 +404,9 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                               onClick={option.action}
                               className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 ${option.bgHover} transition-colors cursor-pointer`}
                             >
-                              <option.icon className={`text-xl ${option.color}`} />
+                              <option.icon
+                                className={`text-xl ${option.color}`}
+                              />
                               <span className="font-medium">{option.name}</span>
                             </button>
                           ))}
@@ -408,7 +416,10 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   </div>
                 </div>
                 <div className="flex gap-x-3 sm:gap-x-6 2xl:gap-x-20 w-full lg:justify-end justify-start items-center">
-                  <h4 className="font-semibold text-sm sm:text-base md:text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0" translate="no">
+                  <h4
+                    className="font-semibold text-sm sm:text-base md:text-[18px] 2xl:text-[28px] text-[#0085FF] shrink-0"
+                    translate="no"
+                  >
                     ${data?.price?.toLocaleString()}
                   </h4>
 
@@ -462,26 +473,38 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
               <div className="pt-2 sm:pt-2.5 2xl:pt-5 pb-3 sm:pb-4 2xl:pb-8 border-b border-gray-100">
                 <div className="flex items-center gap-1.5 sm:gap-2.5">
                   <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                  <p className="text-xs sm:text-[13px] xl:text-[16px] font-medium text-[#404040] line-clamp-1" translate="no">
+                  <p
+                    className="text-xs sm:text-[13px] xl:text-[16px] font-medium text-[#404040] line-clamp-1"
+                    translate="no"
+                  >
                     {data?.fullAddress}, {data?.city}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3 sm:gap-5 mt-2 sm:mt-2.5">
                   <div className="flex items-center gap-1.5 sm:gap-2.5">
                     <Bed className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="text-xs sm:text-sm font-normal text-[#404040]" translate="no">
+                    <span
+                      className="text-xs sm:text-sm font-normal text-[#404040]"
+                      translate="no"
+                    >
                       {data?.bedrooms} Beds
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 sm:gap-2.5">
                     <Bathtub className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="text-xs sm:text-sm font-normal text-[#404040]" translate="no">
+                    <span
+                      className="text-xs sm:text-sm font-normal text-[#404040]"
+                      translate="no"
+                    >
                       {data?.bathrooms} Baths
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 sm:gap-2.5">
                     <Acceleration className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="text-xs sm:text-sm font-normal text-[#404040]" translate="no">
+                    <span
+                      className="text-xs sm:text-sm font-normal text-[#404040]"
+                      translate="no"
+                    >
                       {data?.areaInSqMeter} m²
                     </span>
                   </div>
@@ -604,7 +627,8 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                 </button>
 
                 <h3 className="text-[#0085FF] text-base sm:text-lg md:text-xl font-bold mb-2 flex items-center gap-2">
-                  <Converter className="w-5 h-5 sm:w-6 sm:h-6" /> Currency Converter
+                  <Converter className="w-5 h-5 sm:w-6 sm:h-6" /> Currency
+                  Converter
                 </h3>
                 <p className="text-sm text-gray-500 mb-6">
                   Convert Honduran Lempira (HNL) to US Dollars (USD)
@@ -687,8 +711,18 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                   className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors p-2 z-10"
                   aria-label="Close modal"
                 >
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
                 <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">

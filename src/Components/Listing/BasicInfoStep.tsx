@@ -15,7 +15,7 @@ const propertyTypes = ["House", "Apartment", "Land", "Commercial"];
 
 const USD_TO_HNL_RATE = 24.8;
 
-const listingTypes = ["For Sale", "For Rent", "Sold", "Rented"];
+const listingTypes = ["For Sale", "For Rent",];
 const departments = [
   "Atlántida",
   "Choluteca",
@@ -252,14 +252,14 @@ export default function BasicInfoStep({
         />
       </div>
 
-      <div className="grid  grid-cols-1 gap-16 w-full">
-        {/* <div>
+      <div className="grid grid-cols-1 gap-16 w-full">
+        <div>
           <label className="block text-sm font-medium mb-2">
             Category <span className="text-red-500">*</span>
           </label>
           <select
             {...register("category", {
-              required: "categoryis required",
+              required: "Category is required",
             })}
             className="w-full px-4 py-3 bg-[#F7F7F7] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
@@ -275,7 +275,7 @@ export default function BasicInfoStep({
               {errors.category.message}
             </p>
           )}
-        </div> */}
+        </div>
 
         {/* Price */}
         <div>
