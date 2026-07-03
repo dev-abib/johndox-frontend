@@ -32,7 +32,6 @@ const ContactForm = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<ContactFormData>();
 
@@ -44,7 +43,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="lg:pt-[150px] pt-15 px-4">
+    <section className="lg:pt-[150px] pt-15">
       <Container>
         <div className="lg:flex gap-x-22">
           <div className="w-full">
