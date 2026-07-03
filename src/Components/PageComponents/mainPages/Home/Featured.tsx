@@ -115,7 +115,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
   return (
     <>
       {/* Main Featured Section */}
-      <section className="py-12 sm:py-16 md:py-24 xl:py-[150px] px-4 sm:px-5">
+      <section className="py-12 sm:py-16 md:py-24 xl:py-[150px]">
         <Container>
           {/* Section Header */}
           <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16 px-2 sm:px-0">
@@ -203,7 +203,10 @@ const Featured = ({ data = [] }: PropertyProps) => {
                 {/* Property Details */}
                 <div className="mt-3 sm:mt-4 md:mt-5">
                   {/* Price */}
-                  <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
+                  <h3
+                    className="text-lg sm:text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]"
+                    translate="no"
+                  >
                     {new Intl.NumberFormat().format(item.price)}
                     <span className="text-sm sm:text-base lg:text-[18px] font-medium text-[#919191] pl-1">
                       USD
@@ -211,7 +214,10 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   </h3>
 
                   {/* Property Name */}
-                  <h4 className="text-sm sm:text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-2 sm:mt-3" translate="no">
+                  <h4
+                    className="text-sm sm:text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-2 sm:mt-3"
+                    translate="no"
+                  >
                     {item.propertyName?.length > 25
                       ? item.propertyName.substring(0, 25) + "..."
                       : item.propertyName}
@@ -220,7 +226,10 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   {/* Location */}
                   <div className="flex items-center gap-2 mt-3 sm:mt-4">
                     <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                    <p className="text-sm sm:text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]" translate="no">
+                    <p
+                      className="text-sm sm:text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]"
+                      translate="no"
+                    >
                       {item.city}, {item.state}
                     </p>
                   </div>
@@ -230,21 +239,30 @@ const Featured = ({ data = [] }: PropertyProps) => {
                     {/* Bedrooms */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5">
                       <Bed className="shrink-0 scale-90 sm:scale-100" />
-                      <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                      <span
+                        className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]"
+                        translate="no"
+                      >
                         {item.bedrooms} Bed
                       </span>
                     </div>
                     {/* Bathrooms */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5">
                       <Bathtub className="shrink-0 scale-90 sm:scale-100" />
-                      <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                      <span
+                        className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]"
+                        translate="no"
+                      >
                         {item.bathrooms} Bath
                       </span>
                     </div>
                     {/* Area in Square Meters */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5">
                       <Acceleration className="shrink-0 scale-90 sm:scale-100" />
-                      <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                      <span
+                        className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]"
+                        translate="no"
+                      >
                         {item.areaInSqMeter} m²
                       </span>
                     </div>

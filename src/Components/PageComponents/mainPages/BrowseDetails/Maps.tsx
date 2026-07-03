@@ -20,7 +20,7 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
   // Severe Guardrail: If lat/lng are completely missing, don't crash or render a map in West Africa/Mexico
   if (!item?.location?.lat || !item?.location?.lng) {
     return (
-      <section className="py-6 lg:py-12 px-3 sm:px-0">
+      <section className="py-6 lg:py-12">
         <Container>
           <h2 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#000000] mb-3 sm:mb-4">
             Property Location
@@ -46,7 +46,7 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${position.lat},${position.lng}`;
 
   return (
-    <section className="py-6 lg:py-12 px-3 sm:px-0">
+    <section className="py-6 lg:py-12">
       <Container>
         <h2 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#000000] mb-3 sm:mb-4">
           Property Location
@@ -75,7 +75,10 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
                 position={position}
                 onClick={() => setIsOpen(prev => !prev)}
               >
-                <div className="bg-white text-black font-bold text-xs px-2.5 py-1.5 rounded-full shadow-md border border-gray-300 hover:scale-105 transition-transform cursor-pointer whitespace-nowrap" translate="no">
+                <div
+                  className="bg-white text-black font-bold text-xs px-2.5 py-1.5 rounded-full shadow-md border border-gray-300 hover:scale-105 transition-transform cursor-pointer whitespace-nowrap"
+                  translate="no"
+                >
                   {formattedPrice}
                 </div>
               </AdvancedMarker>
@@ -99,10 +102,16 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
                       />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <p className="text-[#0085FF] font-bold text-sm leading-tight" translate="no">
+                      <p
+                        className="text-[#0085FF] font-bold text-sm leading-tight"
+                        translate="no"
+                      >
                         {formattedPrice}
                       </p>
-                      <p className="text-[10px] text-gray-500 truncate w-[120px]" translate="no">
+                      <p
+                        className="text-[10px] text-gray-500 truncate w-[120px]"
+                        translate="no"
+                      >
                         {propertyTitle}
                       </p>
 
