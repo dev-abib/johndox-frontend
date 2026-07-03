@@ -26,7 +26,7 @@ const page = () => {
     <>
       <BrowseDetails data={singleProductDetails} />
       <BrowseDescription data={singleProductDetails} />
-      <div className="lg:flex gap-5 container mx-auto items-start px-3 sm:px-4 lg:px-0">
+      <div className="lg:flex gap-5 container mx-auto items-start">
         <div className="w-full">
           <Maps item={singleProductDetails} />
         </div>

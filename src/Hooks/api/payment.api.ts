@@ -1,9 +1,7 @@
 import toast from "react-hot-toast";
 import useClientApi from "../useClientApi";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const checkOutPlan = (token: string | undefined) => {
-  const queryClient = useQueryClient();
 
   return useClientApi({
     method: "post",
