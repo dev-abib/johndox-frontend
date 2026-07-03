@@ -115,29 +115,29 @@ const Featured = ({ data = [] }: PropertyProps) => {
   return (
     <>
       {/* Main Featured Section */}
-      <section className="py-16 md:py-24 xl:py-[150px] px-5">
+      <section className="py-12 sm:py-16 md:py-24 xl:py-[150px] px-4 sm:px-5">
         <Container>
           {/* Section Header */}
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="font-medium text-black text-3xl sm:text-4xl lg:text-[38px]">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16 px-2 sm:px-0">
+            <h2 className="font-medium text-black text-2xl sm:text-3xl md:text-4xl lg:text-[38px]">
               Featured Properties
             </h2>
-            <p className="font-normal text-black text-base sm:text-lg lg:text-[18px] mt-4 max-w-3xl mx-auto">
+            <p className="font-normal text-black text-sm sm:text-base lg:text-[18px] mt-3 sm:mt-4 max-w-3xl mx-auto px-2 sm:px-0">
               Explore top-tier homes and land carefully curated for quality and
               value.
             </p>
           </div>
 
           {/* Properties Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-11">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 xl:gap-11">
             {displayedProperties?.map((item: any) => (
               <div
                 key={item._id}
-                className="bg-white shadow-lg rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-4.5 pt-4.5 pb-7.5"
+                className="bg-white shadow-lg rounded-2xl sm:rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-3 sm:px-4 md:px-4.5 pt-3 sm:pt-4 md:pt-4.5 pb-5 sm:pb-6 md:pb-7.5"
               >
                 {/* Property Image with Clickable Overlay */}
                 <div className="relative overflow-hidden">
-                  <figure className="h-[260px] sm:h-[280px] lg:h-[300px] overflow-hidden cursor-pointer rounded-lg relative group/image">
+                  <figure className="h-[220px] sm:h-[250px] md:h-[280px] lg:h-[300px] overflow-hidden cursor-pointer rounded-lg relative group/image">
                     {/* Property Image */}
                     <Image
                       src={item.media?.[0]?.url}
@@ -201,50 +201,50 @@ const Featured = ({ data = [] }: PropertyProps) => {
                 </div>
 
                 {/* Property Details */}
-                <div className="mt-5">
+                <div className="mt-3 sm:mt-4 md:mt-5">
                   {/* Price */}
-                  <h3 className="text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
+                  <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
                     {new Intl.NumberFormat().format(item.price)}
-                    <span className="text-lg lg:text-[18px] font-medium text-[#919191] pl-1">
+                    <span className="text-sm sm:text-base lg:text-[18px] font-medium text-[#919191] pl-1">
                       USD
                     </span>
                   </h3>
 
                   {/* Property Name */}
-                  <h4 className="text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-3" translate="no">
+                  <h4 className="text-sm sm:text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-2 sm:mt-3" translate="no">
                     {item.propertyName?.length > 25
                       ? item.propertyName.substring(0, 25) + "..."
                       : item.propertyName}
                   </h4>
 
                   {/* Location */}
-                  <div className="flex items-center gap-2.5 mt-4">
-                    <Location className="w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                    <p className="text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]" translate="no">
+                  <div className="flex items-center gap-2 mt-3 sm:mt-4">
+                    <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
+                    <p className="text-sm sm:text-base lg:text-lg xl:text-[18px] font-medium text-[#919191]" translate="no">
                       {item.city}, {item.state}
                     </p>
                   </div>
 
                   {/* Property Features: Beds, Baths, Area */}
-                  <div className="flex flex-wrap gap-5 mt-5">
+                  <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-5 mt-3 sm:mt-4 md:mt-5">
                     {/* Bedrooms */}
-                    <div className="flex items-center gap-2.5">
-                      <Bed className="shrink-0" />
-                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5">
+                      <Bed className="shrink-0 scale-90 sm:scale-100" />
+                      <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
                         {item.bedrooms} Bed
                       </span>
                     </div>
                     {/* Bathrooms */}
-                    <div className="flex items-center gap-2.5">
-                      <Bathtub className="shrink-0" />
-                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5">
+                      <Bathtub className="shrink-0 scale-90 sm:scale-100" />
+                      <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
                         {item.bathrooms} Bath
                       </span>
                     </div>
                     {/* Area in Square Meters */}
-                    <div className="flex items-center gap-2.5">
-                      <Acceleration className="shrink-0" />
-                      <span className="text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
+                    <div className="flex items-center gap-1.5 sm:gap-2.5">
+                      <Acceleration className="shrink-0 scale-90 sm:scale-100" />
+                      <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191]" translate="no">
                         {item.areaInSqMeter} m²
                       </span>
                     </div>
@@ -254,7 +254,7 @@ const Featured = ({ data = [] }: PropertyProps) => {
                   <Link
                     href={`${isBuyerLayout ? `/buyerlayout/browse/${item._id}` : `/browse/${item._id}`}`}
                   >
-                    <button className="mt-8 w-full bg-[#0085FF] text-white font-medium text-base lg:text-lg py-3 xl:py-4 rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
+                    <button className="mt-5 sm:mt-6 md:mt-8 w-full bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg py-3 sm:py-3 xl:py-4 rounded-xl sm:rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer">
                       Contact
                     </button>
                   </Link>
@@ -265,10 +265,10 @@ const Featured = ({ data = [] }: PropertyProps) => {
 
           {/* View All Properties Button */}
           {!showAll && data.length > 6 && (
-            <div className="text-center mt-12 lg:mt-16">
+            <div className="text-center mt-8 sm:mt-10 md:mt-12 lg:mt-16">
               <button
                 onClick={() => setShowAll(true)}
-                className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-lg px-10 xl:py-4 py-3 rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
+                className="inline-flex items-center gap-3 bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg px-6 sm:px-8 md:px-10 xl:py-4 py-3 rounded-xl sm:rounded-2xl transition-colors duration-300 shadow-lg hover:shadow-xl cursor-pointer hover:bg-transparent hover:text-black border border-blue-600"
               >
                 View All Properties
               </button>

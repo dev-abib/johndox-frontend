@@ -16,6 +16,13 @@ interface BrowswProps {
   data: any;
 }
 
+const fieldLabels: Record<keyof LoanFormInput, string> = {
+  assetsPrice: "Assets Price",
+  downPayment: "Down Payment",
+  loanTerms: "Loan Duration (Years)",
+  interestRate: "Interest Rate",
+};
+
 const LoanCalculatorForm: React.FC<BrowswProps> = ({ data }) => {
   const [result, setResult] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,19 +70,13 @@ const LoanCalculatorForm: React.FC<BrowswProps> = ({ data }) => {
           className="space-y-6 bg-[#F9FAFB] p-6 rounded-3xl shadow-lg"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Input fields remain the same */}
-            {[
-              "assetsPrice",
-              "downPayment",
-              "Loan duration(Years)",
-              "interestRate",
-            ].map(name => (
+            {(Object.keys(fieldLabels) as (keyof LoanFormInput)[]).map(name => (
               <div key={name}>
-                <label className="text-sm font-medium text-[#5F5F5F] capitalize">
-                  {name.replace(/([A-Z])/g, " $1")}
+                <label className="text-sm font-medium text-[#5F5F5F]">
+                  {fieldLabels[name]}
                 </label>
                 <Controller
-                  name={name as keyof LoanFormInput}
+                  name={name}
                   control={control}
                   rules={{ required: "Required" }}
                   render={({ field }) => (

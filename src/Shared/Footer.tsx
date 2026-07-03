@@ -22,52 +22,79 @@ const socialIcons: Record<string, any> = {
 // ── Role-based footer link definitions ──────────────────────────────────────
 const footerLinks = {
   guest: {
-    column1: [
-      { label: "Browse Properties", href: "/browse" },
-      { label: "Houses", href: "/browse?type=house" },
-      { label: "Land", href: "/browse?type=land" },
-    ],
-    column2: [
-      { label: "Commercial", href: "/browse?type=commercial" },
-      { label: "Pricing", href: "/pricing" },
-    ],
-    column3: [
-      { label: "About Us", href: "/about" },
-      { label: "Contact", href: "/contact-us" },
-      { label: "Terms & Conditions", href: "/terms" },
-    ],
+    column1: {
+      title: "Properties",
+      links: [
+        { label: "Browse Properties", href: "/browse" },
+        { label: "Houses", href: "/browse?type=house" },
+        { label: "Land", href: "/browse?type=land" },
+      ],
+    },
+    column2: {
+      title: "Services",
+      links: [
+        { label: "Commercial", href: "/browse?type=commercial" },
+        { label: "Pricing", href: "/pricing" },
+      ],
+    },
+    column3: {
+      title: "Company",
+      links: [
+        { label: "About Us", href: "/about" },
+        { label: "Contact", href: "/contact-us" },
+        { label: "Terms & Conditions", href: "/terms" },
+      ],
+    },
   },
   buyer: {
-    column1: [
-      { label: "Browse Properties", href: "/buyerlayout/browse" },
-      { label: "My Favorites", href: "/buyerlayout/favourites" },
-      { label: "Saved Searches", href: "/buyerlayout/searches" },
-    ],
-    column2: [
-      { label: "Messages", href: "/buyerlayout/messages" },
-      { label: "Notifications", href: "/buyerlayout/notifications" },
-    ],
-    column3: [
-      { label: "About Us", href: "/buyerlayout/about" },
-      { label: "Contact", href: "/buyerlayout/contact-us" },
-      { label: "Terms & Conditions", href: "/buyerlayout/terms-service" },
-    ],
+    column1: {
+      title: "Browse",
+      links: [
+        { label: "Browse Properties", href: "/buyerlayout/browse" },
+        { label: "My Favorites", href: "/buyerlayout/favourites" },
+        { label: "Saved Searches", href: "/buyerlayout/searches" },
+      ],
+    },
+    column2: {
+      title: "Activity",
+      links: [
+        { label: "Messages", href: "/buyerlayout/messages" },
+        { label: "Notifications", href: "/buyerlayout/notifications" },
+      ],
+    },
+    column3: {
+      title: "Company",
+      links: [
+        { label: "About Us", href: "/buyerlayout/about" },
+        { label: "Contact", href: "/buyerlayout/contact-us" },
+        { label: "Terms & Conditions", href: "/buyerlayout/terms-service" },
+      ],
+    },
   },
   seller: {
-    column1: [
-      { label: "My Listings", href: "/seller/my-listing" },
-      { label: "New Listing", href: "/seller/new-listing" },
-      { label: "Analytics", href: "/seller/analytics" },
-    ],
-    column2: [
-      { label: "Subscription Plans", href: "/seller/pricing" },
-      { label: "Messages", href: "/seller/message" },
-    ],
-    column3: [
-      { label: "About Us", href: "/seller/about" },
-      { label: "Contact", href: "/seller/contact-us" },
-      { label: "Terms & Conditions", href: "/seller/terms-service" },
-    ],
+    column1: {
+      title: "Listings",
+      links: [
+        { label: "My Listings", href: "/seller/my-listing" },
+        { label: "New Listing", href: "/seller/new-listing" },
+        { label: "Analytics", href: "/seller/analytics" },
+      ],
+    },
+    column2: {
+      title: "Business",
+      links: [
+        { label: "Subscription Plans", href: "/seller/pricing" },
+        { label: "Messages", href: "/seller/message" },
+      ],
+    },
+    column3: {
+      title: "Company",
+      links: [
+        { label: "About Us", href: "/seller/about" },
+        { label: "Contact", href: "/seller/contact-us" },
+        { label: "Terms & Conditions", href: "/seller/terms-service" },
+      ],
+    },
   },
 };
 
@@ -102,43 +129,42 @@ const Footer = () => {
   const renderLinkList = (items: { label: string; href: string }[]) =>
     items.map(item => (
       <li key={item.label}>
-        <a href={item.href} className="hover:text-white transition-colors">
+        <a
+          href={item.href}
+          className="hover:text-white transition-colors text-muted-gray xl:text-[20px] font-medium leading-[30px]"
+        >
           {item.label}
         </a>
       </li>
     ));
 
   return (
-    <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15">
+    <footer className="bg-[#0f0f0f] text-white overflow-hidden lg:mt-[150px] mt-15 xl:px-4">
       <Container>
         <div>
-          <div className="px-5 py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
+          <div className="py-5 xl:py-10 flex flex-col xl:flex-row gap-4 xl:gap-12">
             {/* Left Text */}
             <div className="xl:w-[37%] w-full">
-              <p className="footer_text xl:w-[80%] w-full text-center xl:text-left">
+              <p className="footer_text  w-full pb-10">
                 The leading real estate marketplace in Honduras.
               </p>
             </div>
 
             {/* Links — role-aware */}
-            <div className="flex flex-col sm:flex-row xl:flex-row justify-between items-start flex-1 gap-5 xl:gap-10 xl:w-[63%] w-full">
-              <div className="w-full sm:w-auto">
-                <ul className="xl:space-y-3 footer_text text-center sm:text-left">
-                  {renderLinkList(links.column1)}
-                </ul>
-              </div>
-
-              <div className="w-full sm:w-auto">
-                <ul className="xl:space-y-3 footer_text text-center sm:text-left">
-                  {renderLinkList(links.column2)}
-                </ul>
-              </div>
-
-              <div className="w-full sm:w-auto">
-                <ul className="xl:space-y-3 footer_text text-center sm:text-left">
-                  {renderLinkList(links.column3)}
-                </ul>
-              </div>
+            <div className="flex flex-col sm:flex-row xl:flex-row justify-between items-start flex-1 gap-8 xl:gap-10 xl:w-[63%] w-full">
+              {["column1", "column2", "column3"].map(col => {
+                const column = links[col as keyof typeof links];
+                return (
+                  <div key={col} className="w-full sm:w-auto">
+                    <h3 className="text-white text-lg xl:text-[22px] font-semibold mb-3 xl:mb-4 text-left">
+                      {column.title}
+                    </h3>
+                    <ul className="space-y-2 xl:space-y-3 text-left">
+                      {renderLinkList(column.links)}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

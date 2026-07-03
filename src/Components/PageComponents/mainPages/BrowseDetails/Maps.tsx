@@ -20,12 +20,12 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
   // Severe Guardrail: If lat/lng are completely missing, don't crash or render a map in West Africa/Mexico
   if (!item?.location?.lat || !item?.location?.lng) {
     return (
-      <section className="py-6 lg:py-12">
+      <section className="py-6 lg:py-12 px-3 sm:px-0">
         <Container>
-          <h2 className="text-[22px] font-medium text-[#000000] mb-4">
+          <h2 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#000000] mb-3 sm:mb-4">
             Property Location
           </h2>
-          <div className="w-full xl:h-[450px] h-[300px] bg-gray-50 border border-dashed border-gray-200 rounded-lg flex items-center justify-center text-sm text-gray-400">
+          <div className="w-full xl:h-[450px] h-[250px] sm:h-[300px] bg-gray-50 border border-dashed border-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-400 px-4 text-center">
             Coordinates not available for this property.
           </div>
         </Container>
@@ -46,13 +46,13 @@ const Maps: React.FC<MapsProps> = ({ item }) => {
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${position.lat},${position.lng}`;
 
   return (
-    <section className="py-6 lg:py-12">
+    <section className="py-6 lg:py-12 px-3 sm:px-0">
       <Container>
-        <h2 className="text-[22px] font-medium text-[#000000] mb-4">
+        <h2 className="text-lg sm:text-xl md:text-[22px] font-medium text-[#000000] mb-3 sm:mb-4">
           Property Location
         </h2>
 
-        <div className="relative w-full xl:h-[450px] h-[300px] rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+        <div className="relative w-full xl:h-[450px] h-[250px] sm:h-[300px] rounded-lg overflow-hidden border border-gray-200 shadow-sm">
           <APIProvider
             apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
             // FIX: Lock map engine to regional location native names instead of auto-translating to English

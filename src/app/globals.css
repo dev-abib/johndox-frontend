@@ -28,7 +28,7 @@ body {
   @apply text-xl;
 }
 .footer_text {
-  @apply xl:text-[20px] font-medium leading-[30px] text-muted-gray;
+  @apply text-[25px] font-medium leading-[30px] text-muted-gray;
 }
 .menu_item {
   @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark;
