@@ -1,6 +1,5 @@
 "use client";
 import { useEffect } from "react";
-
 const STORAGE_KEY = "preferred_language";
 
 declare global {
@@ -25,7 +24,6 @@ export default function GoogleTranslateLoader() {
         "google_translate_element",
       );
 
-      // Apply saved language preference after widget initializes
       const savedLang = localStorage.getItem(STORAGE_KEY);
       const targetLang = savedLang === "en" ? "en" : "es";
 
@@ -43,8 +41,7 @@ export default function GoogleTranslateLoader() {
 
     const script = document.createElement("script");
     script.id = "google-translate-script";
-    script.src =
-      "//translate.google.com/translate_a/element.js?cb=googleTranslateInit";
+    script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateInit";
     script.async = true;
 
     document.body.appendChild(script);

@@ -1,7 +1,4 @@
 "use client";
-
-
-
 interface faqprops {
   data?: any;
   faq?: any;

@@ -1,20 +1,17 @@
 "use client";
 import React, { useEffect } from "react";
+import { Convert } from "../Svg/SvgContainer";
+import LocationPicker from "./LocationPicker";
 import {
   UseFormRegister,
   FieldErrors,
   UseFormWatch,
   UseFormSetValue,
 } from "react-hook-form";
-import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
-import LocationPicker from "./LocationPicker";
-
 const propertyTypes = ["House", "Apartment", "Land", "Commercial"];
-
 const USD_TO_HNL_RATE = 24.8;
-
 const listingTypes = ["For Sale", "For Rent",];
 const departments = [
   "Atlántida",
