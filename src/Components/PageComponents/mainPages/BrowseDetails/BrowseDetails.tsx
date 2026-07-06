@@ -725,13 +725,13 @@ const BrowseDetails: React.FC<BrowswProps> = ({ data }) => {
                     />
                   </svg>
                 </button>
-                <div className="relative w-full h-full bg-black rounded-lg overflow-hidden">
+                <div className="relative w-full h-full rounded-lg overflow-hidden">
                   <Image
                     src={lightboxImage}
                     alt="Property full view"
                     fill
                     priority
-                    className="rounded-lg object-contain"
+                    className="rounded-lg object-contain w-full h-full"
                   />
                 </div>
               </div>
