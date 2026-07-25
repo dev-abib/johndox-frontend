@@ -31,7 +31,7 @@ body {
   @apply text-[25px] font-medium leading-[30px] text-muted-gray;
 }
 .menu_item {
-  @apply 2xl:text-[20px] font-medium leading-[30px] text-text-dark;
+  @apply 2xl:text-[17px] font-medium leading-[30px] text-text-dark;
 }
 .Auth_section_title {
   @apply 2xl:text-[32px] font-semibold leading-[48px] text-primary-blue;
@@ -55,7 +55,8 @@ body {
 }
 
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
     transform: scale(0.92);
   }
@@ -78,9 +79,9 @@ body {
 }
 
 /* Hide default Google Translate UI */
-.skiptranslate iframe, 
-.goog-te-banner-frame.skiptranslate, 
-.goog-te-gadget-icon, 
+.skiptranslate iframe,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget-icon,
 .goog-te-gadget-simple,
 #goog-gt-tt,
 .goog-te-spinner-pos,
@@ -94,5 +95,5 @@ body {
   pointer-events: none !important;
 }
 body {
-  top: 0px !important; 
+  top: 0px !important;
 }

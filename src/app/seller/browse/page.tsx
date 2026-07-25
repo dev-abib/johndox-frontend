@@ -3,8 +3,6 @@ import {
   Acceleration,
   Bathtub,
   Bed,
-  Favourite,
-  Favourites,
   Location,
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
@@ -24,10 +22,9 @@ import {
   InfoWindow,
   useMap,
 } from "@vis.gl/react-google-maps";
-import toast from "react-hot-toast";
 import { useMediaQuery } from "react-responsive";
-import { usePathname, useRouter } from "next/navigation";
-import { AddFavourite, usePropertyView } from "@/Hooks/api/post_api";
+import { useRouter } from "next/navigation";
+import { usePropertyView } from "@/Hooks/api/post_api";
 
 // ─── Shared Filter Panel ───────────────────────────────────────────────────────
 const FilterPanel = ({
@@ -60,7 +57,7 @@ const FilterPanel = ({
       )}
     </div>
 
-    {/* Fix: Added Buy or Rental Tab Switcher */}
+    {/* Buy or Rental Tab Switcher */}
     <div className="mb-6">
       <div className="flex bg-[#F3F3F4] p-1 rounded-xl">
         <button
@@ -197,19 +194,14 @@ const FilterPanel = ({
 );
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
-const page = () => {
+const SellerBrowsePage = () => {
   const router = useRouter();
-  const { mutate } = AddFavourite();
   const [open, setOpen] = useState(false);
   const { data: cta } = ListPropertyBrowse();
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState("Newest First");
-  const [loadingFavorites, setLoadingFavorites] = useState<
-    Record<string, boolean>
-  >({});
   // State for full image modal
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   const [activeFilters, setActiveFilters] = useState<any>({});
 
   // Handle Escape key and body scroll when modal is open
@@ -227,7 +219,6 @@ const page = () => {
     };
   }, [selectedImage]);
 
-  // Fix: Setup state hook for listing status selection ("buy" or "rent")
   const [listingType, setListingType] = useState("buy");
   const [propertyType, setPropertyType] = useState("All");
   const [minPrice, setMinPrice] = useState("");
@@ -244,16 +235,16 @@ const page = () => {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const handleContact = async (id: string) => {
+  const handleViewProperty = async (id: string) => {
     if (!id) return;
     try {
       await propertyViewMutation.mutateAsync({
         endpoint: `/property/${id}/view`,
       });
-      router.push(`/browse/${id}`);
+      router.push(`/seller/browse/${id}`);
     } catch (err) {
       console.error("Tracking failed, navigating anyway", err);
-      router.push(`/browse/${id}`);
+      router.push(`/seller/browse/${id}`);
     }
   };
 
@@ -283,45 +274,9 @@ const page = () => {
     setActiveFilters(filters);
   };
 
-  const pathname = usePathname();
-  const isBuyerLayout = pathname.startsWith("/buyerlayout");
-
   const displayedProperties = showAll
     ? data?.data?.items
     : data?.data?.items?.slice(0, 4);
-
-  const [favoriteStates, setFavoriteStates] = useState<{
-    [key: string]: boolean;
-  }>({});
-
-  useEffect(() => {
-    const items = data?.data?.items;
-    if (items && items.length > 0) {
-      const initialFavorites = Object.fromEntries(
-        items.map((item: any) => [item._id, item.isFavorite || false]),
-      );
-      setFavoriteStates(initialFavorites);
-    }
-  }, [data]);
-
-  const toggleFavorite = (id: string) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login to add favourites");
-      return;
-    }
-    setLoadingFavorites(prev => ({ ...prev, [id]: true }));
-    setFavoriteStates(prev => ({ ...prev, [id]: !prev[id] }));
-    mutate(
-      { endpoint: `/toggle-favourite-listing/${id}` },
-      {
-        onSettled: () =>
-          setLoadingFavorites(prev => ({ ...prev, [id]: false })),
-        onError: () =>
-          setFavoriteStates(prev => ({ ...prev, [id]: !prev[id] })),
-      },
-    );
-  };
 
   const options = [
     "Newest First",
@@ -383,9 +338,7 @@ const page = () => {
                 pixelOffset={[0, -35]}
                 headerDisabled={true}
               >
-                <Link
-                  href={`${isBuyerLayout ? `/buyerlayout/browse/${item._id}` : `/browse/${item._id}`}`}
-                >
+                <Link href={`/seller/browse/${item._id}`}>
                   <div
                     className="p-1 cursor-pointer outline-none bg-white rounded-lg"
                     onMouseEnter={() => handleMouseEnter(item._id)}
@@ -415,7 +368,6 @@ const page = () => {
     );
   };
 
-  // shared filter props
   const handleClearFilters = () => {
     setListingType("buy");
     setPropertyType("All");
@@ -429,6 +381,7 @@ const page = () => {
     setActiveFilters({});
   };
 
+  // shared filter props
   const filterProps = {
     listingType,
     setListingType,
@@ -458,13 +411,13 @@ const page = () => {
               Browse Properties
             </h2>
             <p className="font-normal text-[#212B36] lg:text-base text-xs sm:text-sm">
-              Find your perfect property
+              Explore all available properties
             </p>
           </div>
 
           <div className="space-y-1">
             <h2 className="font-semibold text-[#212B36] lg:text-[28px] text-sm sm:text-lg">
-              Real Estate & Homes For Rent
+              Real Estate & Homes
             </h2>
             <p className="font-normal text-[#212B36] lg:text-base text-xs sm:text-sm">
               ( Showing {displayedProperties?.length} properties )
@@ -553,10 +506,10 @@ const page = () => {
             {showMobileFilters && <FilterPanel {...filterProps} />}
           </div>
 
-          {/* ── Property List — order-1 on desktop ── */}
+          {/* ── Property List — order-2 ── */}
           <div
             ref={listRef}
-            className={`w-full xl:flex-1 order-2  ${
+            className={`w-full xl:flex-1 order-2 ${
               isMobile && viewMode !== "list" ? "hidden" : "block"
             }`}
           >
@@ -627,20 +580,6 @@ const page = () => {
                         </div>
                       </div>
                     </figure>
-                    <div
-                      onClick={() =>
-                        !loadingFavorites[item._id] && toggleFavorite(item._id)
-                      }
-                      className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/90 backdrop-blur-sm p-2 sm:p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
-                    >
-                      {loadingFavorites[item._id] ? (
-                        <span className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-                      ) : favoriteStates[item._id] ? (
-                        <Favourites />
-                      ) : (
-                        <Favourite />
-                      )}
-                    </div>
                   </div>
 
                   <div className="mt-3 sm:mt-4 md:mt-5">
@@ -680,10 +619,10 @@ const page = () => {
                       </div>
                     </div>
                     <button
-                      onClick={() => handleContact(item._id)}
+                      onClick={() => handleViewProperty(item._id)}
                       className="mt-4 sm:mt-5 md:mt-8 w-full bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg py-2.5 sm:py-3 xl:py-4 rounded-xl sm:rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
                     >
-                      Contact
+                      View Details
                     </button>
                   </div>
                 </div>
@@ -702,7 +641,7 @@ const page = () => {
             </div>
           </div>
 
-          {/* ── Map — order-2 on desktop ── */}
+          {/* ── Map — order-1 ── */}
           <div
             ref={mapRef}
             className={`w-full xl:w-[35%] h-[350px] sm:h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 overflow-hidden ${
@@ -759,7 +698,7 @@ const page = () => {
             </button>
 
             {/* Image Display Container */}
-            <div className="relative w-full h-full  rounded-lg overflow-hidden">
+            <div className="relative w-full h-full rounded-lg overflow-hidden">
               <Image
                 src={selectedImage}
                 alt="Property full view"
@@ -790,12 +729,12 @@ const page = () => {
             {cta?.data?.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <Link href={"/browse"} className="w-full sm:w-auto">
+            <Link href={"/seller/browse"} className="w-full sm:w-auto">
               <button className="w-full sm:w-auto px-6 sm:px-8 cursor-pointer text-sm sm:text-base xl:text-xl py-3 sm:py-2.5 xl:py-[20px] rounded-xl bg-primary-blue text-white font-medium hover:bg-primary-blue transition">
                 {cta?.data?.btnTxt?.[0] ?? "Start Selling Today"}
               </button>
             </Link>
-            <Link href={"/pricing"} className="w-full sm:w-auto">
+            <Link href={"/seller/pricing"} className="w-full sm:w-auto">
               <button className="w-full sm:w-auto px-6 sm:px-8 cursor-pointer text-sm sm:text-base xl:text-xl py-3 sm:py-2.5 xl:py-[20px] rounded-xl border-2 border-primary-blue text-primary-blue font-medium hover:bg-blue-50 transition">
                 {cta?.data?.btnTxt?.[1] ?? "View Pricing Plans"}
               </button>
@@ -810,4 +749,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SellerBrowsePage;

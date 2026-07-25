@@ -12,7 +12,7 @@ import { useCategory } from "@/Hooks/api/dashboard_api";
 import { ListingFormData } from "@/app/seller/new-listing/page";
 const propertyTypes = ["House", "Apartment", "Land", "Commercial"];
 const USD_TO_HNL_RATE = 24.8;
-const listingTypes = ["For Sale", "For Rent",];
+const listingTypes = ["For Sale", "For Rent"];
 const departments = [
   "Atlántida",
   "Choluteca",
@@ -238,8 +238,10 @@ export default function BasicInfoStep({
             setValue("latitude", lat);
             setValue("longitude", lng);
           }}
-          onAddressFound={(address) => {
-            setValue("streetAddress", address.fullAddress, { shouldValidate: true });
+          onAddressFound={address => {
+            setValue("streetAddress", address.fullAddress, {
+              shouldValidate: true,
+            });
             setValue("city", address.city, { shouldValidate: true });
             // Only set state if it matches a department option
             if (address.state && departments.includes(address.state)) {
@@ -250,7 +252,8 @@ export default function BasicInfoStep({
       </div>
 
       <div className="grid grid-cols-1 gap-16 w-full">
-        <div>
+        {/* Category */}
+        {/* <div>
           <label className="block text-sm font-medium mb-2">
             Category <span className="text-red-500">*</span>
           </label>
@@ -272,7 +275,7 @@ export default function BasicInfoStep({
               {errors.category.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         {/* Price */}
         <div>

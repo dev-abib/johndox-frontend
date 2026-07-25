@@ -46,6 +46,7 @@ const FilterPanel = ({
   bathrooms,
   setBathrooms,
   handleSearch,
+  handleClear,
   onClose,
 }: any) => (
   <div className="rounded-2xl border border-[#E7E7E7] shadow-[0_0_8px_0_rgba(145,158,171,0.24)] bg-white p-6">
@@ -177,13 +178,21 @@ const FilterPanel = ({
       </div>
     </div>
 
-    {/* SEARCH */}
-    <button
-      onClick={handleSearch}
-      className="w-full rounded-xl cursor-pointer bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition"
-    >
-      Search
-    </button>
+    {/* ACTION BUTTONS */}
+    <div className="flex flex-col gap-2">
+      <button
+        onClick={handleSearch}
+        className="w-full rounded-xl cursor-pointer bg-primary-blue py-3 text-white text-sm font-medium hover:opacity-90 transition"
+      >
+        Search
+      </button>
+      <button
+        onClick={handleClear}
+        className="w-full rounded-xl cursor-pointer border border-gray-300 bg-white py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition"
+      >
+        Clear Filters
+      </button>
+    </div>
   </div>
 );
 
@@ -249,9 +258,7 @@ const page = () => {
   };
 
   const handleSearch = () => {
-    const filters = {
-      // Fix: Feed status into request mapping schema fields
-      listingType: listingType,
+    const filters: Record<string, any> = {
       propertyType:
         propertyType === "All" ? undefined : propertyType.toLowerCase(),
       minPrice: minPrice || undefined,
@@ -259,13 +266,20 @@ const page = () => {
       location: location || undefined,
       minBedrooms: bedrooms || undefined,
       minBathrooms: bathrooms || undefined,
-      sort:
-        selectedSort === "Price: Low to High"
-          ? "price_asc"
-          : selectedSort === "Price: High to Low"
-            ? "price_desc"
-            : "newest",
+      page: 1,
+      limit: 10,
     };
+
+    if (selectedSort === "Price: Low to High") {
+      filters.sort = "price asc";
+    } else if (selectedSort === "Price: High to Low") {
+      filters.sort = "price desc";
+    } else if (selectedSort === "Most Popular") {
+      filters.sort = "most_popular";
+    } else {
+      filters.sort = "newest";
+    }
+
     setActiveFilters(filters);
   };
 
@@ -402,6 +416,19 @@ const page = () => {
   };
 
   // shared filter props
+  const handleClearFilters = () => {
+    setListingType("buy");
+    setPropertyType("All");
+    setMinPrice("");
+    setMaxPrice("");
+    setLocation("");
+    setBedrooms(null);
+    setBathrooms(null);
+    setSelectedSort("Newest First");
+    setSelected("Newest First");
+    setActiveFilters({});
+  };
+
   const filterProps = {
     listingType,
     setListingType,
@@ -418,6 +445,7 @@ const page = () => {
     bathrooms,
     setBathrooms,
     handleSearch,
+    handleClear: handleClearFilters,
   };
 
   return (
@@ -469,6 +497,7 @@ const page = () => {
                     key={option}
                     onClick={() => {
                       setSelected(option);
+                      setSelectedSort(option);
                       setOpen(false);
                     }}
                     className="flex w-full items-center justify-between px-3 py-2 hover:bg-gray-100 transition"
@@ -532,7 +561,32 @@ const page = () => {
             }`}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-              {displayedProperties?.map((item: any) => (
+              {(!data?.data?.items || data?.data?.items?.length === 0) ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 sm:py-20 text-center">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+                    <svg
+                      className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-2">
+                    No listings found
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-500 max-w-md">
+                    Try adjusting your filters or search criteria to find more properties.
+                  </p>
+                </div>
+              ) : (
+                displayedProperties?.map((item: any) => (
                 <div
                   key={item._id}
                   className="bg-white shadow-lg rounded-2xl sm:rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-3 sm:px-4 md:px-4.5 pt-3 sm:pt-4 md:pt-4.5 pb-4 sm:pb-5 md:pb-7.5"
@@ -633,7 +687,7 @@ const page = () => {
                     </button>
                   </div>
                 </div>
-              ))}
+              )))}
 
               {!showAll && data?.data?.items?.length > 4 && (
                 <div className="col-span-full text-center">
