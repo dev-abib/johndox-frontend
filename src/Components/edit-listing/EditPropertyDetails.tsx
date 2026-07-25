@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { ListingFormData } from "@/app/seller/new-listing/page";
+import { ListingFormData } from "@/app/seller/edit-listing/[id]/page";
 
 interface EditPropertyDetailsProps {
   data?: any;

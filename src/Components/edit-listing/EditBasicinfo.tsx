@@ -9,7 +9,7 @@ import {
 } from "react-hook-form";
 import { Convert } from "../Svg/SvgContainer";
 import { useCategory } from "@/Hooks/api/dashboard_api";
-import { ListingFormData } from "@/app/seller/new-listing/page";
+import { ListingFormData } from "@/app/seller/edit-listing/[id]/page";
 import LocationPicker from "../Listing/LocationPicker";
 
 const propertyTypes = [
