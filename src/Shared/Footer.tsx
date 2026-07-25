@@ -75,6 +75,7 @@ const footerLinks = {
     column1: {
       title: "Listings",
       links: [
+        { label: "Browse Properties", href: "/seller/browse" },
         { label: "My Listings", href: "/seller/my-listing" },
         { label: "New Listing", href: "/seller/new-listing" },
         { label: "Analytics", href: "/seller/analytics" },

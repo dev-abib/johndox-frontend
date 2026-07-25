@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { PiSpinnerBold } from "react-icons/pi";
-import { IoIosArrowBack } from "react-icons/io";
 import Container from "@/Components/Common/Container";
 import { useForm, FormProvider } from "react-hook-form";
 import { useAddListing } from "@/Hooks/api/dashboard_api";
@@ -21,7 +20,7 @@ export type ListingFormData = {
   price: string;
   bedrooms?: string;
   bathrooms?: string;
-  category: string;
+  category?: string;
   area?: string;
   yearBuilt?: string;
   lotSize?: string;
@@ -62,7 +61,6 @@ export default function CreateListingPage() {
       area: "",
       yearBuilt: "",
       lotSize: "",
-      category: "",
       amenities: {},
       photos: null,
       video: null,
@@ -96,7 +94,6 @@ export default function CreateListingPage() {
           "city",
           "state",
           "priceUSD",
-          "category",
         ]);
       case 2:
         return await trigger([
@@ -160,8 +157,6 @@ export default function CreateListingPage() {
         }
       });
     }
-
-    formData.append("category", data.category);
 
     if (data.latitude !== undefined && data.longitude !== undefined && !isNaN(data.latitude) && !isNaN(data.longitude)) {
       formData.append("lat", data.latitude.toString());
