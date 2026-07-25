@@ -323,12 +323,12 @@ const page = () => {
     );
   };
 
-  const options = [
-    "Newest First",
-    "Price: Low to High",
-    "Price: High to Low",
-    "Most Popular",
-  ];
+  // const options = [
+  //   "Newest First",
+  //   "Price: Low to High",
+  //   "Price: High to Low",
+  //   "Most Popular",
+  // ];
 
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
@@ -485,7 +485,7 @@ const page = () => {
                   <AngleBottomSvg />
                 </span>
               </button>
-              <div
+              {/* <div
                 className={`absolute left-0 mt-2 w-full rounded-lg border bg-white shadow-lg transition-all duration-200 z-50 ${
                   open
                     ? "opacity-100 translate-y-0"
@@ -510,7 +510,7 @@ const page = () => {
                     )}
                   </button>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -278,12 +278,12 @@ const SellerBrowsePage = () => {
     ? data?.data?.items
     : data?.data?.items?.slice(0, 4);
 
-  const options = [
-    "Newest First",
-    "Price: Low to High",
-    "Price: High to Low",
-    "Most Popular",
-  ];
+  // const options = [
+  //   "Newest First",
+  //   "Price: Low to High",
+  //   "Price: High to Low",
+  //   "Most Popular",
+  // ];
 
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
@@ -425,7 +425,7 @@ const SellerBrowsePage = () => {
           </div>
 
           {/* Sort Dropdown */}
-          <div className="w-full md:w-auto">
+          {/* <div className="w-full md:w-auto">
             <div className="relative w-full lg:w-[220px]">
               <button
                 onClick={() => setOpen(!open)}
@@ -465,7 +465,7 @@ const SellerBrowsePage = () => {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* ── Main Content ── */}

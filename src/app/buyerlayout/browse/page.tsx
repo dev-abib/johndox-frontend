@@ -323,12 +323,12 @@ const page = () => {
     );
   };
 
-  const options = [
-    "Newest First",
-    "Price: Low to High",
-    "Price: High to Low",
-    "Most Popular",
-  ];
+  // const options = [
+  //   "Newest First",
+  //   "Price: Low to High",
+  //   "Price: High to Low",
+  //   "Most Popular",
+  // ];
 
   if (isLoading) {
     return <BrowseDetailsSkeleton />;
@@ -472,7 +472,7 @@ const page = () => {
           </div>
 
           {/* Sort Dropdown */}
-          <div className="w-full md:w-auto">
+          {/* <div className="w-full md:w-auto">
             <div className="relative w-full lg:w-[220px]">
               <button
                 onClick={() => setOpen(!open)}
@@ -512,7 +512,7 @@ const page = () => {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* ── Main Content ── */}
