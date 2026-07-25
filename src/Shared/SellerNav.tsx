@@ -153,13 +153,21 @@ const SellerNav = () => {
               />
             </Link>
 
-            <ul className="hidden xl:flex items-center gap-3.5 2xl:gap-8 menu_item">
+            <ul className="hidden xl:flex items-center gap-2 2xl:gap-5 menu_item">
               <li>
                 <Link
                   href="/seller/forseller"
                   className="hover:text-black transition"
                 >
                   For Sellers
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/seller/browse"
+                  className="hover:text-black transition"
+                >
+                  Browse Properties
                 </Link>
               </li>
               <Link href={"/seller/pricing"}>
@@ -354,6 +362,11 @@ const SellerNav = () => {
               <li>
                 <Link href="/seller/forseller" onClick={() => setIsOpen(false)}>
                   For Sellers
+                </Link>
+              </li>
+              <li>
+                <Link href="/seller/browse" onClick={() => setIsOpen(false)}>
+                  Browse Properties
                 </Link>
               </li>
               <Link href={"/seller/pricing"}>
