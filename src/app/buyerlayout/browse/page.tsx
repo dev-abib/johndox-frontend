@@ -29,7 +29,7 @@ import { useMediaQuery } from "react-responsive";
 import { usePathname, useRouter } from "next/navigation";
 import { AddFavourite, usePropertyView } from "@/Hooks/api/post_api";
 
-// ─── Shared Filter Panel ───────────────────────────────────────────────────────
+// ─── Shared Filter Panel (Mobile) ───────────────────────────────────────────────
 const FilterPanel = ({
   listingType,
   setListingType,
@@ -60,7 +60,7 @@ const FilterPanel = ({
       )}
     </div>
 
-    {/* Fix: Added Buy or Rental Tab Switcher */}
+    {/* Buy or Rental Tab Switcher */}
     <div className="mb-6">
       <div className="flex bg-[#F3F3F4] p-1 rounded-xl">
         <button
@@ -195,6 +195,204 @@ const FilterPanel = ({
     </div>
   </div>
 );
+
+// ─── Horizontal Filter Bar (Desktop) ─────────────────────────────────────────
+const HorizontalFilterBar = ({
+  listingType,
+  setListingType,
+  propertyType,
+  setPropertyType,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice,
+  location,
+  setLocation,
+  bedrooms,
+  setBedrooms,
+  bathrooms,
+  setBathrooms,
+  handleSearch,
+  handleClear,
+}: any) => {
+  const [showPropertyDropdown, setShowPropertyDropdown] = useState(false);
+  const [showBedDropdown, setShowBedDropdown] = useState(false);
+  const [showBathDropdown, setShowBathDropdown] = useState(false);
+  const propRef = useRef<HTMLDivElement>(null);
+  const bedRef = useRef<HTMLDivElement>(null);
+  const bathRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (propRef.current && !propRef.current.contains(e.target as Node)) setShowPropertyDropdown(false);
+      if (bedRef.current && !bedRef.current.contains(e.target as Node)) setShowBedDropdown(false);
+      if (bathRef.current && !bathRef.current.contains(e.target as Node)) setShowBathDropdown(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="rounded-2xl border border-[#E7E7E7] shadow-[0_0_8px_0_rgba(145,158,171,0.24)] bg-white p-5 lg:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-y-4 lg:gap-x-6">
+        {/* Buy / Rent */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</label>
+          <div className="flex bg-[#F3F3F4] p-0.5 rounded-lg">
+            <button
+              onClick={() => setListingType("buy")}
+              className={`px-5 py-2.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
+                listingType === "buy" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Buy
+            </button>
+            <button
+              onClick={() => setListingType("rent")}
+              className={`px-5 py-2.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
+                listingType === "rent" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              Rent
+            </button>
+          </div>
+        </div>
+
+        {/* Property Type Dropdown */}
+        <div ref={propRef} className="flex flex-col gap-1.5 relative">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</label>
+          <button
+            onClick={() => setShowPropertyDropdown(!showPropertyDropdown)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border border-[#C4CDD5] rounded-lg bg-white hover:bg-gray-50 transition cursor-pointer min-w-[120px]"
+          >
+            <span className="flex-1 text-left">{propertyType}</span>
+            <AngleBottomSvg />
+          </button>
+          {showPropertyDropdown && (
+            <div className="absolute top-full left-0 mt-1 w-full bg-white border border-[#E7E7E7] rounded-lg shadow-lg z-50 overflow-hidden">
+              {["All", "House", "Land", "Commercial"].map(type => (
+                <button
+                  key={type}
+                  onClick={() => { setPropertyType(type); setShowPropertyDropdown(false); }}
+                  className={`w-full text-left px-3 py-2.5 text-sm transition hover:bg-gray-50 cursor-pointer ${
+                    propertyType === type ? "text-primary-blue font-semibold bg-blue-50" : "text-gray-700"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Price Range */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</label>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="number"
+              placeholder="Min"
+              value={minPrice}
+              onChange={e => setMinPrice(e.target.value)}
+              className="w-[90px] lg:w-[100px] px-3 py-2.5 text-sm border border-[#C4CDD5] rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-blue"
+            />
+            <span className="text-gray-400 text-sm">-</span>
+            <input
+              type="number"
+              placeholder="Max"
+              value={maxPrice}
+              onChange={e => setMaxPrice(e.target.value)}
+              className="w-[90px] lg:w-[100px] px-3 py-2.5 text-sm border border-[#C4CDD5] rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-blue"
+            />
+          </div>
+        </div>
+
+        {/* Location */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</label>
+          <input
+            placeholder="City or State"
+            value={location}
+            onChange={e => setLocation(e.target.value)}
+            className="w-[150px] lg:w-[170px] px-4 py-2.5 text-sm border border-[#C4CDD5] rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-blue"
+          />
+        </div>
+
+        {/* Bedrooms Dropdown */}
+        <div ref={bedRef} className="flex flex-col gap-1.5 relative">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Beds</label>
+          <button
+            onClick={() => setShowBedDropdown(!showBedDropdown)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border border-[#C4CDD5] rounded-lg bg-white hover:bg-gray-50 transition cursor-pointer min-w-[80px]"
+          >
+            <span className="flex-1 text-left">{bedrooms ? `${bedrooms === 5 ? "5+" : bedrooms}` : "Any"}</span>
+            <AngleBottomSvg />
+          </button>
+          {showBedDropdown && (
+            <div className="absolute top-full left-0 mt-1 w-full bg-white border border-[#E7E7E7] rounded-lg shadow-lg z-50 overflow-hidden">
+              <button onClick={() => { setBedrooms(null); setShowBedDropdown(false); }} className="w-full text-left px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer">Any</button>
+              {[1, 2, 3, 4, 5].map(num => (
+                <button
+                  key={num}
+                  onClick={() => { setBedrooms(num); setShowBedDropdown(false); }}
+                  className={`w-full text-left px-3 py-2.5 text-sm transition hover:bg-gray-50 cursor-pointer ${
+                    bedrooms === num ? "text-primary-blue font-semibold bg-blue-50" : "text-gray-700"
+                  }`}
+                >
+                  {num === 5 ? "5+" : num}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Bathrooms Dropdown */}
+        <div ref={bathRef} className="flex flex-col gap-1.5 relative">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Baths</label>
+          <button
+            onClick={() => setShowBathDropdown(!showBathDropdown)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border border-[#C4CDD5] rounded-lg bg-white hover:bg-gray-50 transition cursor-pointer min-w-[80px]"
+          >
+            <span className="flex-1 text-left">{bathrooms ? `${bathrooms === 5 ? "5+" : bathrooms}` : "Any"}</span>
+            <AngleBottomSvg />
+          </button>
+          {showBathDropdown && (
+            <div className="absolute top-full left-0 mt-1 w-full bg-white border border-[#E7E7E7] rounded-lg shadow-lg z-50 overflow-hidden">
+              <button onClick={() => { setBathrooms(null); setShowBathDropdown(false); }} className="w-full text-left px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer">Any</button>
+              {[1, 2, 3, 4, 5].map(num => (
+                <button
+                  key={num}
+                  onClick={() => { setBathrooms(num); setShowBathDropdown(false); }}
+                  className={`w-full text-left px-3 py-2.5 text-sm transition hover:bg-gray-50 cursor-pointer ${
+                    bathrooms === num ? "text-primary-blue font-semibold bg-blue-50" : "text-gray-700"
+                  }`}
+                >
+                  {num === 5 ? "5+" : num}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-end gap-2 pb-[1px]">
+          <button
+            onClick={handleSearch}
+            className="px-7 py-2.5 rounded-lg bg-primary-blue text-white text-sm font-medium hover:opacity-90 transition cursor-pointer"
+          >
+            Search
+          </button>
+          <button
+            onClick={handleClear}
+            className="px-6 py-2.5 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-600 hover:bg-gray-50 transition cursor-pointer"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 const page = () => {
@@ -515,10 +713,15 @@ const page = () => {
           </div> */}
         </div>
 
+        {/* ── Horizontal Filter Bar (Desktop) ── */}
+        <div className="hidden lg:block mb-6">
+          <HorizontalFilterBar {...filterProps} />
+        </div>
+
         {/* ── Main Content ── */}
         <div className="flex flex-col xl:flex-row gap-4 lg:gap-6">
           {/* ── MOBILE: List/Map toggle + Collapsible Filter ── */}
-          <div className="block xl:hidden order-1 mt-4 sm:mt-6">
+          <div className="block lg:hidden order-1 mt-4 sm:mt-6">
             <div className="flex bg-[#F3F3F4] p-1 rounded-xl mb-3">
               <button
                 onClick={() => setViewMode("list")}
@@ -718,12 +921,6 @@ const page = () => {
             </div>
           </div>
 
-          {/* ── DESKTOP: Filter always visible — order-3 = RIGHT SIDE ── */}
-          <div className="hidden lg:block w-[280px] shrink-0 order-3">
-            <div className="sticky top-[20px]">
-              <FilterPanel {...filterProps} />
-            </div>
-          </div>
         </div>
       </div>
 
