@@ -18,7 +18,7 @@ const Community = ({ community }: CommunityProps) => {
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-5 gap-6 lg:gap-9">
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5 gap-6 lg:gap-9">
           {community?.data?.featureItems?.map((item: any) => (
             <div
               key={item?._id}
