@@ -713,48 +713,54 @@ const page = () => {
           </div> */}
         </div>
 
-        {/* ── Horizontal Filter Bar (Desktop) ── */}
-        <div className="hidden lg:block mb-6">
+        {/* ── Horizontal Filter Bar (Desktop) — Sticky on scroll ── */}
+        <div className="hidden lg:block sticky top-28 z-30 -mx-3 sm:-mx-4 md:-mx-6 mb-6 bg-white/95 backdrop-blur-sm px-3 sm:px-4 md:px-6 py-3 shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]">
           <HorizontalFilterBar {...filterProps} />
         </div>
 
+        {/* ── MOBILE: List/Map toggle + Collapsible Filter — Sticky on scroll ── */}
+        <div className="block lg:hidden sticky top-28 z-30 -mx-3 sm:-mx-4 md:-mx-6 mb-4 bg-white/95 backdrop-blur-sm px-3 sm:px-4 md:px-6 py-3 shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]">
+          <div className="flex bg-[#F3F3F4] p-1 rounded-xl mb-3">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "list"
+                  ? "bg-white text-primary-blue shadow-sm"
+                  : "text-gray-500"
+              }`}
+            >
+              List View
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "map"
+                  ? "bg-white text-primary-blue shadow-sm"
+                  : "text-gray-500"
+              }`}
+            >
+              Map View
+            </button>
+          </div>
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="w-full flex items-center justify-between bg-white border border-[#E7E7E7] rounded-xl px-4 py-3 shadow-sm hover:bg-gray-50 transition"
+          >
+            <span className="text-sm font-medium text-gray-700">Filters & Search</span>
+            <span className={`transition-transform shrink-0 ${showMobileFilters ? "rotate-180" : ""}`}>
+              <AngleBottomSvg />
+            </span>
+          </button>
+        </div>
+
+        {showMobileFilters && (
+          <div className="block lg:hidden -mx-3 sm:-mx-4 md:-mx-6 mb-4 px-3 sm:px-4 md:px-6">
+            <FilterPanel {...filterProps} />
+          </div>
+        )}
+
         {/* ── Main Content ── */}
         <div className="flex flex-col xl:flex-row gap-4 lg:gap-6">
-          {/* ── MOBILE: List/Map toggle + Collapsible Filter ── */}
-          <div className="block lg:hidden order-1 mt-4 sm:mt-6">
-            <div className="flex bg-[#F3F3F4] p-1 rounded-xl mb-3">
-              <button
-                onClick={() => setViewMode("list")}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  viewMode === "list"
-                    ? "bg-white text-primary-blue shadow-sm"
-                    : "text-gray-500"
-                }`}
-              >
-                List View
-              </button>
-              <button
-                onClick={() => setViewMode("map")}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  viewMode === "map"
-                    ? "bg-white text-primary-blue shadow-sm"
-                    : "text-gray-500"
-                }`}
-              >
-                Map View
-              </button>
-            </div>
-            <button
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="w-full flex items-center justify-between bg-white border border-[#E7E7E7] rounded-xl px-4 py-3 mb-3 shadow-sm hover:bg-gray-50 transition"
-            >
-              <span className="text-sm font-medium text-gray-700">Filters & Search</span>
-              <span className={`transition-transform shrink-0 ${showMobileFilters ? "rotate-180" : ""}`}>
-                <AngleBottomSvg />
-              </span>
-            </button>
-            {showMobileFilters && <FilterPanel {...filterProps} />}
-          </div>
 
           {/* ── Property List — order-1 on desktop ── */}
           <div
@@ -908,7 +914,7 @@ const page = () => {
           {/* ── Map — order-2 on desktop ── */}
           <div
             ref={mapRef}
-            className={`w-full xl:w-[35%] h-[350px] sm:h-[500px] lg:h-[calc(100vh-150px)] xl:sticky lg:top-[20px] order-1 relative shrink-0 overflow-hidden ${
+            className={`w-full xl:w-[35%] h-[350px] sm:h-[500px] lg:h-[calc(100vh-150px)] xl:h-[calc(100vh-300px)] xl:sticky xl:top-[280px] order-1 relative shrink-0 overflow-hidden ${
               isMobile && viewMode !== "map" ? "hidden" : "block"
             }`}
           >
