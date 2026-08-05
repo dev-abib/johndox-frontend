@@ -1,6 +1,7 @@
 "use client";
 import { CiSearch } from "react-icons/ci";
 import Container from "@/Components/Common/Container";
+import { useRouter } from "next/navigation";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Location, Lookingfor } from "@/Components/Svg/SvgContainer";
 
@@ -15,6 +16,7 @@ interface heroProps {
 }
 
 const Hero: React.FC<heroProps> = ({ hero }) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("buy");
   const [formData, setFormData] = useState<SearchFormData>({
     lookingFor: "",
@@ -28,6 +30,16 @@ const Hero: React.FC<heroProps> = ({ hero }) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+
+    // Redirect to the browse page with the selected filters as query params.
+    // The browse page reads these and applies them the same way it applies
+    // its own in-page filters.
+    const params = new URLSearchParams();
+    params.set("type", activeTab);
+    if (formData.lookingFor) params.set("propertyType", formData.lookingFor);
+    if (formData.location) params.set("location", formData.location);
+
+    router.push(`/browse?${params.toString()}`);
   };
 
   return (

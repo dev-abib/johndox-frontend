@@ -9,8 +9,7 @@ import {
 } from "@/Components/Svg/SvgContainer";
 import Link from "next/link";
 import Image from "next/image";
-import { FaCheck } from "react-icons/fa";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import {
   AngleBottomSvg,
   SideBarCloseSvg,
@@ -26,7 +25,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import toast from "react-hot-toast";
 import { useMediaQuery } from "react-responsive";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AddFavourite, usePropertyView } from "@/Hooks/api/post_api";
 
 // ─── Shared Filter Panel ───────────────────────────────────────────────────────
@@ -225,9 +224,12 @@ const HorizontalFilterBar = ({
   // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (propRef.current && !propRef.current.contains(e.target as Node)) setShowPropertyDropdown(false);
-      if (bedRef.current && !bedRef.current.contains(e.target as Node)) setShowBedDropdown(false);
-      if (bathRef.current && !bathRef.current.contains(e.target as Node)) setShowBathDropdown(false);
+      if (propRef.current && !propRef.current.contains(e.target as Node))
+        setShowPropertyDropdown(false);
+      if (bedRef.current && !bedRef.current.contains(e.target as Node))
+        setShowBedDropdown(false);
+      if (bathRef.current && !bathRef.current.contains(e.target as Node))
+        setShowBathDropdown(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -238,12 +240,16 @@ const HorizontalFilterBar = ({
       <div className="flex flex-wrap items-end justify-between gap-y-4 lg:gap-x-6">
         {/* Buy / Rent */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</label>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Type
+          </label>
           <div className="flex bg-[#F3F3F4] p-0.5 rounded-lg">
             <button
               onClick={() => setListingType("buy")}
               className={`px-5 py-2.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
-                listingType === "buy" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500 hover:text-gray-900"
+                listingType === "buy"
+                  ? "bg-white text-primary-blue shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
               }`}
             >
               Buy
@@ -251,7 +257,9 @@ const HorizontalFilterBar = ({
             <button
               onClick={() => setListingType("rent")}
               className={`px-5 py-2.5 text-sm font-medium rounded-md transition-all cursor-pointer ${
-                listingType === "rent" ? "bg-white text-primary-blue shadow-sm" : "text-gray-500 hover:text-gray-900"
+                listingType === "rent"
+                  ? "bg-white text-primary-blue shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
               }`}
             >
               Rent
@@ -261,7 +269,9 @@ const HorizontalFilterBar = ({
 
         {/* Property Type Dropdown */}
         <div ref={propRef} className="flex flex-col gap-1.5 relative">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</label>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Property
+          </label>
           <button
             onClick={() => setShowPropertyDropdown(!showPropertyDropdown)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border border-[#C4CDD5] rounded-lg bg-white hover:bg-gray-50 transition cursor-pointer min-w-[120px]"
@@ -274,9 +284,14 @@ const HorizontalFilterBar = ({
               {["All", "House", "Land", "Commercial"].map(type => (
                 <button
                   key={type}
-                  onClick={() => { setPropertyType(type); setShowPropertyDropdown(false); }}
+                  onClick={() => {
+                    setPropertyType(type);
+                    setShowPropertyDropdown(false);
+                  }}
                   className={`w-full text-left px-3 py-2.5 text-sm transition hover:bg-gray-50 cursor-pointer ${
-                    propertyType === type ? "text-primary-blue font-semibold bg-blue-50" : "text-gray-700"
+                    propertyType === type
+                      ? "text-primary-blue font-semibold bg-blue-50"
+                      : "text-gray-700"
                   }`}
                 >
                   {type}
@@ -288,7 +303,9 @@ const HorizontalFilterBar = ({
 
         {/* Price Range */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</label>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Price
+          </label>
           <div className="flex items-center gap-1.5">
             <input
               type="number"
@@ -310,7 +327,9 @@ const HorizontalFilterBar = ({
 
         {/* Location */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</label>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Location
+          </label>
           <input
             placeholder="City or State"
             value={location}
@@ -321,23 +340,40 @@ const HorizontalFilterBar = ({
 
         {/* Bedrooms Dropdown */}
         <div ref={bedRef} className="flex flex-col gap-1.5 relative">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Beds</label>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Beds
+          </label>
           <button
             onClick={() => setShowBedDropdown(!showBedDropdown)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border border-[#C4CDD5] rounded-lg bg-white hover:bg-gray-50 transition cursor-pointer min-w-[80px]"
           >
-            <span className="flex-1 text-left">{bedrooms ? `${bedrooms === 5 ? "5+" : bedrooms}` : "Any"}</span>
+            <span className="flex-1 text-left">
+              {bedrooms ? `${bedrooms === 5 ? "5+" : bedrooms}` : "Any"}
+            </span>
             <AngleBottomSvg />
           </button>
           {showBedDropdown && (
             <div className="absolute top-full left-0 mt-1 w-full bg-white border border-[#E7E7E7] rounded-lg shadow-lg z-50 overflow-hidden">
-              <button onClick={() => { setBedrooms(null); setShowBedDropdown(false); }} className="w-full text-left px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer">Any</button>
+              <button
+                onClick={() => {
+                  setBedrooms(null);
+                  setShowBedDropdown(false);
+                }}
+                className="w-full text-left px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer"
+              >
+                Any
+              </button>
               {[1, 2, 3, 4, 5].map(num => (
                 <button
                   key={num}
-                  onClick={() => { setBedrooms(num); setShowBedDropdown(false); }}
+                  onClick={() => {
+                    setBedrooms(num);
+                    setShowBedDropdown(false);
+                  }}
                   className={`w-full text-left px-3 py-2.5 text-sm transition hover:bg-gray-50 cursor-pointer ${
-                    bedrooms === num ? "text-primary-blue font-semibold bg-blue-50" : "text-gray-700"
+                    bedrooms === num
+                      ? "text-primary-blue font-semibold bg-blue-50"
+                      : "text-gray-700"
                   }`}
                 >
                   {num === 5 ? "5+" : num}
@@ -349,23 +385,40 @@ const HorizontalFilterBar = ({
 
         {/* Bathrooms Dropdown */}
         <div ref={bathRef} className="flex flex-col gap-1.5 relative">
-          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Baths</label>
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Baths
+          </label>
           <button
             onClick={() => setShowBathDropdown(!showBathDropdown)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium border border-[#C4CDD5] rounded-lg bg-white hover:bg-gray-50 transition cursor-pointer min-w-[80px]"
           >
-            <span className="flex-1 text-left">{bathrooms ? `${bathrooms === 5 ? "5+" : bathrooms}` : "Any"}</span>
+            <span className="flex-1 text-left">
+              {bathrooms ? `${bathrooms === 5 ? "5+" : bathrooms}` : "Any"}
+            </span>
             <AngleBottomSvg />
           </button>
           {showBathDropdown && (
             <div className="absolute top-full left-0 mt-1 w-full bg-white border border-[#E7E7E7] rounded-lg shadow-lg z-50 overflow-hidden">
-              <button onClick={() => { setBathrooms(null); setShowBathDropdown(false); }} className="w-full text-left px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer">Any</button>
+              <button
+                onClick={() => {
+                  setBathrooms(null);
+                  setShowBathDropdown(false);
+                }}
+                className="w-full text-left px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-50 cursor-pointer"
+              >
+                Any
+              </button>
               {[1, 2, 3, 4, 5].map(num => (
                 <button
                   key={num}
-                  onClick={() => { setBathrooms(num); setShowBathDropdown(false); }}
+                  onClick={() => {
+                    setBathrooms(num);
+                    setShowBathDropdown(false);
+                  }}
                   className={`w-full text-left px-3 py-2.5 text-sm transition hover:bg-gray-50 cursor-pointer ${
-                    bathrooms === num ? "text-primary-blue font-semibold bg-blue-50" : "text-gray-700"
+                    bathrooms === num
+                      ? "text-primary-blue font-semibold bg-blue-50"
+                      : "text-gray-700"
                   }`}
                 >
                   {num === 5 ? "5+" : num}
@@ -396,8 +449,20 @@ const HorizontalFilterBar = ({
 };
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
-const page = () => {
+const BrowseContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Filters passed via URL query params (e.g. from the home page search)
+  const typeParam = searchParams.get("type");
+  const propertyTypeParam = searchParams.get("propertyType");
+  const locationParam = searchParams.get("location");
+  const minPriceParam = searchParams.get("minPrice");
+  const maxPriceParam = searchParams.get("maxPrice");
+  const minBedroomsParam = searchParams.get("minBedrooms");
+  const minBathroomsParam = searchParams.get("minBathrooms");
+  const sortParam = searchParams.get("sort");
+
   const { mutate } = AddFavourite();
   const [open, setOpen] = useState(false);
   const { data: cta } = ListPropertyBrowse();
@@ -409,7 +474,25 @@ const page = () => {
   // State for full image modal
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const [activeFilters, setActiveFilters] = useState<any>({});
+  // Build the initial filters from the URL query params — same shape the
+  // in-page handleSearch produces, so results are filtered on first load.
+  const [activeFilters, setActiveFilters] = useState<any>(() => {
+    const initialFilters: Record<string, any> = {
+      propertyType:
+        !propertyTypeParam || propertyTypeParam.toLowerCase() === "all"
+          ? undefined
+          : propertyTypeParam.toLowerCase(),
+      minPrice: minPriceParam || undefined,
+      maxPrice: maxPriceParam || undefined,
+      location: locationParam || undefined,
+      minBedrooms: minBedroomsParam ? Number(minBedroomsParam) : undefined,
+      minBathrooms: minBathroomsParam ? Number(minBathroomsParam) : undefined,
+      page: 1,
+      limit: 10,
+      sort: sortParam || "newest",
+    };
+    return initialFilters;
+  });
 
   // Handle Escape key and body scroll when modal is open
   useEffect(() => {
@@ -427,14 +510,32 @@ const page = () => {
   }, [selectedImage]);
 
   // Fix: Setup state hook for listing status selection ("buy" or "rent")
-  const [listingType, setListingType] = useState("buy");
-  const [propertyType, setPropertyType] = useState("All");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [location, setLocation] = useState("");
-  const [bedrooms, setBedrooms] = useState<number | null>(null);
-  const [bathrooms, setBathrooms] = useState<number | null>(null);
-  const [selectedSort, setSelectedSort] = useState("Newest First");
+  const [listingType, setListingType] = useState(
+    typeParam === "rent" ? "rent" : "buy",
+  );
+  const [propertyType, setPropertyType] = useState(
+    propertyTypeParam
+      ? propertyTypeParam.charAt(0).toUpperCase() + propertyTypeParam.slice(1)
+      : "All",
+  );
+  const [minPrice, setMinPrice] = useState(minPriceParam || "");
+  const [maxPrice, setMaxPrice] = useState(maxPriceParam || "");
+  const [location, setLocation] = useState(locationParam || "");
+  const [bedrooms, setBedrooms] = useState<number | null>(
+    minBedroomsParam ? Number(minBedroomsParam) : null,
+  );
+  const [bathrooms, setBathrooms] = useState<number | null>(
+    minBathroomsParam ? Number(minBathroomsParam) : null,
+  );
+  const [selectedSort, setSelectedSort] = useState(
+    sortParam === "price asc"
+      ? "Price: Low to High"
+      : sortParam === "price desc"
+        ? "Price: High to Low"
+        : sortParam === "most_popular"
+          ? "Most Popular"
+          : "Newest First",
+  );
   const { data, isLoading } = useGetProperties(activeFilters);
   const propertyViewMutation = usePropertyView();
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -480,6 +581,22 @@ const page = () => {
     }
 
     setActiveFilters(filters);
+
+    // Keep the URL in sync so the applied filters stay shareable/refreshable
+    const urlFilters = { ...filters };
+    delete urlFilters.page;
+    delete urlFilters.limit;
+    if (urlFilters.sort === "newest") delete urlFilters.sort;
+    const params = new URLSearchParams();
+    Object.entries(urlFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "")
+        params.set(key, String(value));
+    });
+    // Preserve the buy/rent toggle in the URL (default is buy, so only
+    // write it when it differs)
+    if (listingType === "rent") params.set("type", "rent");
+    const qs = params.toString();
+    router.replace(qs ? `/browse?${qs}` : "/browse");
   };
 
   const pathname = usePathname();
@@ -626,6 +743,7 @@ const page = () => {
     setSelectedSort("Newest First");
     setSelected("Newest First");
     setActiveFilters({});
+    router.replace("/browse");
   };
 
   const filterProps = {
@@ -720,7 +838,7 @@ const page = () => {
         </div>
 
         {/* ── MOBILE: List/Map toggle + Collapsible Filter — Sticky on scroll ── */}
-        <div className="block lg:hidden sticky top-28 z-30 -mx-3 sm:-mx-4 md:-mx-6 mb-4 bg-white/95 backdrop-blur-sm px-3 sm:px-4 md:px-6 py-3 shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]">
+        <div className="block lg:hidden sticky top-23 z-30 -mx-3 sm:-mx-4 md:-mx-6 mb-4 bg-white/95 backdrop-blur-sm px-3 sm:px-4 md:px-6 py-3 shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]">
           <div className="flex bg-[#F3F3F4] p-1 rounded-xl mb-3">
             <button
               onClick={() => setViewMode("list")}
@@ -747,8 +865,12 @@ const page = () => {
             onClick={() => setShowMobileFilters(!showMobileFilters)}
             className="w-full flex items-center justify-between bg-white border border-[#E7E7E7] rounded-xl px-4 py-3 shadow-sm hover:bg-gray-50 transition"
           >
-            <span className="text-sm font-medium text-gray-700">Filters & Search</span>
-            <span className={`transition-transform shrink-0 ${showMobileFilters ? "rotate-180" : ""}`}>
+            <span className="text-sm font-medium text-gray-700">
+              Filters & Search
+            </span>
+            <span
+              className={`transition-transform shrink-0 ${showMobileFilters ? "rotate-180" : ""}`}
+            >
               <AngleBottomSvg />
             </span>
           </button>
@@ -762,7 +884,6 @@ const page = () => {
 
         {/* ── Main Content ── */}
         <div className="flex flex-col xl:flex-row gap-4 lg:gap-6">
-
           {/* ── Property List — order-1 on desktop ── */}
           <div
             ref={listRef}
@@ -771,7 +892,7 @@ const page = () => {
             }`}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-              {(!data?.data?.items || data?.data?.items?.length === 0) ? (
+              {!data?.data?.items || data?.data?.items?.length === 0 ? (
                 <div className="col-span-full flex flex-col items-center justify-center py-16 sm:py-20 text-center">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 mb-6 rounded-full bg-gray-100 flex items-center justify-center">
                     <svg
@@ -792,112 +913,133 @@ const page = () => {
                     No listings found
                   </h3>
                   <p className="text-sm sm:text-base text-gray-500 max-w-md">
-                    Try adjusting your filters or search criteria to find more properties.
+                    Try adjusting your filters or search criteria to find more
+                    properties.
                   </p>
                 </div>
               ) : (
                 displayedProperties?.map((item: any) => (
-                <div
-                  key={item._id}
-                  className="bg-white shadow-lg rounded-2xl sm:rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-3 sm:px-4 md:px-4.5 pt-3 sm:pt-4 md:pt-4.5 pb-4 sm:pb-5 md:pb-7.5"
-                >
-                  <div className="relative overflow-hidden">
-                    <figure className="h-[200px] sm:h-[240px] md:h-[280px] lg:h-[300px] overflow-hidden rounded-lg relative group/image">
-                      <Image
-                        src={item.media?.[0]?.url}
-                        alt={item.propertyName}
-                        width={500}
-                        height={300}
-                        onClick={() => setSelectedImage(item.media?.[0]?.url)}
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 rounded-lg"
-                      />
-                      <div
-                        className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center cursor-pointer"
-                        onClick={() => setSelectedImage(item.media?.[0]?.url)}
-                      >
-                        <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
-                          <div className="bg-white/95 p-2 sm:p-3 rounded-full">
-                            <svg
-                              className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
-                              />
-                            </svg>
+                  <div
+                    key={item._id}
+                    className="bg-white shadow-lg rounded-2xl sm:rounded-[28px] overflow-hidden group hover:shadow-2xl transition-all duration-500 px-3 sm:px-4 md:px-4.5 pt-3 sm:pt-4 md:pt-4.5 pb-4 sm:pb-5 md:pb-7.5"
+                  >
+                    <div className="relative overflow-hidden">
+                      <figure className="h-[200px] sm:h-[240px] md:h-[280px] lg:h-[300px] overflow-hidden rounded-lg relative group/image">
+                        <Image
+                          src={item.media?.[0]?.url}
+                          alt={item.propertyName}
+                          width={500}
+                          height={300}
+                          onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 rounded-lg"
+                        />
+                        <div
+                          className="absolute inset-0 bg-black/0 group-hover/image:bg-black/30 transition-all duration-300 rounded-lg flex items-center justify-center cursor-pointer"
+                          onClick={() => setSelectedImage(item.media?.[0]?.url)}
+                        >
+                          <div className="opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                            <div className="bg-white/95 p-2 sm:p-3 rounded-full">
+                              <svg
+                                className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+                                />
+                              </svg>
+                            </div>
+                            <span className="text-white font-medium text-xs sm:text-sm">
+                              Click to view
+                            </span>
                           </div>
-                          <span className="text-white font-medium text-xs sm:text-sm">
-                            Click to view
+                        </div>
+                      </figure>
+                      <div
+                        onClick={() =>
+                          !loadingFavorites[item._id] &&
+                          toggleFavorite(item._id)
+                        }
+                        className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/90 backdrop-blur-sm p-2 sm:p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
+                      >
+                        {loadingFavorites[item._id] ? (
+                          <span className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                        ) : favoriteStates[item._id] ? (
+                          <Favourites />
+                        ) : (
+                          <Favourite />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mt-3 sm:mt-4 md:mt-5">
+                      <h3
+                        className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]"
+                        translate="no"
+                      >
+                        ${item?.price?.toLocaleString()}
+                        <span className="text-xs sm:text-sm md:text-base lg:text-[18px] font-medium text-[#919191] pl-1">
+                          USD
+                        </span>
+                      </h3>
+                      <h4
+                        className="text-sm sm:text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-2 sm:mt-3 line-clamp-1"
+                        translate="no"
+                      >
+                        {item.propertyName}
+                      </h4>
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 mt-2 sm:mt-3 md:mt-4">
+                        <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
+                        <p
+                          className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1"
+                          translate="no"
+                        >
+                          {item.city}, {item.state}
+                        </p>
+                      </div>
+                      <div className="flex flex-nowrap items-center gap-3 sm:gap-4 md:gap-5 mt-3 sm:mt-4 md:mt-5 overflow-hidden">
+                        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                          <Bed className="shrink-0 scale-90 sm:scale-100" />
+                          <span
+                            className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap"
+                            translate="no"
+                          >
+                            {item.bedrooms} Bed
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                          <Bathtub className="shrink-0 scale-90 sm:scale-100" />
+                          <span
+                            className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap"
+                            translate="no"
+                          >
+                            {item.bathrooms} Bath
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                          <Acceleration className="shrink-0 scale-90 sm:scale-100" />
+                          <span
+                            className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap"
+                            translate="no"
+                          >
+                            {item.areaInSqMeter} m²
                           </span>
                         </div>
                       </div>
-                    </figure>
-                    <div
-                      onClick={() =>
-                        !loadingFavorites[item._id] && toggleFavorite(item._id)
-                      }
-                      className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/90 backdrop-blur-sm p-2 sm:p-2.5 rounded-full cursor-pointer hover:bg-white transition-colors"
-                    >
-                      {loadingFavorites[item._id] ? (
-                        <span className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-                      ) : favoriteStates[item._id] ? (
-                        <Favourites />
-                      ) : (
-                        <Favourite />
-                      )}
+                      <button
+                        onClick={() => handleContact(item._id)}
+                        className="mt-4 sm:mt-5 md:mt-8 w-full bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg py-2.5 sm:py-3 xl:py-4 rounded-xl sm:rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
+                      >
+                        Contact
+                      </button>
                     </div>
                   </div>
-
-                  <div className="mt-3 sm:mt-4 md:mt-5">
-                    <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[28px] font-bold text-[#0085FF]" translate="no">
-                      ${item?.price?.toLocaleString()}
-                      <span className="text-xs sm:text-sm md:text-base lg:text-[18px] font-medium text-[#919191] pl-1">
-                        USD
-                      </span>
-                    </h3>
-                    <h4 className="text-sm sm:text-base lg:text-lg xl:text-[24px] font-medium text-[#5F5F5F] mt-2 sm:mt-3 line-clamp-1" translate="no">
-                      {item.propertyName}
-                    </h4>
-                    <div className="flex items-center gap-1.5 sm:gap-2.5 mt-2 sm:mt-3 md:mt-4">
-                      <Location className="w-4 h-4 sm:w-[18px] sm:h-[18px] 2xl:w-[24px] 2xl:h-[24px]" />
-                      <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-[18px] font-medium text-[#919191] line-clamp-1" translate="no">
-                        {item.city}, {item.state}
-                      </p>
-                    </div>
-                    <div className="flex flex-nowrap items-center gap-3 sm:gap-4 md:gap-5 mt-3 sm:mt-4 md:mt-5 overflow-hidden">
-                      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                        <Bed className="shrink-0 scale-90 sm:scale-100" />
-                        <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
-                          {item.bedrooms} Bed
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                        <Bathtub className="shrink-0 scale-90 sm:scale-100" />
-                        <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
-                          {item.bathrooms} Bath
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                        <Acceleration className="shrink-0 scale-90 sm:scale-100" />
-                        <span className="text-xs sm:text-sm lg:text-[14px] font-normal text-[#919191] whitespace-nowrap" translate="no">
-                          {item.areaInSqMeter} m²
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleContact(item._id)}
-                      className="mt-4 sm:mt-5 md:mt-8 w-full bg-[#0085FF] text-white font-medium text-sm sm:text-base lg:text-lg py-2.5 sm:py-3 xl:py-4 rounded-xl sm:rounded-2xl hover:bg-transparent hover:text-[#0085FF] border border-[#0085FF] transition-all duration-300 cursor-pointer"
-                    >
-                      Contact
-                    </button>
-                  </div>
-                </div>
-              )))}
+                ))
+              )}
 
               {!showAll && data?.data?.items?.length > 4 && (
                 <div className="col-span-full text-center">
@@ -927,7 +1069,6 @@ const page = () => {
               </APIProvider>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -1011,6 +1152,15 @@ const page = () => {
         </div>
       </section>
     </>
+  );
+};
+
+// Wrapped in Suspense so useSearchParams can be used during prerendering
+const page = () => {
+  return (
+    <Suspense fallback={<BrowseDetailsSkeleton />}>
+      <BrowseContent />
+    </Suspense>
   );
 };
 
